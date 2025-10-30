@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Service Provider Portal</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      min-height: 100vh;
+      display: flex;
+      background: linear-gradient(135deg, #2d3748 0%, #4a5568 100%);
+      background-attachment: fixed;
+      color: #2d3748;
+    }
+
+    /* Left Side - Branding */
+    .brand-section {
+      flex: 1;
+      background: transparent;
+      color: white;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      position: relative;
+      overflow: hidden;
+      min-height: 100vh;
+    }
+
+    .brand-section::before {
+      content: '';
+      position: absolute;
+      top: -50%;
+      right: -50%;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 20% 80%, rgba(74, 108, 247, 0.3) 0%, transparent 50%),
+        radial-gradient(circle at 80% 20%, rgba(255, 107, 107, 0.2) 0%, transparent 50%),
+        radial-gradient(circle at 40% 40%, rgba(72, 202, 228, 0.2) 0%, transparent 50%);
+    }
+
+    .brand-content {
+      max-width: 500px;
+      text-align: center;
+      z-index: 1;
+    }
+
+    .brand-logo {
+      margin-bottom: 30px;
+    }
+
+    .brand-logo i {
+      font-size: 64px;
+      background: linear-gradient(135deg, #4a6cf7 0%, #667eea 100%);
+      padding: 25px;
+      border-radius: 20px;
+      margin-bottom: 20px;
+      display: inline-block;
+      box-shadow: 0 8px 25px rgba(74, 108, 247, 0.4);
+      animation: pulse 2s ease-in-out infinite;
+    }
+
+    .brand-content h1 {
+      font-size: 36px;
+      font-weight: 700;
+      margin-bottom: 15px;
+      color: white;
+      text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .brand-content p {
+      font-size: 18px;
+      color: #e2e8f0;
+      margin-bottom: 40px;
+      line-height: 1.6;
+    }
+
+    .features {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      text-align: left;
+    }
+
+    .feature-item {
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      padding: 20px;
+      background: rgba(255,255,255,0.15);
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,0.2);
+      transition: all 0.3s ease;
+      cursor: pointer;
+    }
+
+    .feature-item:hover {
+      transform: translateX(10px);
+      background: rgba(255,255,255,0.2);
+      box-shadow: 0 8px 25px rgba(0,0,0,0.2);
+    }
+
+    .feature-item i {
+      font-size: 24px;
+      color: white;
+      background: linear-gradient(135deg, #4a6cf7 0%, #667eea 100%);
+      padding: 12px;
+      border-radius: 10px;
+      transition: all 0.3s ease;
+    }
+
+    .feature-item:hover i {
+      transform: scale(1.1);
+      background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+    }
+
+    .feature-item:nth-child(2):hover i {
+      background: linear-gradient(135deg, #48cae4 0%, #0096c7 100%);
+    }
+
+    .feature-item:nth-child(3):hover i {
+      background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+    }
+
+    .feature-text h3 {
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 5px;
+    }
+
+    .feature-text p {
+      font-size: 14px;
+      color: #e2e8f0;
+      margin: 0;
+    }
+
+    /* Right Side - Login Form */
+    .login-section {
+      flex: 1;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px;
+      background: transparent;
+      position: relative;
+      min-height: 100vh;
+    }
+
+    .login-section::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: 
+        radial-gradient(circle at 10% 20%, rgba(74, 108, 247, 0.1) 0%, transparent 40%),
+        radial-gradient(circle at 90% 80%, rgba(255, 107, 107, 0.1) 0%, transparent 40%);
+    }
+
+    .login-container {
+      width: 100%;
+      max-width: 400px;
+      background: white;
+      padding: 40px;
+      border-radius: 20px;
+      box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+      animation: fadeIn 0.8s ease-out;
+      position: relative;
+      z-index: 1;
+      border: 1px solid rgba(255,255,255,0.5);
+    }
+
+    .login-container::before {
+      content: '';
+      position: absolute;
+      top: -2px;
+      left: -2px;
+      right: -2px;
+      bottom: -2px;
+      background: linear-gradient(45deg, #4a6cf7, #667eea, #764ba2, #4a6cf7);
+      border-radius: 22px;
+      z-index: -1;
+      opacity: 0.1;
+    }
+
+    .login-logo {
+      text-align: center;
+      margin-bottom: 25px;
+    }
+
+    .login-logo i {
+      font-size: 42px;
+      color: #4a6cf7;
+      background: linear-gradient(135deg, #f0f4ff 0%, #e3ebff 100%);
+      padding: 20px;
+      border-radius: 50%;
+      box-shadow: 0 5px 15px rgba(74, 108, 247, 0.3);
+    }
+
+    .login-container h2 {
+      text-align: center;
+      margin-bottom: 8px;
+      font-size: 28px;
+      font-weight: 700;
+      color: #2d3748;
+    }
+
+    .subtitle {
+      text-align: center;
+      color: #718096;
+      margin-bottom: 30px;
+      font-size: 15px;
+    }
+
+    .input-group {
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .login-container input {
+      width: 100%;
+      padding: 16px 16px 16px 50px;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      background: #ffffff;
+      color: #4a5568;
+      font-size: 15px;
+      transition: all 0.3s;
+      font-weight: 500;
+    }
+
+    .input-group i {
+      position: absolute;
+      left: 18px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: #a0aec0;
+      transition: all 0.3s;
+    }
+
+    .login-container input:focus {
+      outline: none;
+      border-color: #4a6cf7;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .login-container input:focus + i {
+      color: #4a6cf7;
+      transform: translateY(-50%) scale(1.1);
+    }
+
+    .login-container input::placeholder {
+      color: #a0aec0;
+    }
+
+    .remember-forgot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin: 20px 0 25px;
+      font-size: 14px;
+    }
+
+    .remember {
+      display: flex;
+      align-items: center;
+      color: #4a5568;
+    }
+
+    .remember input {
+      width: auto;
+      margin-right: 8px;
+      accent-color: #4a6cf7;
+      transform: scale(1.1);
+    }
+
+    .forgot-link {
+      color: #4a6cf7;
+      text-decoration: none;
+      font-weight: 500;
+      transition: all 0.3s;
+    }
+
+    .forgot-link:hover {
+      color: #3b5bdb;
+      transform: translateX(5px);
+    }
+
+    .login-container button {
+      width: 100%;
+      padding: 16px;
+      background: linear-gradient(135deg, #4a6cf7 0%, #3b5bdb 100%);
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(74, 108, 247, 0.4);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .login-container button::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+      transition: left 0.5s;
+    }
+
+    .login-container button:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(74, 108, 247, 0.5);
+    }
+
+    .login-container button:hover::before {
+      left: 100%;
+    }
+
+    .login-container button:active {
+      transform: translateY(-1px);
+    }
+
+    .register-link {
+      margin-top: 25px;
+      font-size: 14px;
+      color: #718096;
+      text-align: center;
+    }
+
+    .register-link a {
+      color: #4a6cf7;
+      text-decoration: none;
+      font-weight: 600;
+      transition: all 0.3s;
+    }
+
+    .register-link a:hover {
+      color: #3b5bdb;
+      text-decoration: underline;
+    }
+
+    /* Animations */
+    @keyframes pulse {
+      0%, 100% { transform: scale(1); }
+      50% { transform: scale(1.05); }
+    }
+
+    @keyframes fadeIn {
+      from { 
+        opacity: 0; 
+        transform: translateX(30px); 
+      }
+      to { 
+        opacity: 1; 
+        transform: translateX(0); 
+      }
+    }
+
+    /* Responsive Design */
+    @media (max-width: 1024px) {
+      body {
+        flex-direction: column;
+      }
+      
+      .brand-section {
+        padding: 30px 20px;
+        min-height: auto;
+      }
+      
+      .brand-content {
+        max-width: 100%;
+      }
+      
+      .login-section {
+        padding: 30px 20px;
+        min-height: auto;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .login-container {
+        padding: 30px 20px;
+      }
+      
+      .brand-logo i {
+        font-size: 48px;
+        padding: 20px;
+      }
+      
+      .brand-content h1 {
+        font-size: 28px;
+      }
+      
+      .feature-item {
+        flex-direction: column;
+        text-align: center;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Left Side - Branding Section -->
+  <div class="brand-section">
+    <div class="brand-content">
+      <div class="brand-logo">
+        <i class="fas fa-building"></i>
+      </div>
+      <h1>Service Provider Portal</h1>
+      <p>Streamline your service management with our comprehensive dashboard and analytics tools</p>
+      
+      <div class="features">
+        <div class="feature-item">
+          <i class="fas fa-chart-line"></i>
+          <div class="feature-text">
+            <h3>Advanced Analytics</h3>
+            <p>Track performance with real-time data and insights</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-users"></i>
+          <div class="feature-text">
+            <h3>Client Management</h3>
+            <p>Manage all your clients and appointments efficiently</p>
+          </div>
+        </div>
+        <div class="feature-item">
+          <i class="fas fa-shield-alt"></i>
+          <div class="feature-text">
+            <h3>Secure & Protected</h3>
+            <p>Your data is safe with enterprise-grade security</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side - Login Form -->
+  <div class="login-section">
+    <div class="login-container">
+      <div class="login-logo">
+        <i class="fas fa-sign-in-alt"></i>
+      </div>
+      <h2>Welcome Back</h2>
+      <p class="subtitle">Sign in to access your dashboard</p>
+      
+      <!-- Fixed: Single form without nesting -->
+      <form id="loginForm">
+        <div class="input-group">
+          <i class="fas fa-user"></i>
+          <input type="text" name="email" placeholder="Email or Username" required />
+        </div>
+        <div class="input-group">
+          <i class="fas fa-lock"></i>
+          <input type="password" name="password" placeholder="Password" required />
+        </div>
+        <div class="remember-forgot">
+          <label class="remember">
+            <input type="checkbox" name="remember">
+            Remember me
+          </label>
+          <a href="forgot_password.html" class="forgot-link">Forgot Password?</a>
+        </div>
+        <button type="submit">Login to Account</button>
+      </form>
+      
+      <p class="register-link">
+        Don't have an account? <a href="provider_register.html">Register here</a>
+      </p>
+    </div>
+  </div>
+
+  <script>
+    document.getElementById('loginForm').addEventListener('submit', async function(e) {
+      e.preventDefault();
+      
+      const email = this.elements.email.value;
+      const password = this.elements.password.value;
+      
+      if (!email || !password) {
+        alert('Please fill in all fields');
+        return;
+      }
+
+      // Add loading animation to button
+      const button = this.querySelector('button');
+      const originalText = button.innerHTML;
+      button.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Signing in...';
+      button.disabled = true;
+
+      try {
+        // Send login request to your backend
+        const response = await fetch('http://localhost:4000/provider/login', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: email,
+            password: password
+          })
+        });
+
+        const result = await response.json();
+
+        if (response.ok) {
+          // Login successful - SAVE THE PROVIDER DATA
+          localStorage.setItem('provider_username', email);
+          localStorage.setItem('provider_id', result.provider.id);
+          localStorage.setItem('provider_name', result.provider.name);
+          
+          alert('Login successful! Redirecting to dashboard...');
+          window.location.href = 'provider_dashboard.html';
+        } else {
+          // Login failed
+          alert(result.message || 'Login failed. Please check your credentials.');
+          button.innerHTML = originalText;
+          button.disabled = false;
+        }
+      } catch (error) {
+        console.error('Login error:', error);
+        alert('Network error. Please try again.');
+        button.innerHTML = originalText;
+        button.disabled = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,3086 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advanced Service Tracking - FixItNow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3c72;
+            --secondary: #ff6b6b;
+            --accent: #4ecdc4;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --border-radius: 12px;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-logo span,
+        .sidebar.collapsed .menu-item span,
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 25px 10px;
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 14px 25px;
+            justify-content: center;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo {
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar-logo i {
+            color: var(--secondary);
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .menu-item {
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu-item.active i {
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            white-space: nowrap;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .user-info h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* User Profile Panel */
+        .user-profile-panel {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .user-profile-panel.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .user-profile-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-profile-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-profile-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .user-profile-menu {
+            padding: 15px 0;
+        }
+
+        .profile-menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 10px 0;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        /* Header Styles */
+        .header {
+            height: var(--header-height);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 250px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        /* Search Results Panel */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            margin-top: 5px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background: #f8f9fa;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .search-result-desc {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Track Content */
+        .track-content {
+            padding: 30px;
+        }
+
+        .track-header {
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(30, 60, 114, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .track-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .track-title {
+            font-size: 28px;
+            font-weight: 700;
+            z-index: 1;
+        }
+
+        .track-subtitle {
+            opacity: 0.9;
+            margin-top: 5px;
+            z-index: 1;
+        }
+
+        .track-illustration {
+            font-size: 80px;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        /* Track Container */
+        .track-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        /* Search Section */
+        .search-section {
+            margin-bottom: 30px;
+        }
+
+        .search-box-large {
+            position: relative;
+            margin-bottom: 20px;
+        }
+
+        .search-box-large input {
+            width: 100%;
+            padding: 15px 20px 15px 50px;
+            border: 1px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .search-box-large input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .search-box-large i {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+            font-size: 18px;
+        }
+
+        .search-hint {
+            font-size: 14px;
+            color: var(--gray);
+            text-align: center;
+        }
+
+        /* Active Requests */
+        .active-requests {
+            margin-bottom: 30px;
+        }
+
+        .section-title {
+            font-size: 20px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            font-size: 22px;
+        }
+
+        .request-list {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .request-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            border: 1px solid #e0e0e0;
+            transition: var(--transition);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .request-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 5px;
+            height: 100%;
+            transition: var(--transition);
+        }
+
+        .request-card.inprogress::before {
+            background: #3498db;
+        }
+
+        .request-card.pending::before {
+            background: var(--warning);
+        }
+
+        .request-card.completed::before {
+            background: var(--success);
+        }
+
+        .request-card.cancelled::before {
+            background: var(--danger);
+        }
+
+        .request-card:hover {
+            transform: translateY(-3px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .request-card.selected {
+            border-color: var(--primary);
+            background: rgba(30, 60, 114, 0.02);
+        }
+
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .request-id {
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .request-date {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .request-details {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .request-info h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .request-info p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .service-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .status-inprogress {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        .status-cancelled {
+            background: rgba(231, 76, 60, 0.1);
+            color: var(--danger);
+        }
+
+        /* Status Timeline */
+        .status-timeline {
+            margin-bottom: 30px;
+        }
+
+        .timeline {
+            position: relative;
+            padding: 20px 0;
+        }
+
+        .timeline::before {
+            content: '';
+            position: absolute;
+            left: 20px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #e0e0e0;
+        }
+
+        .timeline-item {
+            display: flex;
+            margin-bottom: 25px;
+            position: relative;
+        }
+
+        .timeline-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .timeline-marker {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 20px;
+            z-index: 2;
+            color: white;
+            font-size: 16px;
+            transition: var(--transition);
+        }
+
+        .timeline-marker.active {
+            background: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.2);
+        }
+
+        .timeline-marker.completed {
+            background: var(--success);
+        }
+
+        .timeline-marker.pending {
+            background: var(--gray);
+        }
+
+        .timeline-content {
+            flex: 1;
+            padding-top: 5px;
+        }
+
+        .timeline-content h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .timeline-content p {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 5px;
+        }
+
+        .timeline-time {
+            font-size: 12px;
+            color: #999;
+        }
+
+        /* Service Provider Info */
+        .provider-info {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .provider-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 20px;
+            margin-right: 15px;
+        }
+
+        .provider-details h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .provider-details p {
+            color: var(--gray);
+            font-size: 14px;
+        }
+
+        .provider-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+        }
+
+        .rating-stars {
+            color: #ffc107;
+        }
+
+        /* Contact Actions */
+        .contact-actions {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .contact-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+            background: white;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .contact-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Track Actions */
+        .track-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 15px;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #e0e0e0;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 15px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #152a52;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid #e0e0e0;
+            color: var(--dark);
+        }
+
+        .btn-outline:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .search-box input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 0 20px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .track-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .track-illustration {
+                font-size: 70px;
+            }
+            
+            .contact-actions {
+                flex-direction: column;
+            }
+            
+            .track-actions {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .track-content {
+                padding: 20px 15px;
+            }
+            
+            .track-container {
+                padding: 20px;
+            }
+            
+            .request-details {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 10px;
+        }
+
+        .sidebar-toggle:hover {
+            background: #e9ecef;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: #e9ecef;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--primary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Map Container */
+        .map-container {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .map-placeholder {
+            background: #e9ecef;
+            border-radius: 8px;
+            height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+            font-size: 16px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(30, 60, 114, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        /* Progress Bar */
+        .progress-section {
+            margin-bottom: 20px;
+        }
+
+        .progress-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .progress-bar {
+            height: 8px;
+            background: #e0e0e0;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--primary);
+            border-radius: 4px;
+            transition: width 0.5s ease;
+        }
+
+        /* Live Tracking */
+        .live-tracking {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: white;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .live-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .pulse {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 10px rgba(46, 204, 113, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(46, 204, 113, 0); }
+        }
+
+        /* Estimated Time */
+        .eta-container {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 15px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .eta-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .eta-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+
+        /* Animation for requests */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .request-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .request-card:nth-child(2) { animation-delay: 0.1s; }
+        .request-card:nth-child(3) { animation-delay: 0.2s; }
+
+        /* Animation for user profile panel */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Dark Mode Styles */
+        body.dark-theme {
+            --dark: #f8f9fa;
+            --light: #2d3436;
+            background: #1a1d23;
+            color: #f8f9fa;
+        }
+        
+        body.dark-theme .sidebar,
+        body.dark-theme .header,
+        body.dark-theme .track-container,
+        body.dark-theme .request-card,
+        body.dark-theme .provider-info,
+        body.dark-theme .eta-container,
+        body.dark-theme .toast,
+        body.dark-theme .user-profile-panel,
+        body.dark-theme .search-results {
+            background: #2d3436;
+            color: #f8f9fa;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        }
+        
+        body.dark-theme .menu-item,
+        body.dark-theme .profile-menu-item {
+            color: #ddd;
+        }
+        
+        body.dark-theme .menu-item:hover,
+        body.dark-theme .menu-item.active,
+        body.dark-theme .profile-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8f9fa;
+        }
+        
+        body.dark-theme .search-box input,
+        body.dark-theme .search-box-large input,
+        body.dark-theme .theme-toggle,
+        body.dark-theme .sidebar-toggle,
+        body.dark-theme .contact-btn,
+        body.dark-theme .btn-outline {
+            background: #3a4047;
+            color: #f8f9fa;
+            border-color: #444;
+        }
+        
+        body.dark-theme .search-box input:focus,
+        body.dark-theme .search-box-large input:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.3);
+        }
+        
+        body.dark-theme .request-card.selected {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        body.dark-theme .provider-info,
+        body.dark-theme .eta-container {
+            background: #3a4047;
+        }
+        
+        body.dark-theme .map-placeholder {
+            background: #3a4047;
+            color: #aaa;
+        }
+        
+        body.dark-theme .contact-btn:hover,
+        body.dark-theme .btn-outline:hover {
+            background: var(--primary);
+            color: white;
+        }
+        
+        body.dark-theme .track-subtitle,
+        body.dark-theme .search-hint,
+        body.dark-theme .request-date,
+        body.dark-theme .request-info p,
+        body.dark-theme .provider-details p,
+        body.dark-theme .timeline-content p,
+        body.dark-theme .timeline-time,
+        body.dark-theme .toast-message {
+            color: #aaa;
+        }
+        
+        body.dark-theme .timeline::before {
+            background: #444;
+        }
+        
+        body.dark-theme .progress-bar {
+            background: #444;
+        }
+        
+        body.dark-theme .track-actions {
+            border-color: #444;
+        }
+
+        /* Advanced Features */
+        .advanced-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        .feature-card {
+            flex: 1;
+            min-width: 200px;
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .feature-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 24px;
+            margin-bottom: 15px;
+        }
+
+        .feature-card h4 {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .feature-card p {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        /* Service Analytics */
+        .analytics-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+
+        .analytics-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .analytics-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .analytics-filters {
+            display: flex;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 15px;
+            border-radius: 20px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .analytics-card {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            text-align: center;
+        }
+
+        .analytics-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+        }
+
+        .analytics-label {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        .chart-container {
+            height: 200px;
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--gray);
+        }
+
+        /* Enhanced User Profile */
+        .user-stats {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .stat-item {
+            flex: 1;
+            text-align: center;
+            padding: 15px;
+            background: rgba(30, 60, 114, 0.05);
+            border-radius: var(--border-radius);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        /* Enhanced Service Cards */
+        .service-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .action-btn {
+            padding: 8px 12px;
+            border-radius: 6px;
+            background: #f8f9fa;
+            border: 1px solid #e0e0e0;
+            font-size: 12px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .action-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Enhanced Map */
+        .map-controls {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .map-btn {
+            padding: 8px 15px;
+            border-radius: 6px;
+            background: white;
+            border: 1px solid #e0e0e0;
+            font-size: 14px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .map-btn:hover {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 30px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        .modal-body {
+            margin-bottom: 20px;
+        }
+
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        /* Call Interface */
+        .call-interface {
+            text-align: center;
+            padding: 20px;
+        }
+
+        .call-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: 600;
+            margin: 0 auto 20px;
+        }
+
+        .call-info {
+            margin-bottom: 30px;
+        }
+
+        .call-actions {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+        }
+
+        .call-btn {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .call-btn.accept {
+            background: var(--success);
+            color: white;
+        }
+
+        .call-btn.decline {
+            background: var(--danger);
+            color: white;
+        }
+
+        .call-btn.end {
+            background: var(--danger);
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- User Profile Panel -->
+    <div class="user-profile-panel" id="userProfilePanel">
+        <div class="user-profile-header">
+            <div class="user-profile-avatar" id="profileAvatar">JS</div>
+            <div class="user-profile-info">
+                <h3 id="profileName">John Smith</h3>
+                <p id="profileType">Premium Member</p>
+            </div>
+        </div>
+        <div class="user-stats">
+            <div class="stat-item">
+                <div class="stat-value" id="completedServices">12</div>
+                <div class="stat-label">Completed</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="activeServices">3</div>
+                <div class="stat-label">Active</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="memberSince">2022</div>
+                <div class="stat-label">Member Since</div>
+            </div>
+        </div>
+        <div class="user-profile-menu">
+            <a href="profile.html" class="profile-menu-item">
+                <i class="fas fa-user"></i>
+                My Profile
+            </a>
+            <a href="setting.html" class="profile-menu-item">
+                <i class="fas fa-cog"></i>
+                Account Settings
+            </a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Modals -->
+    <div class="modal" id="callModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Call Service Provider</h3>
+                <button class="modal-close" id="closeCallModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="call-interface">
+                    <div class="call-avatar" id="callProviderAvatar">MJ</div>
+                    <div class="call-info">
+                        <h4 id="callProviderName">Michael Johnson</h4>
+                        <p>Licensed Electrician</p>
+                        <p id="callStatus">Connecting...</p>
+                    </div>
+                    <div class="call-actions">
+                        <button class="call-btn accept" id="acceptCall">
+                            <i class="fas fa-phone"></i>
+                        </button>
+                        <button class="call-btn decline" id="declineCall">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                        <button class="call-btn end" id="endCall" style="display: none;">
+                            <i class="fas fa-phone-slash"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="messageModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Message Service Provider</h3>
+                <button class="modal-close" id="closeMessageModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">To:</label>
+                    <input type="text" class="form-control" id="messageRecipient" value="Michael Johnson" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Message:</label>
+                    <textarea class="form-control" id="messageText" rows="4" placeholder="Type your message here..."></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-outline" id="cancelMessage">Cancel</button>
+                <button class="btn btn-primary" id="sendMessage">Send Message</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal" id="shareModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 class="modal-title">Share Tracking</h3>
+                <button class="modal-close" id="closeShareModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Tracking Link:</label>
+                    <input type="text" class="form-control" id="trackingLink" value="https://fixitnow.com/track/REQ-7842" readonly>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Share via:</label>
+                    <div style="display: flex; gap: 10px; margin-top: 10px;">
+                        <button class="btn btn-outline" id="copyLink">
+                            <i class="fas fa-copy"></i> Copy Link
+                        </button>
+                        <button class="btn btn-outline" id="shareEmail">
+                            <i class="fas fa-envelope"></i> Email
+                        </button>
+                        <button class="btn btn-outline" id="shareSMS">
+                            <i class="fas fa-sms"></i> SMS
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" id="closeShare">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-tools"></i>
+                <span>FixItNow</span>
+            </a>
+        </div>
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="services.html" class="menu-item">
+                <i class="fas fa-concierge-bell"></i>
+                <span>Services</span>
+            </a>
+            <a href="bookings.html" class="menu-item">
+                <i class="fas fa-calendar-check"></i>
+                <span>Bookings</span>
+            </a>
+            <a href="track_service.html" class="menu-item active">
+                <i class="fas fa-map-marker-alt"></i>
+                <span>Track Service</span>
+            </a>
+            <a href="providers.html" class="menu-item">
+                <i class="fas fa-user-friends"></i>
+                <span>Service Providers</span>
+            </a>
+            <a href="payments.html" class="menu-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Payments</span>
+            </a>
+            <a href="reviews.html" class="menu-item">
+                <i class="fas fa-star"></i>
+                <span>Reviews</span>
+            </a>
+            <a href="settings.html" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a href="help.html" class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+        </div>
+        <div class="sidebar-footer" id="userProfileToggle">
+            <div class="user-profile">
+                <div class="user-avatar">JS</div>
+                <div class="user-info">
+                    <h4>John Smith</h4>
+                    <p>Premium Member</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Advanced Service Tracking</h1>
+            </div>
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search requests..." id="searchInput">
+                    <div class="search-results" id="searchResults"></div>
+                </div>
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+                <div class="sidebar-toggle" id="sidebarToggle">
+                    <i class="fas fa-chevron-left"></i>
+                </div>
+            </div>
+        </div>
+
+        <!-- Track Content -->
+        <div class="track-content">
+            <!-- Track Header -->
+            <div class="track-header">
+                <div>
+                    <h1 class="track-title">Advanced Service Tracking</h1>
+                    <p class="track-subtitle">Monitor your service requests with real-time analytics and advanced features</p>
+                </div>
+                <div class="track-illustration">
+                    <i class="fas fa-map-marked-alt"></i>
+                </div>
+            </div>
+            
+            <!-- Advanced Features -->
+            <div class="advanced-features">
+                <div class="feature-card" id="liveTrackingFeature">
+                    <div class="feature-icon">
+                        <i class="fas fa-satellite-dish"></i>
+                    </div>
+                    <h4>Live Tracking</h4>
+                    <p>Real-time location tracking of your service provider</p>
+                </div>
+                <div class="feature-card" id="analyticsFeature">
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <h4>Service Analytics</h4>
+                    <p>Detailed insights into your service history and patterns</p>
+                </div>
+                <div class="feature-card" id="smartAlertsFeature">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <h4>Smart Alerts</h4>
+                    <p>Intelligent notifications based on service progress</p>
+                </div>
+                <div class="feature-card" id="predictiveETAFeature">
+                    <div class="feature-icon">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h4>Predictive ETA</h4>
+                    <p>AI-powered arrival time predictions</p>
+                </div>
+            </div>
+
+            <!-- Analytics Container -->
+            <div class="analytics-container" id="analyticsContainer" style="display: none;">
+                <div class="analytics-header">
+                    <h3 class="analytics-title">Service Analytics</h3>
+                    <div class="analytics-filters">
+                        <button class="filter-btn active" data-period="week">This Week</button>
+                        <button class="filter-btn" data-period="month">This Month</button>
+                        <button class="filter-btn" data-period="year">This Year</button>
+                    </div>
+                </div>
+                <div class="analytics-grid">
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="totalServices">24</div>
+                        <div class="analytics-label">Total Services</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="avgRating">4.7</div>
+                        <div class="analytics-label">Average Rating</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="responseTime">28</div>
+                        <div class="analytics-label">Avg Response (min)</div>
+                    </div>
+                    <div class="analytics-card">
+                        <div class="analytics-value" id="completionRate">92%</div>
+                        <div class="analytics-label">Completion Rate</div>
+                    </div>
+                </div>
+                <div class="chart-container">
+                    <p>Service Request Trend Chart</p>
+                </div>
+            </div>
+            
+            <!-- Track Container -->
+            <div class="track-container">
+                <!-- Live Tracking -->
+                <div class="live-tracking">
+                    <div class="live-indicator">
+                        <div class="pulse"></div>
+                        <span>Live Tracking Active</span>
+                    </div>
+                    <div class="last-update">
+                        Last updated: <span id="lastUpdateTime">Just now</span>
+                    </div>
+                </div>
+
+                <!-- Search Section -->
+                <div class="search-section">
+                    <div class="search-box-large">
+                        <i class="fas fa-search"></i>
+                        <input type="text" placeholder="Enter Service Request ID or search by service type..." id="serviceSearch">
+                    </div>
+                    <p class="search-hint">You can search by Request ID, service type, or provider name</p>
+                </div>
+                
+                <!-- Active Requests -->
+                <div class="active-requests">
+                    <h3 class="section-title">
+                        <i class="fas fa-list"></i> Your Active Requests
+                    </h3>
+                    
+                    <div class="request-list" id="requestList">
+                        <!-- Request cards will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Estimated Time -->
+                <div class="eta-container">
+                    <div class="eta-info">
+                        <div class="eta-icon">
+                            <i class="fas fa-clock"></i>
+                        </div>
+                        <div>
+                            <h4>Estimated Completion</h4>
+                            <p id="etaTime">Today, 4:30 PM</p>
+                        </div>
+                    </div>
+                    <div class="eta-status">
+                        <span id="etaStatus">On Schedule</span>
+                    </div>
+                </div>
+                
+                <!-- Progress Section -->
+                <div class="progress-section">
+                    <div class="progress-info">
+                        <span>Service Progress</span>
+                        <span id="progressPercent">50%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progressFill" style="width: 50%"></div>
+                    </div>
+                </div>
+                
+                <!-- Status Timeline -->
+                <div class="status-timeline">
+                    <h3 class="section-title">
+                        <i class="fas fa-stream"></i> Request Status: <span id="selected-request">#REQ-7842</span>
+                    </h3>
+                    
+                    <div class="timeline" id="statusTimeline">
+                        <!-- Timeline items will be dynamically loaded here -->
+                    </div>
+                </div>
+                
+                <!-- Map Section -->
+                <div class="map-container">
+                    <div class="map-controls">
+                        <button class="map-btn" id="refreshMap">
+                            <i class="fas fa-sync-alt"></i> Refresh Map
+                        </button>
+                        <button class="map-btn" id="zoomIn">
+                            <i class="fas fa-search-plus"></i> Zoom In
+                        </button>
+                        <button class="map-btn" id="zoomOut">
+                            <i class="fas fa-search-minus"></i> Zoom Out
+                        </button>
+                        <button class="map-btn" id="providerRoute">
+                            <i class="fas fa-route"></i> Show Route
+                        </button>
+                    </div>
+                    <h4 style="margin-bottom: 15px; text-align: left;">
+                        <i class="fas fa-map-marker-alt"></i> Service Location
+                    </h4>
+                    <div class="map-placeholder">
+                        <div class="map-overlay">
+                            <i class="fas fa-map-marked-alt" style="font-size: 40px;"></i>
+                            <p>Live Location Tracking</p>
+                            <small>Provider is currently en route</small>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Service Provider Info -->
+                <div class="provider-info" id="providerInfo">
+                    <!-- Provider info will be dynamically loaded here -->
+                </div>
+                
+                <div class="track-actions">
+                    <button class="btn btn-outline" id="downloadReport">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                    <button class="btn btn-outline" id="shareTracking">
+                        <i class="fas fa-share-alt"></i> Share Tracking
+                    </button>
+                    <button class="btn btn-primary" id="requestUpdate">
+                        <i class="fas fa-sync-alt"></i> Request Update
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Service Tracking Application
+        class AdvancedServiceTrackingApp {
+            constructor() {
+                this.serviceRequests = [
+                    {
+                        id: "7842",
+                        serviceType: "Electrical Wiring",
+                        provider: {
+                            name: "Michael Johnson",
+                            avatar: "MJ",
+                            title: "Licensed Electrician",
+                            rating: 4.7,
+                            reviews: 128,
+                            phone: "+1-555-0123",
+                            email: "michael.j@fixitnow.com",
+                            location: "2.3 miles away",
+                            eta: "Today, 4:30 PM"
+                        },
+                        date: "Oct 18, 2023",
+                        status: "inprogress",
+                        progress: 50,
+                        timeline: [
+                            {
+                                step: "Request Submitted",
+                                description: "Your service request has been received",
+                                time: "Oct 18, 2023 • 2:15 PM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Provider Assigned",
+                                description: "Michael Johnson has been assigned to your request",
+                                time: "Oct 18, 2023 • 3:30 PM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Diagnosis Completed",
+                                description: "Initial assessment and diagnosis completed",
+                                time: "Oct 19, 2023 • 10:45 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Service In Progress",
+                                description: "Electrical wiring work is currently underway",
+                                time: "Expected completion: Oct 25, 2023",
+                                status: "active"
+                            },
+                            {
+                                step: "Quality Check",
+                                description: "Final inspection and quality assurance",
+                                time: "Pending",
+                                status: "pending"
+                            },
+                            {
+                                step: "Service Completed",
+                                description: "Your service request will be marked as completed",
+                                time: "Pending",
+                                status: "pending"
+                            }
+                        ]
+                    },
+                    {
+                        id: "7921",
+                        serviceType: "Painting Service",
+                        provider: {
+                            name: "Sarah Williams",
+                            avatar: "SW",
+                            title: "Professional Painter",
+                            rating: 4.9,
+                            reviews: 95,
+                            phone: "+1-555-0124",
+                            email: "sarah.w@fixitnow.com",
+                            location: "5.1 miles away",
+                            eta: "Oct 28, 2023 • 9:00 AM"
+                        },
+                        date: "Oct 22, 2023",
+                        status: "pending",
+                        progress: 20,
+                        timeline: [
+                            {
+                                step: "Request Submitted",
+                                description: "Your service request has been received",
+                                time: "Oct 22, 2023 • 9:30 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Provider Assigned",
+                                description: "Sarah Williams has been assigned to your request",
+                                time: "Oct 22, 2023 • 11:15 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Scheduled",
+                                description: "Service scheduled for Oct 28, 2023",
+                                time: "Scheduled: Oct 28, 2023 • 9:00 AM",
+                                status: "active"
+                            },
+                            {
+                                step: "Service In Progress",
+                                description: "Painting service will begin",
+                                time: "Pending",
+                                status: "pending"
+                            },
+                            {
+                                step: "Quality Check",
+                                description: "Final inspection and quality assurance",
+                                time: "Pending",
+                                status: "pending"
+                            },
+                            {
+                                step: "Service Completed",
+                                description: "Your service request will be marked as completed",
+                                time: "Pending",
+                                status: "pending"
+                            }
+                        ]
+                    },
+                    {
+                        id: "8015",
+                        serviceType: "Plumbing Repair",
+                        provider: {
+                            name: "Robert Chen",
+                            avatar: "RC",
+                            title: "Licensed Plumber",
+                            rating: 4.8,
+                            reviews: 156,
+                            phone: "+1-555-0125",
+                            email: "robert.c@fixitnow.com",
+                            location: "Completed",
+                            eta: "Completed"
+                        },
+                        date: "Oct 25, 2023",
+                        status: "completed",
+                        progress: 100,
+                        timeline: [
+                            {
+                                step: "Request Submitted",
+                                description: "Your service request has been received",
+                                time: "Oct 25, 2023 • 8:45 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Provider Assigned",
+                                description: "Robert Chen has been assigned to your request",
+                                time: "Oct 25, 2023 • 10:20 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Diagnosis Completed",
+                                description: "Initial assessment and diagnosis completed",
+                                time: "Oct 25, 2023 • 11:30 AM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Service In Progress",
+                                description: "Plumbing repair work completed",
+                                time: "Oct 25, 2023 • 2:15 PM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Quality Check",
+                                description: "Final inspection and quality assurance completed",
+                                time: "Oct 25, 2023 • 3:00 PM",
+                                status: "completed"
+                            },
+                            {
+                                step: "Service Completed",
+                                description: "Your service request has been completed",
+                                time: "Oct 25, 2023 • 3:30 PM",
+                                status: "completed"
+                            }
+                        ]
+                    }
+                ];
+                
+                this.currentRequest = this.serviceRequests[0];
+                this.lastUpdateTime = new Date();
+                this.userData = {
+                    name: "John Smith",
+                    avatar: "JS",
+                    memberType: "Premium Member",
+                    memberSince: 2022,
+                    completedServices: 12,
+                    activeServices: 3,
+                    totalServices: 24,
+                    avgRating: 4.7,
+                    responseTime: 28,
+                    completionRate: 92
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.setupEventListeners();
+                this.renderRequestList();
+                this.selectRequest(this.currentRequest.id);
+                this.initializeSidebarToggle();
+                this.initializeThemeToggle();
+                this.initializeProfilePanel();
+                this.updateLastUpdateTime();
+                this.updateUserData();
+                
+                // Simulate live updates
+                this.startLiveUpdates();
+            }
+            
+            // Setup event listeners
+            setupEventListeners() {
+                // Mobile menu toggle
+                document.getElementById('menuToggle').addEventListener('click', () => {
+                    document.getElementById('sidebar').classList.toggle('active');
+                });
+                
+                // Search functionality
+                document.getElementById('serviceSearch').addEventListener('keyup', (e) => {
+                    if (e.key === 'Enter') {
+                        this.searchRequests(e.target.value);
+                    }
+                });
+                
+                // Header search
+                document.getElementById('searchInput').addEventListener('input', (e) => {
+                    this.searchRequests(e.target.value);
+                });
+                
+                // Contact button functionality
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.contact-btn')) {
+                        const btn = e.target.closest('.contact-btn');
+                        const action = btn.textContent.trim();
+                        
+                        if (action.includes('Call')) {
+                            this.initiateCall();
+                        } else if (action.includes('Message')) {
+                            this.openMessageModal();
+                        } else if (action.includes('Track')) {
+                            this.showToast('Opening location tracker...', 'info');
+                        }
+                    }
+                });
+                
+                // Track action buttons
+                document.getElementById('requestUpdate').addEventListener('click', () => {
+                    this.requestUpdate();
+                });
+                
+                document.getElementById('downloadReport').addEventListener('click', () => {
+                    this.downloadReport();
+                });
+                
+                document.getElementById('shareTracking').addEventListener('click', () => {
+                    this.openShareModal();
+                });
+                
+                // Map controls
+                document.getElementById('refreshMap').addEventListener('click', () => {
+                    this.refreshMap();
+                });
+                
+                document.getElementById('zoomIn').addEventListener('click', () => {
+                    this.showToast('Map zoomed in', 'info');
+                });
+                
+                document.getElementById('zoomOut').addEventListener('click', () => {
+                    this.showToast('Map zoomed out', 'info');
+                });
+                
+                document.getElementById('providerRoute').addEventListener('click', () => {
+                    this.showProviderRoute();
+                });
+                
+                // Advanced features
+                document.getElementById('liveTrackingFeature').addEventListener('click', () => {
+                    this.toggleLiveTracking();
+                });
+                
+                document.getElementById('analyticsFeature').addEventListener('click', () => {
+                    this.toggleAnalytics();
+                });
+                
+                document.getElementById('smartAlertsFeature').addEventListener('click', () => {
+                    this.toggleSmartAlerts();
+                });
+                
+                document.getElementById('predictiveETAFeature').addEventListener('click', () => {
+                    this.togglePredictiveETA();
+                });
+                
+                // Analytics filters
+                document.querySelectorAll('.filter-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+                        e.target.classList.add('active');
+                        this.updateAnalytics(e.target.dataset.period);
+                    });
+                });
+                
+                // Modal controls
+                document.getElementById('closeCallModal').addEventListener('click', () => {
+                    this.closeCallModal();
+                });
+                
+                document.getElementById('acceptCall').addEventListener('click', () => {
+                    this.acceptCall();
+                });
+                
+                document.getElementById('declineCall').addEventListener('click', () => {
+                    this.declineCall();
+                });
+                
+                document.getElementById('endCall').addEventListener('click', () => {
+                    this.endCall();
+                });
+                
+                document.getElementById('closeMessageModal').addEventListener('click', () => {
+                    this.closeMessageModal();
+                });
+                
+                document.getElementById('cancelMessage').addEventListener('click', () => {
+                    this.closeMessageModal();
+                });
+                
+                document.getElementById('sendMessage').addEventListener('click', () => {
+                    this.sendMessage();
+                });
+                
+                document.getElementById('closeShareModal').addEventListener('click', () => {
+                    this.closeShareModal();
+                });
+                
+                document.getElementById('copyLink').addEventListener('click', () => {
+                    this.copyTrackingLink();
+                });
+                
+                document.getElementById('shareEmail').addEventListener('click', () => {
+                    this.shareViaEmail();
+                });
+                
+                document.getElementById('shareSMS').addEventListener('click', () => {
+                    this.shareViaSMS();
+                });
+                
+                document.getElementById('closeShare').addEventListener('click', () => {
+                    this.closeShareModal();
+                });
+                
+                // Close panels when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!document.getElementById('userProfileToggle').contains(e.target) && 
+                        !document.getElementById('userProfilePanel').contains(e.target)) {
+                        document.getElementById('userProfilePanel').classList.remove('active');
+                    }
+                    
+                    if (!document.getElementById('searchInput').contains(e.target) && 
+                        !document.getElementById('searchResults').contains(e.target)) {
+                        document.getElementById('searchResults').classList.remove('active');
+                    }
+                });
+            }
+            
+            // Initialize sidebar toggle
+            initializeSidebarToggle() {
+                const sidebarToggle = document.getElementById('sidebarToggle');
+                const sidebar = document.getElementById('sidebar');
+                const mainContent = document.getElementById('mainContent');
+                
+                sidebarToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('collapsed');
+                    mainContent.classList.toggle('expanded');
+                    
+                    // Change icon based on state
+                    const icon = sidebarToggle.querySelector('i');
+                    if (sidebar.classList.contains('collapsed')) {
+                        icon.className = 'fas fa-chevron-right';
+                    } else {
+                        icon.className = 'fas fa-chevron-left';
+                    }
+                });
+            }
+            
+            // Initialize theme toggle
+            initializeThemeToggle() {
+                const themeToggle = document.getElementById('themeToggle');
+                const icon = themeToggle.querySelector('i');
+                
+                // Check for saved theme preference or default to light
+                const currentTheme = localStorage.getItem('fixitnow-theme') || 'light';
+                if (currentTheme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    icon.className = 'fas fa-sun';
+                }
+                
+                themeToggle.addEventListener('click', () => {
+                    document.body.classList.toggle('dark-theme');
+                    
+                    if (document.body.classList.contains('dark-theme')) {
+                        localStorage.setItem('fixitnow-theme', 'dark');
+                        icon.className = 'fas fa-sun';
+                        this.showToast('Dark mode enabled', 'success');
+                    } else {
+                        localStorage.setItem('fixitnow-theme', 'light');
+                        icon.className = 'fas fa-moon';
+                        this.showToast('Light mode enabled', 'success');
+                    }
+                });
+            }
+            
+            // Initialize profile panel
+            initializeProfilePanel() {
+                const userProfileToggle = document.getElementById('userProfileToggle');
+                const userProfilePanel = document.getElementById('userProfilePanel');
+                const switchAccountBtn = document.getElementById('switchAccountBtn');
+                const logoutBtn = document.getElementById('logoutBtn');
+                
+                userProfileToggle.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    userProfilePanel.classList.toggle('active');
+                });
+                
+                // Switch account functionality
+                switchAccountBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    this.showToast('Account switching feature would be implemented here', 'info');
+                    userProfilePanel.classList.remove('active');
+                });
+                
+                // Logout functionality
+                logoutBtn.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    if (confirm('Are you sure you want to logout?')) {
+                        this.showToast('You have been logged out successfully', 'success');
+                        // Redirect to login page in a real app
+                        // window.location.href = 'login.html';
+                    }
+                });
+            }
+            
+            // Update user data in profile
+            updateUserData() {
+                document.getElementById('profileName').textContent = this.userData.name;
+                document.getElementById('profileAvatar').textContent = this.userData.avatar;
+                document.getElementById('profileType').textContent = this.userData.memberType;
+                document.getElementById('completedServices').textContent = this.userData.completedServices;
+                document.getElementById('activeServices').textContent = this.userData.activeServices;
+                document.getElementById('memberSince').textContent = this.userData.memberSince;
+                
+                // Update analytics
+                document.getElementById('totalServices').textContent = this.userData.totalServices;
+                document.getElementById('avgRating').textContent = this.userData.avgRating;
+                document.getElementById('responseTime').textContent = this.userData.responseTime;
+                document.getElementById('completionRate').textContent = this.userData.completionRate + '%';
+            }
+            
+            // Render request list
+            renderRequestList() {
+                const requestList = document.getElementById('requestList');
+                requestList.innerHTML = '';
+                
+                this.serviceRequests.forEach(request => {
+                    const requestCard = document.createElement('div');
+                    requestCard.className = `request-card ${request.status} ${request.id === this.currentRequest.id ? 'selected' : ''}`;
+                    requestCard.dataset.id = request.id;
+                    
+                    const statusClass = `status-${request.status}`;
+                    const statusText = this.getStatusText(request.status);
+                    
+                    requestCard.innerHTML = `
+                        <div class="request-header">
+                            <span class="request-id">#REQ-${request.id}</span>
+                            <span class="request-date">${request.date}</span>
+                        </div>
+                        <div class="request-details">
+                            <div class="request-info">
+                                <h4>${request.serviceType}</h4>
+                                <p>Service Provider: ${request.provider.name}</p>
+                            </div>
+                            <div class="service-status ${statusClass}">${statusText}</div>
+                        </div>
+                        <div class="service-actions">
+                            <button class="action-btn" data-action="details">
+                                <i class="fas fa-info-circle"></i> Details
+                            </button>
+                            <button class="action-btn" data-action="contact">
+                                <i class="fas fa-phone"></i> Contact
+                            </button>
+                            <button class="action-btn" data-action="track">
+                                <i class="fas fa-map-marker-alt"></i> Track
+                            </button>
+                        </div>
+                    `;
+                    
+                    requestCard.addEventListener('click', (e) => {
+                        if (!e.target.closest('.action-btn')) {
+                            this.selectRequest(request.id);
+                        }
+                    });
+                    
+                    // Add action button functionality
+                    const actionButtons = requestCard.querySelectorAll('.action-btn');
+                    actionButtons.forEach(btn => {
+                        btn.addEventListener('click', (e) => {
+                            e.stopPropagation();
+                            const action = btn.dataset.action;
+                            this.handleRequestAction(action, request);
+                        });
+                    });
+                    
+                    requestList.appendChild(requestCard);
+                });
+            }
+            
+            // Handle request actions
+            handleRequestAction(action, request) {
+                switch(action) {
+                    case 'details':
+                        this.showRequestDetails(request);
+                        break;
+                    case 'contact':
+                        this.initiateCall(request.provider);
+                        break;
+                    case 'track':
+                        this.trackProvider(request);
+                        break;
+                }
+            }
+            
+            // Show request details
+            showRequestDetails(request) {
+                this.showToast(`Showing details for #REQ-${request.id}`, 'info');
+                // In a real app, this would open a modal with detailed information
+            }
+            
+            // Initiate call to provider
+            initiateCall(provider = null) {
+                const targetProvider = provider || this.currentRequest.provider;
+                document.getElementById('callProviderName').textContent = targetProvider.name;
+                document.getElementById('callProviderAvatar').textContent = targetProvider.avatar;
+                document.getElementById('callStatus').textContent = 'Connecting...';
+                
+                // Show call modal
+                document.getElementById('callModal').classList.add('active');
+                
+                // Simulate call connection
+                setTimeout(() => {
+                    document.getElementById('callStatus').textContent = 'Ringing...';
+                }, 1000);
+                
+                setTimeout(() => {
+                    document.getElementById('callStatus').textContent = 'Connected';
+                    document.getElementById('acceptCall').style.display = 'none';
+                    document.getElementById('declineCall').style.display = 'none';
+                    document.getElementById('endCall').style.display = 'flex';
+                }, 3000);
+            }
+            
+            // Accept call
+            acceptCall() {
+                document.getElementById('callStatus').textContent = 'Connected';
+                document.getElementById('acceptCall').style.display = 'none';
+                document.getElementById('declineCall').style.display = 'none';
+                document.getElementById('endCall').style.display = 'flex';
+                this.showToast('Call connected', 'success');
+            }
+            
+            // Decline call
+            declineCall() {
+                this.closeCallModal();
+                this.showToast('Call declined', 'info');
+            }
+            
+            // End call
+            endCall() {
+                this.closeCallModal();
+                this.showToast('Call ended', 'info');
+            }
+            
+            // Close call modal
+            closeCallModal() {
+                document.getElementById('callModal').classList.remove('active');
+                document.getElementById('acceptCall').style.display = 'flex';
+                document.getElementById('declineCall').style.display = 'flex';
+                document.getElementById('endCall').style.display = 'none';
+            }
+            
+            // Open message modal
+            openMessageModal() {
+                document.getElementById('messageRecipient').value = this.currentRequest.provider.name;
+                document.getElementById('messageText').value = '';
+                document.getElementById('messageModal').classList.add('active');
+            }
+            
+            // Close message modal
+            closeMessageModal() {
+                document.getElementById('messageModal').classList.remove('active');
+            }
+            
+            // Send message
+            sendMessage() {
+                const message = document.getElementById('messageText').value;
+                if (message.trim() === '') {
+                    this.showToast('Please enter a message', 'warning');
+                    return;
+                }
+                
+                this.showToast(`Message sent to ${this.currentRequest.provider.name}`, 'success');
+                this.closeMessageModal();
+            }
+            
+            // Open share modal
+            openShareModal() {
+                document.getElementById('trackingLink').value = `https://fixitnow.com/track/REQ-${this.currentRequest.id}`;
+                document.getElementById('shareModal').classList.add('active');
+            }
+            
+            // Close share modal
+            closeShareModal() {
+                document.getElementById('shareModal').classList.remove('active');
+            }
+            
+            // Copy tracking link
+            copyTrackingLink() {
+                const linkInput = document.getElementById('trackingLink');
+                linkInput.select();
+                document.execCommand('copy');
+                this.showToast('Tracking link copied to clipboard', 'success');
+            }
+            
+            // Share via email
+            shareViaEmail() {
+                this.showToast('Opening email client with tracking link', 'info');
+            }
+            
+            // Share via SMS
+            shareViaSMS() {
+                this.showToast('Opening SMS app with tracking link', 'info');
+            }
+            
+            // Track provider
+            trackProvider(request) {
+                this.selectRequest(request.id);
+                this.showToast(`Tracking ${request.provider.name}...`, 'info');
+            }
+            
+            // Select a request
+            selectRequest(requestId) {
+                this.currentRequest = this.serviceRequests.find(req => req.id === requestId);
+                
+                // Update UI
+                this.updateSelectedRequestUI();
+                this.renderTimeline();
+                this.renderProviderInfo();
+                this.updateProgress();
+                this.updateETA();
+                
+                this.showToast(`Now tracking #REQ-${requestId}`, 'info');
+            }
+            
+            // Update selected request UI
+            updateSelectedRequestUI() {
+                // Update selected request display
+                document.getElementById('selected-request').textContent = `#REQ-${this.currentRequest.id}`;
+                
+                // Update card selection
+                document.querySelectorAll('.request-card').forEach(card => {
+                    card.classList.remove('selected');
+                    if (card.dataset.id === this.currentRequest.id) {
+                        card.classList.add('selected');
+                    }
+                });
+            }
+            
+            // Render timeline
+            renderTimeline() {
+                const timeline = document.getElementById('statusTimeline');
+                timeline.innerHTML = '';
+                
+                this.currentRequest.timeline.forEach(item => {
+                    const timelineItem = document.createElement('div');
+                    timelineItem.className = 'timeline-item';
+                    
+                    const markerClass = `timeline-marker ${item.status}`;
+                    const markerIcon = this.getTimelineIcon(item.status);
+                    
+                    timelineItem.innerHTML = `
+                        <div class="${markerClass}">
+                            <i class="${markerIcon}"></i>
+                        </div>
+                        <div class="timeline-content">
+                            <h4>${item.step}</h4>
+                            <p>${item.description}</p>
+                            <div class="timeline-time">${item.time}</div>
+                        </div>
+                    `;
+                    
+                    timeline.appendChild(timelineItem);
+                });
+            }
+            
+            // Render provider info
+            renderProviderInfo() {
+                const providerInfo = document.getElementById('providerInfo');
+                const provider = this.currentRequest.provider;
+                
+                providerInfo.innerHTML = `
+                    <div class="provider-header">
+                        <div class="provider-avatar">${provider.avatar}</div>
+                        <div class="provider-details">
+                            <h4>${provider.name}</h4>
+                            <p>${provider.title}</p>
+                            <div class="provider-rating">
+                                <div class="rating-stars">
+                                    ${this.generateStars(provider.rating)}
+                                </div>
+                                <span>${provider.rating} (${provider.reviews} reviews)</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="contact-actions">
+                        <button class="contact-btn">
+                            <i class="fas fa-phone"></i> Call Provider
+                        </button>
+                        <button class="contact-btn">
+                            <i class="fas fa-comment"></i> Send Message
+                        </button>
+                        <button class="contact-btn">
+                            <i class="fas fa-map-marker-alt"></i> Track Location
+                        </button>
+                    </div>
+                `;
+            }
+            
+            // Update progress
+            updateProgress() {
+                document.getElementById('progressPercent').textContent = `${this.currentRequest.progress}%`;
+                document.getElementById('progressFill').style.width = `${this.currentRequest.progress}%`;
+            }
+            
+            // Update ETA
+            updateETA() {
+                document.getElementById('etaTime').textContent = this.currentRequest.provider.eta;
+                
+                // Update ETA status
+                const etaStatus = document.getElementById('etaStatus');
+                if (this.currentRequest.status === 'completed') {
+                    etaStatus.textContent = 'Completed';
+                    etaStatus.style.color = 'var(--success)';
+                } else if (this.currentRequest.status === 'inprogress') {
+                    etaStatus.textContent = 'On Schedule';
+                    etaStatus.style.color = 'var(--success)';
+                } else {
+                    etaStatus.textContent = 'Scheduled';
+                    etaStatus.style.color = 'var(--warning)';
+                }
+            }
+            
+            // Update last update time
+            updateLastUpdateTime() {
+                const now = new Date();
+                const diffMs = now - this.lastUpdateTime;
+                const diffMins = Math.floor(diffMs / 60000);
+                
+                let timeText;
+                if (diffMins < 1) {
+                    timeText = 'Just now';
+                } else if (diffMins === 1) {
+                    timeText = '1 minute ago';
+                } else {
+                    timeText = `${diffMins} minutes ago`;
+                }
+                
+                document.getElementById('lastUpdateTime').textContent = timeText;
+            }
+            
+            // Start live updates simulation
+            startLiveUpdates() {
+                // Simulate live updates every 30 seconds
+                setInterval(() => {
+                    this.lastUpdateTime = new Date();
+                    this.updateLastUpdateTime();
+                    
+                    // Randomly update progress for in-progress requests
+                    if (this.currentRequest.status === 'inprogress' && this.currentRequest.progress < 90) {
+                        const progressIncrease = Math.floor(Math.random() * 5) + 1;
+                        this.currentRequest.progress = Math.min(this.currentRequest.progress + progressIncrease, 90);
+                        this.updateProgress();
+                        
+                        if (progressIncrease > 0) {
+                            this.showToast(`Service progress updated to ${this.currentRequest.progress}%`, 'info', 2000);
+                        }
+                    }
+                }, 30000);
+            }
+            
+            // Search requests
+            searchRequests(query) {
+                const searchTerm = query.toLowerCase().trim();
+                
+                if (!searchTerm) {
+                    this.renderRequestList();
+                    document.getElementById('searchResults').classList.remove('active');
+                    return;
+                }
+                
+                const filteredRequests = this.serviceRequests.filter(request => 
+                    request.id.includes(searchTerm) ||
+                    request.serviceType.toLowerCase().includes(searchTerm) ||
+                    request.provider.name.toLowerCase().includes(searchTerm)
+                );
+                
+                // Update search results panel
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '';
+                
+                if (filteredRequests.length > 0) {
+                    filteredRequests.forEach(request => {
+                        const resultItem = document.createElement('div');
+                        resultItem.className = 'search-result-item';
+                        resultItem.innerHTML = `
+                            <div class="search-result-title">#REQ-${request.id} - ${request.serviceType}</div>
+                            <div class="search-result-desc">Provider: ${request.provider.name} • Status: ${this.getStatusText(request.status)}</div>
+                        `;
+                        resultItem.addEventListener('click', () => {
+                            this.selectRequest(request.id);
+                            searchResults.classList.remove('active');
+                            document.getElementById('searchInput').value = '';
+                        });
+                        searchResults.appendChild(resultItem);
+                    });
+                    searchResults.classList.add('active');
+                } else {
+                    searchResults.innerHTML = '<div class="search-result-item">No matching requests found</div>';
+                    searchResults.classList.add('active');
+                }
+                
+                if (filteredRequests.length > 0) {
+                    this.currentRequest = filteredRequests[0];
+                    this.selectRequest(this.currentRequest.id);
+                    this.showToast(`Found ${filteredRequests.length} matching requests`, 'success');
+                } else {
+                    this.showToast('No matching requests found', 'warning');
+                }
+            }
+            
+            // Request update
+            requestUpdate() {
+                const btn = document.getElementById('requestUpdate');
+                const originalText = btn.innerHTML;
+                
+                // Show loading state
+                btn.innerHTML = '<div class="loading"></div> Requesting...';
+                btn.disabled = true;
+                
+                // Simulate API call
+                setTimeout(() => {
+                    this.showToast('Update request sent to service provider!', 'success');
+                    
+                    // Reset button
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 1500);
+            }
+            
+            // Download report
+            downloadReport() {
+                const btn = document.getElementById('downloadReport');
+                const originalText = btn.innerHTML;
+                
+                // Show loading state
+                btn.innerHTML = '<div class="loading"></div> Downloading...';
+                btn.disabled = true;
+                
+                // Simulate download
+                setTimeout(() => {
+                    this.showToast('Service report downloaded successfully!', 'success');
+                    
+                    // Reset button
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }, 2000);
+            }
+            
+            // Share tracking
+            shareTracking() {
+                this.openShareModal();
+            }
+            
+            // Refresh map
+            refreshMap() {
+                this.showToast('Map refreshed with latest location data', 'info');
+            }
+            
+            // Show provider route
+            showProviderRoute() {
+                this.showToast('Provider route displayed on map', 'info');
+            }
+            
+            // Advanced feature toggles
+            toggleLiveTracking() {
+                this.showToast('Live tracking feature activated', 'success');
+            }
+            
+            toggleAnalytics() {
+                const analyticsContainer = document.getElementById('analyticsContainer');
+                if (analyticsContainer.style.display === 'none') {
+                    analyticsContainer.style.display = 'block';
+                    this.showToast('Service analytics displayed', 'success');
+                } else {
+                    analyticsContainer.style.display = 'none';
+                    this.showToast('Service analytics hidden', 'info');
+                }
+            }
+            
+            toggleSmartAlerts() {
+                this.showToast('Smart alerts configured for your services', 'success');
+            }
+            
+            togglePredictiveETA() {
+                this.showToast('Predictive ETA calculations enabled', 'success');
+            }
+            
+            // Update analytics based on period
+            updateAnalytics(period) {
+                // In a real app, this would fetch analytics data for the selected period
+                this.showToast(`Analytics updated for ${period}`, 'info');
+            }
+            
+            // Helper methods
+            getStatusText(status) {
+                const statusMap = {
+                    'completed': 'Completed',
+                    'pending': 'Scheduled',
+                    'inprogress': 'In Progress',
+                    'cancelled': 'Cancelled'
+                };
+                return statusMap[status] || status;
+            }
+            
+            getTimelineIcon(status) {
+                const iconMap = {
+                    'completed': 'fas fa-check',
+                    'active': 'fas fa-tools',
+                    'pending': 'fas fa-clock'
+                };
+                return iconMap[status] || 'fas fa-circle';
+            }
+            
+            generateStars(rating) {
+                let stars = '';
+                const fullStars = Math.floor(rating);
+                const hasHalfStar = rating % 1 !== 0;
+                
+                for (let i = 0; i < fullStars; i++) {
+                    stars += '<i class="fas fa-star"></i>';
+                }
+                
+                if (hasHalfStar) {
+                    stars += '<i class="fas fa-star-half-alt"></i>';
+                }
+                
+                const emptyStars = 5 - fullStars - (hasHalfStar ? 1 : 0);
+                for (let i = 0; i < emptyStars; i++) {
+                    stars += '<i class="far fa-star"></i>';
+                }
+                
+                return stars;
+            }
+            
+            // Show toast notification
+            showToast(message, type = 'info', duration = 5000) {
+                const toastContainer = document.getElementById('toastContainer');
+                const toastId = 'toast-' + Date.now();
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.id = toastId;
+                toast.innerHTML = `
+                    <div class="toast-icon">
+                        <i class="fas fa-${this.getToastIcon(type)}"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${this.getToastTitle(type)}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                // Show toast with animation
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 10);
+                
+                // Close button
+                toast.querySelector('.toast-close').addEventListener('click', () => {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                });
+                
+                // Auto remove
+                if (duration > 0) {
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.classList.remove('show');
+                            setTimeout(() => {
+                                if (toast.parentNode) {
+                                    toast.parentNode.removeChild(toast);
+                                }
+                            }, 300);
+                        }
+                    }, duration);
+                }
+                
+                return toastId;
+            }
+            
+            // Get toast icon based on type
+            getToastIcon(type) {
+                const icons = {
+                    'success': 'check-circle',
+                    'error': 'exclamation-circle',
+                    'warning': 'exclamation-triangle',
+                    'info': 'info-circle'
+                };
+                return icons[type] || 'info-circle';
+            }
+            
+            // Get toast title based on type
+            getToastTitle(type) {
+                const titles = {
+                    'success': 'Success',
+                    'error': 'Error',
+                    'warning': 'Warning',
+                    'info': 'Information'
+                };
+                return titles[type] || 'Information';
+            }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.serviceTrackingApp = new AdvancedServiceTrackingApp();
+        });
+    </script>
+</body>
+</html>

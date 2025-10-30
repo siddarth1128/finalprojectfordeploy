@@ -1,0 +1,2421 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - FixItNow</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3c72;
+            --secondary: #ff6b6b;
+            --accent: #4ecdc4;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            transform: translateX(0);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-logo span,
+        .sidebar.collapsed .menu-item span,
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 25px 10px;
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 14px 25px;
+            justify-content: center;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        .sidebar-logo {
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar-logo i {
+            color: var(--secondary);
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .menu-item {
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu-item.active i {
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            white-space: nowrap;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .user-info h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* User Profile Panel */
+        .user-profile-panel {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        .user-profile-panel.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .user-profile-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-profile-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-profile-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .user-profile-menu {
+            padding: 15px 0;
+        }
+
+        .profile-menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 10px 0;
+        }
+
+        /* Logout Modal Styles */
+        .logout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .logout-modal.active {
+            display: flex;
+        }
+
+        .logout-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .logout-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 28px;
+        }
+
+        .logout-content h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        .logout-content p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .logout-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 14px;
+            min-width: 120px;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+
+        .btn-confirm {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        /* Header Styles */
+        .header {
+            height: var(--header-height);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 250px;
+            font-size: 14px;
+            transition: var(--transition);
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        .notification-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .notification-icon:hover {
+            background: #e9ecef;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: var(--secondary);
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .notification-badge.hidden {
+            opacity: 0;
+        }
+
+        /* Search Results Panel */
+        .search-results {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            margin-top: 5px;
+            display: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .search-results.active {
+            display: block;
+        }
+
+        .search-result-item {
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .search-result-item:hover {
+            background: #f8f9fa;
+        }
+
+        .search-result-item:last-child {
+            border-bottom: none;
+        }
+
+        .search-result-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        .search-result-desc {
+            font-size: 12px;
+            color: #777;
+        }
+
+        /* Notifications Panel */
+        .notifications-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 350px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            z-index: 100;
+            margin-top: 5px;
+            display: none;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .notifications-panel.active {
+            display: block;
+        }
+
+        .notifications-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notifications-header h3 {
+            font-size: 16px;
+            color: var(--dark);
+        }
+
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: var(--primary);
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f8f9fa;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-item.unread {
+            background: rgba(30, 60, 114, 0.03);
+        }
+
+        .notification-icon-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(30, 60, 114, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+        }
+
+        .notification-desc {
+            font-size: 13px;
+            color: #666;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: #999;
+        }
+
+        .no-notifications {
+            padding: 30px 20px;
+            text-align: center;
+            color: #777;
+        }
+
+        /* Dashboard Content */
+        .dashboard-content {
+            padding: 30px;
+        }
+
+        /* Welcome Banner */
+        .welcome-banner {
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 30px rgba(30, 60, 114, 0.3);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .welcome-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 200px;
+            height: 200px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            transform: translate(30%, -30%);
+        }
+
+        .welcome-text h2 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .welcome-text p {
+            opacity: 0.9;
+            max-width: 500px;
+        }
+
+        .welcome-illustration {
+            font-size: 100px;
+            opacity: 0.8;
+            z-index: 1;
+        }
+
+        /* Stats Cards */
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            transition: var(--transition);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: white;
+            flex-shrink: 0;
+        }
+
+        .stat-icon.blue {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+        }
+
+        .stat-icon.green {
+            background: linear-gradient(135deg, #2ecc71, #27ae60);
+        }
+
+        .stat-icon.orange {
+            background: linear-gradient(135deg, #ff9a44, #fc6076);
+        }
+
+        .stat-icon.purple {
+            background: linear-gradient(135deg, #a166ab, #5073b8);
+        }
+
+        .stat-info h3 {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 5px;
+        }
+
+        .stat-info p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Recent Services */
+        .recent-services {
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .card-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: var(--transition);
+        }
+
+        .view-all:hover {
+            gap: 8px;
+        }
+
+        .service-list {
+            list-style: none;
+        }
+
+        .service-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #f0f0f0;
+            transition: var(--transition);
+        }
+
+        .service-item:hover {
+            background: rgba(30, 60, 114, 0.03);
+            border-radius: 8px;
+            padding-left: 10px;
+            padding-right: 10px;
+        }
+
+        .service-item:last-child {
+            border-bottom: none;
+        }
+
+        .service-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 10px;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: var(--primary);
+            font-size: 20px;
+            flex-shrink: 0;
+        }
+
+        .service-details {
+            flex: 1;
+        }
+
+        .service-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .service-date {
+            font-size: 13px;
+            color: #777;
+        }
+
+        .service-status {
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        .status-completed {
+            background: rgba(46, 204, 113, 0.1);
+            color: var(--success);
+        }
+
+        .status-pending {
+            background: rgba(243, 156, 18, 0.1);
+            color: var(--warning);
+        }
+
+        .status-inprogress {
+            background: rgba(52, 152, 219, 0.1);
+            color: #3498db;
+        }
+
+        /* Quick Actions */
+        .quick-actions-section {
+            margin-bottom: 30px;
+        }
+
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .action-btn {
+            background: white;
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 25px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            text-decoration: none;
+            color: var(--dark);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .action-btn:hover {
+            border-color: var(--primary);
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .action-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: rgba(30, 60, 114, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 15px;
+            color: var(--primary);
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .action-btn:hover .action-icon {
+            background: var(--primary);
+            color: white;
+        }
+
+        .action-btn h4 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .action-btn p {
+            font-size: 13px;
+            color: #777;
+            line-height: 1.4;
+        }
+
+        /* Popular Services */
+        .popular-services {
+            margin-bottom: 30px;
+        }
+
+        .services-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+        }
+
+        .service-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: var(--transition);
+            cursor: pointer;
+            text-decoration: none;
+            color: var(--dark);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .service-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .service-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .service-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .service-card-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 15px;
+            color: white;
+            font-size: 24px;
+            transition: var(--transition);
+        }
+
+        .service-card:hover .service-card-icon {
+            transform: scale(1.1);
+        }
+
+        .service-card h4 {
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .service-card p {
+            font-size: 13px;
+            color: #777;
+        }
+
+        /* Service Info Panel */
+        .service-info-panel {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 50px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            display: none;
+        }
+
+        .service-info-panel.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .service-info-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .service-info-header h3 {
+            font-size: 22px;
+            color: var(--primary);
+        }
+
+        .close-info {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #777;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .close-info:hover {
+            color: var(--secondary);
+        }
+
+        .service-info-content {
+            margin-bottom: 25px;
+        }
+
+        .service-info-content p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+
+        .service-info-features {
+            margin: 20px 0;
+        }
+
+        .service-info-features h4 {
+            margin-bottom: 10px;
+            color: var(--primary);
+        }
+
+        .service-info-features ul {
+            list-style-type: none;
+            padding-left: 0;
+        }
+
+        .service-info-features li {
+            padding: 8px 0;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            align-items: center;
+        }
+
+        .service-info-features li:last-child {
+            border-bottom: none;
+        }
+
+        .service-info-features i {
+            color: var(--success);
+            margin-right: 10px;
+        }
+
+        .service-info-actions {
+            display: flex;
+            justify-content: center;
+        }
+
+        .btn {
+            padding: 12px 25px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            border: none;
+            font-size: 14px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #152a50;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(30, 60, 114, 0.3);
+        }
+
+        /* Overlay */
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 999;
+            display: none;
+        }
+
+        .overlay.active {
+            display: block;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .search-box input {
+                width: 200px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 0 20px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .welcome-banner {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+            
+            .welcome-illustration {
+                font-size: 70px;
+            }
+            
+            .stats-container {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .quick-actions {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .notifications-panel {
+                width: 300px;
+                right: -50px;
+            }
+            
+            .user-profile-panel {
+                width: 280px;
+                left: 10px;
+            }
+            
+            .logout-actions {
+                flex-direction: column;
+            }
+            
+            .logout-actions .btn {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .services-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .dashboard-content {
+                padding: 20px 15px;
+            }
+            
+            .quick-actions {
+                grid-template-columns: 1fr;
+            }
+            
+            .notifications-panel {
+                width: 280px;
+                right: -80px;
+            }
+            
+            .user-profile-panel {
+                width: 260px;
+                left: 10px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Animation for stats */
+        @keyframes countUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .stat-card {
+            animation: countUp 0.6s ease forwards;
+        }
+
+        .stat-card:nth-child(2) { animation-delay: 0.1s; }
+        .stat-card:nth-child(3) { animation-delay: 0.2s; }
+        .stat-card:nth-child(4) { animation-delay: 0.3s; }
+
+        /* Animation for service info panel */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translate(-50%, -40%); }
+            to { opacity: 1; transform: translate(-50%, -50%); }
+        }
+
+        /* Animation for user profile panel */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* Loading Spinner */
+        .loading-spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Toast Notifications */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+            padding: 15px 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            z-index: 1001;
+            transform: translateX(150%);
+            transition: transform 0.3s ease;
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 12px;
+        }
+
+        .toast-icon.success {
+            background: var(--success);
+        }
+
+        .toast-icon.error {
+            background: var(--secondary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            font-size: 14px;
+            margin-bottom: 3px;
+        }
+
+        .toast-message {
+            font-size: 13px;
+            color: #666;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        /* Dark Mode Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .theme-toggle:hover {
+            background: #e9ecef;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 10px;
+        }
+
+        .sidebar-toggle:hover {
+            background: #e9ecef;
+        }
+
+        .profile-email {
+            font-size: 12px;
+            opacity: 0.8;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Notification -->
+    <div class="toast" id="toast">
+        <div class="toast-icon success">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="toast-content">
+            <div class="toast-title" id="toastTitle">Success</div>
+            <div class="toast-message" id="toastMessage">Action completed successfully</div>
+        </div>
+        <button class="toast-close" id="toastClose" type="button" aria-label="Close notification">
+            <i class="fas fa-times" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="#" class="sidebar-logo">
+                <i class="fas fa-tools"></i>
+                <span>FixItNow</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="#" class="menu-item active">
+                <i class="fas fa-home"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="book_service.html" class="menu-item">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Book Services</span>
+            </a>
+            <a href="service_history.html" class="menu-item">
+                <i class="fas fa-history"></i>
+                <span>Service History</span>
+            </a>
+            <a href="invoice.html" class="menu-item">
+                <i class="fas fa-file-invoice-dollar"></i>
+                <span>Invoices</span>
+            </a>
+            <a href="review.html" class="menu-item">
+                <i class="fas fa-star"></i>
+                <span>Reviews</span>
+            </a>
+            <a href="profile.html" class="menu-item">
+                <i class="fas fa-user-circle"></i>
+                <span>Profile</span>
+            </a>
+            <a href="setting.html" class="menu-item">
+                <i class="fas fa-cog"></i>
+                <span>Settings</span>
+            </a>
+            <a href="help.html" class="menu-item">
+                <i class="fas fa-question-circle"></i>
+                <span>Help & Support</span>
+            </a>
+        </div>
+        
+        <!-- Enhanced Profile Section -->
+        <div class="sidebar-footer" id="userProfileSection">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h4 id="userName">Loading...</h4>
+                    <p id="userType">Member</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Enhanced User Profile Panel -->
+    <div class="user-profile-panel" id="userProfilePanel">
+        <div class="user-profile-header">
+            <div class="user-profile-avatar" id="profileAvatar">U</div>
+            <div class="user-profile-info">
+                <h3 id="profileName">Loading...</h3>
+                <p id="profileType">Member</p>
+               <p id="profileEmail" className="profile-email">Loading...</p>
+            </div>
+        </div>
+        <div class="user-profile-menu">
+            <a href="profile.html" class="profile-menu-item">
+                <i class="fas fa-user"></i>
+                My Profile
+            </a>
+            <a href="setting.html" class="profile-menu-item">
+                <i class="fas fa-cog"></i>
+                Account Settings
+            </a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal" id="logoutModal">
+        <div class="logout-content">
+            <div class="logout-icon">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="logout-actions">
+                <button class="btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="btn btn-confirm" id="confirmLogout">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+                <button class="menu-toggle" id="menuToggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Dashboard</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" placeholder="Search services, providers..." id="searchInput">
+                    <div class="search-results" id="searchResults">
+                        <!-- Search results will be populated here -->
+                    </div>
+                </div>
+                
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+                
+                <div class="notification-icon" id="notificationIcon">
+                    <i class="fas fa-bell"></i>
+                    <span class="notification-badge" id="notificationBadge">2</span>
+                    <div class="notifications-panel" id="notificationsPanel">
+                        <div class="notifications-header">
+                            <h3>Notifications</h3>
+                            <button class="mark-all-read" id="markAllRead">Mark all as read</button>
+                        </div>
+                        <div id="notificationsList">
+                            <!-- Notifications will be populated here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Dashboard Content -->
+        <div class="dashboard-content">
+            <!-- Welcome Banner -->
+            <div class="welcome-banner">
+                <div class="welcome-text">
+                    <h2 id="welcomeMessage">Welcome back! 👋</h2>
+                    <p>Ready to fix something today? Book a service or check your ongoing requests.</p>
+                </div>
+                <div class="welcome-illustration">
+                    <i class="fas fa-home"></i>
+                </div>
+            </div>
+            
+            <!-- Stats Cards -->
+            <div class="stats-container">
+                <div class="stat-card">
+                    <div class="stat-icon blue">
+                        <i class="fas fa-tools"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="servicesCount">0</h3>
+                        <p>Services Booked</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon green">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="completedCount">0</h3>
+                        <p>Completed</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon orange">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="pendingCount">0</h3>
+                        <p>Pending</p>
+                    </div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-icon purple">
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <div class="stat-info">
+                        <h3 id="ratingCount">0.0</h3>
+                        <p>Average Rating</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Recent Services -->
+            <div class="card recent-services">
+                <div class="card-header">
+                    <h3 class="card-title">Recent Services</h3>
+                    <a href="service_history.html" class="view-all">
+                        View All <i class="fas fa-chevron-right"></i>
+                    </a>
+                </div>
+                
+                <ul class="service-list">
+                    <li class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-faucet"></i>
+                        </div>
+                        <div class="service-details">
+                            <div class="service-name">Plumbing Repair</div>
+                            <div class="service-date">Oct 15, 2023 • 10:30 AM</div>
+                        </div>
+                        <div class="service-status status-completed">Completed</div>
+                    </li>
+                    
+                    <li class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <div class="service-details">
+                            <div class="service-name">Electrical Wiring</div>
+                            <div class="service-date">Oct 18, 2023 • 2:15 PM</div>
+                        </div>
+                        <div class="service-status status-inprogress">In Progress</div>
+                    </li>
+                    
+                    <li class="service-item">
+                        <div class="service-icon">
+                            <i class="fas fa-paint-roller"></i>
+                        </div>
+                        <div class="service-details">
+                            <div class="service-name">Painting Service</div>
+                            <div class="service-date">Oct 22, 2023 • 9:00 AM</div>
+                        </div>
+                        <div class="service-status status-pending">Scheduled</div>
+                    </li>
+                </ul>
+            </div>
+            
+            <!-- Popular Services -->
+            <div class="card popular-services">
+                <div class="card-header">
+                    <h3 class="card-title">Popular Services</h3>
+                </div>
+                
+                <div class="services-grid">
+                    <div class="service-card" data-service="plumbing">
+                        <div class="service-card-icon">
+                            <i class="fas fa-faucet"></i>
+                        </div>
+                        <h4>Plumbing</h4>
+                        <p>Leaks, installations & repairs</p>
+                    </div>
+                    
+                    <div class="service-card" data-service="electrical">
+                        <div class="service-card-icon">
+                            <i class="fas fa-bolt"></i>
+                        </div>
+                        <h4>Electrical</h4>
+                        <p>Wiring, fixtures & repairs</p>
+                    </div>
+                    
+                    <div class="service-card" data-service="painting">
+                        <div class="service-card-icon">
+                            <i class="fas fa-paint-roller"></i>
+                        </div>
+                        <h4>Painting</h4>
+                        <p>Interior & exterior painting</p>
+                    </div>
+                    
+                    <div class="service-card" data-service="carpentry">
+                        <div class="service-card-icon">
+                            <i class="fas fa-tools"></i>
+                        </div>
+                        <h4>Carpentry</h4>
+                        <p>Furniture & woodwork</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quick Actions -->
+            <div class="quick-actions-section">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Quick Actions</h3>
+                    </div>
+                    
+                    <div class="quick-actions">
+                        <a href="book_service.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-plus"></i>
+                            </div>
+                            <h4>Book Service</h4>
+                            <p>Schedule a new service appointment with our professionals</p>
+                        </a>
+                        
+                        <a href="track.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-history"></i>
+                            </div>
+                            <h4>Track Request</h4>
+                            <p>Check the status of your ongoing service requests</p>
+                        </a>
+                        
+                        <a href="invoice.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-file-invoice"></i>
+                            </div>
+                            <h4>View Invoices</h4>
+                            <p>Access your payment history and download receipts</p>
+                        </a>
+                        
+                        <a href="help.html" class="action-btn">
+                            <div class="action-icon">
+                                <i class="fas fa-headset"></i>
+                            </div>
+                            <h4>Get Support</h4>
+                            <p>Contact our 24/7 customer support team for assistance</p>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Information Panel -->
+    <div class="overlay" id="overlay"></div>
+    <div class="service-info-panel" id="serviceInfoPanel">
+        <div class="service-info-header">
+            <h3 id="serviceTitle">Plumbing Services</h3>
+            <button class="close-info" id="closeInfo">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="service-info-content">
+            <p id="serviceDescription">Our professional plumbing services cover all your needs from minor repairs to major installations.</p>
+            
+            <div class="service-info-features">
+                <h4>What's Included:</h4>
+                <ul id="serviceFeatures">
+                    <li><i class="fas fa-check"></i> Leak detection and repair</li>
+                    <li><i class="fas fa-check"></i> Pipe installation and replacement</li>
+                    <li><i class="fas fa-check"></i> Faucet and fixture installation</li>
+                    <li><i class="fas fa-check"></i> Drain cleaning and unclogging</li>
+                    <li><i class="fas fa-check"></i> Water heater services</li>
+                </ul>
+            </div>
+            
+            <div class="service-info-features">
+                <h4>Pricing:</h4>
+                <p id="servicePricing">Starting from $75 for basic services. Free estimates for larger projects.</p>
+            </div>
+        </div>
+        <div class="service-info-actions">
+            <button class="btn btn-primary" id="bookServiceBtn">Book This Service</button>
+        </div>
+    </div>
+
+    <!-- JavaScript for enhanced functionality -->
+    <script>
+        // Clear localStorage to reload with new values
+        localStorage.removeItem('allUsers');
+        localStorage.removeItem('currentUser');
+
+        // Enhanced User Manager with localStorage persistence
+        const UserManager = {
+            // Check if user is logged in
+            isLoggedIn: function() {
+                return localStorage.getItem('currentUser') !== null;
+            },
+            
+            // Get current user
+            getCurrentUser: function() {
+                const userData = localStorage.getItem('currentUser');
+                return userData ? JSON.parse(userData) : null;
+            },
+            
+            // Save current user
+            saveCurrentUser: function(user) {
+                localStorage.setItem('currentUser', JSON.stringify(user));
+            },
+            
+            // Get all users (for demo purposes)
+            getAllUsers: function() {
+                const users = localStorage.getItem('allUsers');
+                if (!users) {
+                    // Create demo users if none exist
+                    const demoUsers = [
+                        {
+                            id: 1,
+                            profile: {
+                                fullName: "Bhavani Maktala",
+                                email: "bhavani@example.com",
+                                membership: "Premium Member",
+                                avatar: { initials: "BM" },
+                                stats: {
+                                    servicesBooked: 0,
+                                    completed: 0,
+                                    pending: 0,
+                                    averageRating: 0
+                                }
+                            }
+                        },
+                    ];
+                    localStorage.setItem('allUsers', JSON.stringify(demoUsers));
+                    return demoUsers;
+                }
+                return JSON.parse(users);
+            },
+            
+            // Logout user
+            logout: function() {
+                localStorage.removeItem('currentUser');
+            }
+        };
+
+        // Make UserManager globally available
+        window.userManager = UserManager;
+
+        // Enhanced Dashboard Functionality
+        class Dashboard {
+            constructor() {
+                this.currentUser = null;
+                this.isDarkMode = localStorage.getItem('darkMode') === 'true';
+                this.notifications = [];
+                this.searchResults = [];
+                this.services = {
+                    plumbing: {
+                        title: "Plumbing Services",
+                        description: "Our professional plumbing services cover all your needs from minor repairs to major installations.",
+                        features: [
+                            "Leak detection and repair",
+                            "Pipe installation and replacement",
+                            "Faucet and fixture installation",
+                            "Drain cleaning and unclogging",
+                            "Water heater services"
+                        ],
+                        pricing: "Starting from $75 for basic services. Free estimates for larger projects."
+                    },
+                    electrical: {
+                        title: "Electrical Services",
+                        description: "Comprehensive electrical solutions for your home or business, from simple repairs to complex installations.",
+                        features: [
+                            "Wiring and rewiring",
+                            "Lighting installation",
+                            "Outlet and switch repair",
+                            "Circuit breaker services",
+                            "Electrical inspections"
+                        ],
+                        pricing: "Starting from $90 for basic services. Emergency services available."
+                    },
+                    painting: {
+                        title: "Painting Services",
+                        description: "Transform your space with our professional painting services for both interior and exterior projects.",
+                        features: [
+                            "Interior and exterior painting",
+                            "Color consultation",
+                            "Surface preparation",
+                            "Wallpaper installation/removal",
+                            "Decorative finishes"
+                        ],
+                        pricing: "Starting from $200 per room. Free color consultation included."
+                    },
+                    carpentry: {
+                        title: "Carpentry Services",
+                        description: "Expert carpentry work for all your woodworking needs, from furniture repair to custom installations.",
+                        features: [
+                            "Furniture repair and assembly",
+                            "Custom shelving and storage",
+                            "Door and window installation",
+                            "Trim and molding work",
+                            "Deck and fence repair"
+                        ],
+                        pricing: "Starting from $65 per hour. Free estimates for custom projects."
+                    }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                // Check if user is logged in
+                if (!window.userManager.isLoggedIn()) {
+                    // Create a default user if none exists
+                    const users = window.userManager.getAllUsers();
+                    window.userManager.saveCurrentUser(users[0]);
+                }
+                
+                // Get current user
+                this.currentUser = window.userManager.getCurrentUser();
+                
+                // Initialize all components
+                this.initializeDashboard();
+                this.initializeSidebar();
+                this.initializeProfilePanel();
+                this.initializeSearch();
+                this.initializeNotifications();
+                this.initializeThemeToggle();
+                this.initializeServiceCards();
+                this.initializeServiceInfoPanel();
+                this.initializeToast();
+                
+                // Set initial theme
+                this.setTheme(this.isDarkMode);
+                
+                // Load notifications
+                this.loadNotifications();
+            }
+            
+            initializeDashboard() {
+                if (!this.currentUser) return;
+                
+                // Update user information
+                document.getElementById('userAvatar').textContent = this.currentUser.profile.avatar.initials;
+                document.getElementById('userName').textContent = this.currentUser.profile.fullName;
+                document.getElementById('userType').textContent = this.currentUser.profile.membership;
+                
+                document.getElementById('profileAvatar').textContent = this.currentUser.profile.avatar.initials;
+                document.getElementById('profileName').textContent = this.currentUser.profile.fullName;
+                document.getElementById('profileType').textContent = this.currentUser.profile.membership;
+                document.getElementById('profileEmail').textContent = this.currentUser.profile.email;
+                
+                // Update welcome message
+                const firstName = this.currentUser.profile.fullName.split(' ')[0];
+                document.getElementById('welcomeMessage').textContent = `Welcome back, ${firstName}! 👋`;
+                
+                // Initialize counters with user's actual stats
+                const userStats = this.currentUser.profile.stats;
+                
+                this.animateCounter(document.getElementById('servicesCount'), userStats.servicesBooked, 1500);
+                this.animateCounter(document.getElementById('completedCount'), userStats.completed, 1500);
+                this.animateCounter(document.getElementById('pendingCount'), userStats.pending, 1500);
+                
+                // For rating, use user's actual rating
+                let ratingElement = document.getElementById('ratingCount');
+                let currentRating = 0;
+                const targetRating = userStats.averageRating;
+                const ratingInterval = setInterval(() => {
+                    currentRating += 0.05;
+                    if (currentRating >= targetRating) {
+                        ratingElement.textContent = targetRating.toFixed(1);
+                        clearInterval(ratingInterval);
+                    } else {
+                        ratingElement.textContent = currentRating.toFixed(1);
+                    }
+                }, 50);
+            }
+            
+            animateCounter(element, target, duration) {
+                let start = 0;
+                const increment = target / (duration / 16); // 60fps
+                
+                // Clear any existing content
+                element.textContent = '0';
+                
+                const updateCounter = () => {
+                    start += increment;
+                    if (start < target) {
+                        element.textContent = Math.floor(start);
+                        requestAnimationFrame(updateCounter);
+                    } else {
+                        element.textContent = target;
+                    }
+                };
+                
+                updateCounter();
+            }
+            
+            initializeSidebar() {
+                const sidebar = document.getElementById('sidebar');
+                const menuToggle = document.getElementById('menuToggle');
+                const mainContent = document.getElementById('mainContent');
+                
+                // Mobile menu toggle
+                menuToggle.addEventListener('click', () => {
+                    sidebar.classList.toggle('active');
+                });
+                
+                // Close sidebar when clicking outside on mobile
+                document.addEventListener('click', (e) => {
+                    if (window.innerWidth <= 768 && 
+                        !e.target.closest('.sidebar') && 
+                        !e.target.closest('.menu-toggle') && 
+                        sidebar.classList.contains('active')) {
+                        sidebar.classList.remove('active');
+                    }
+                });
+                
+                // Add active class to menu items when clicked
+                const menuItems = document.querySelectorAll('.menu-item');
+                menuItems.forEach(item => {
+                    item.addEventListener('click', (e) => {
+                        // Remove active class from all items
+                        menuItems.forEach(i => i.classList.remove('active'));
+                        // Add active class to clicked item
+                        item.classList.add('active');
+                        
+                        // Close sidebar on mobile after click
+                        if (window.innerWidth <= 768) {
+                            sidebar.classList.remove('active');
+                        }
+                    });
+                });
+            }
+            
+            initializeProfilePanel() {
+                const userProfileSection = document.getElementById('userProfileSection');
+                const userProfilePanel = document.getElementById('userProfilePanel');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const logoutModal = document.getElementById('logoutModal');
+                const cancelLogout = document.getElementById('cancelLogout');
+                const confirmLogout = document.getElementById('confirmLogout');
+                
+                if (userProfileSection && userProfilePanel) {
+                    userProfileSection.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        userProfilePanel.classList.toggle('active');
+                    });
+                    
+                    // Close profile panel when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!e.target.closest('.sidebar-footer') && !e.target.closest('.user-profile-panel')) {
+                            userProfilePanel.classList.remove('active');
+                        }
+                    });
+                    
+                    // Open logout confirmation modal
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        userProfilePanel.classList.remove('active');
+                        logoutModal.classList.add('active');
+                    });
+                    
+                    // Close modal when cancel is clicked
+                    cancelLogout.addEventListener('click', () => {
+                        logoutModal.classList.remove('active');
+                    });
+                    
+                    // Handle logout confirmation
+                    confirmLogout.addEventListener('click', () => {
+                        this.performLogout();
+                    });
+                    
+                    // Close modal when clicking outside
+                    logoutModal.addEventListener('click', (e) => {
+                        if (e.target === logoutModal) {
+                            logoutModal.classList.remove('active');
+                        }
+                    });
+                }
+            }
+            
+            performLogout() {
+                const confirmBtn = document.getElementById('confirmLogout');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
+                confirmBtn.disabled = true;
+                
+                // Simulate API call or logout process
+                setTimeout(() => {
+                    // Clear user data from localStorage
+                    localStorage.removeItem('currentUser');
+                    
+                    // Close modal
+                    document.getElementById('logoutModal').classList.remove('active');
+                    
+                    // Reset button
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                    
+                    // Show success message
+                    this.showToast('You have been logged out successfully', 'success');
+                    
+                    // Redirect to login page after a delay
+                    setTimeout(() => {
+                        window.location.href = 'user_login.html';
+                    }, 2000);
+                    
+                }, 1500);
+            }
+            
+            initializeSearch() {
+                const searchInput = document.getElementById('searchInput');
+                const searchResults = document.getElementById('searchResults');
+                
+                // Sample search data
+                const searchData = [
+                    { title: "Plumbing Repair", desc: "Fix leaks, install fixtures, unclog drains" },
+                    { title: "Electrical Wiring", desc: "Install, repair, or upgrade electrical systems" },
+                    { title: "Painting Service", desc: "Interior and exterior painting services" },
+                    { title: "Carpentry Work", desc: "Furniture repair, custom woodwork" },
+                    { title: "John's Plumbing", desc: "Certified plumbing service provider" },
+                    { title: "QuickFix Electricians", desc: "24/7 emergency electrical services" },
+                    { title: "ProPainters", desc: "Professional painting and decorating" },
+                    { title: "Master Carpenters", desc: "Custom furniture and woodwork" }
+                ];
+                
+                searchInput.addEventListener('input', (e) => {
+                    const query = e.target.value.toLowerCase().trim();
+                    
+                    if (query.length === 0) {
+                        searchResults.classList.remove('active');
+                        return;
+                    }
+                    
+                    // Filter search results
+                    this.searchResults = searchData.filter(item => 
+                        item.title.toLowerCase().includes(query) || 
+                        item.desc.toLowerCase().includes(query)
+                    );
+                    
+                    // Update search results UI
+                    this.updateSearchResults();
+                    
+                    // Show search results
+                    searchResults.classList.add('active');
+                });
+                
+                // Close search results when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.search-box')) {
+                        searchResults.classList.remove('active');
+                    }
+                });
+            }
+            
+            updateSearchResults() {
+                const searchResults = document.getElementById('searchResults');
+                searchResults.innerHTML = '';
+                
+                if (this.searchResults.length === 0) {
+                    searchResults.innerHTML = '<div class="search-result-item">No results found</div>';
+                    return;
+                }
+                
+                this.searchResults.forEach(result => {
+                    const resultItem = document.createElement('div');
+                    resultItem.className = 'search-result-item';
+                    resultItem.innerHTML = `
+                        <div class="search-result-title">${result.title}</div>
+                        <div class="search-result-desc">${result.desc}</div>
+                    `;
+                    searchResults.appendChild(resultItem);
+                });
+            }
+            
+            initializeNotifications() {
+                const notificationIcon = document.getElementById('notificationIcon');
+                const notificationsPanel = document.getElementById('notificationsPanel');
+                const markAllReadBtn = document.getElementById('markAllRead');
+                const notificationBadge = document.getElementById('notificationBadge');
+                
+                // Toggle notifications panel
+                notificationIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notificationsPanel.classList.toggle('active');
+                });
+                
+                // Close notifications panel when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.notification-icon') && !e.target.closest('.notifications-panel')) {
+                        notificationsPanel.classList.remove('active');
+                    }
+                });
+                
+                // Mark all as read
+                markAllReadBtn.addEventListener('click', () => {
+                    this.notifications.forEach(notification => {
+                        notification.read = true;
+                    });
+                    this.updateNotifications();
+                    notificationsPanel.classList.remove('active');
+                    this.showToast('All notifications marked as read', 'success');
+                });
+            }
+            
+            loadNotifications() {
+                // Sample notifications
+                this.notifications = [
+                    {
+                        id: 1,
+                        title: "Service Completed",
+                        desc: "Your plumbing repair service has been completed successfully.",
+                        time: "10 minutes ago",
+                        read: false,
+                        icon: "fas fa-check-circle"
+                    },
+                    {
+                        id: 2,
+                        title: "New Message",
+                        desc: "You have a new message from your service provider.",
+                        time: "1 hour ago",
+                        read: false,
+                        icon: "fas fa-envelope"
+                    },
+                    {
+                        id: 3,
+                        title: "Payment Received",
+                        desc: "Your payment of $125 has been processed successfully.",
+                        time: "2 hours ago",
+                        read: true,
+                        icon: "fas fa-credit-card"
+                    },
+                    {
+                        id: 4,
+                        title: "Service Reminder",
+                        desc: "Your scheduled painting service is tomorrow at 9:00 AM.",
+                        time: "1 day ago",
+                        read: true,
+                        icon: "fas fa-calendar-alt"
+                    }
+                ];
+                
+                this.updateNotifications();
+            }
+            
+            updateNotifications() {
+                const notificationsList = document.getElementById('notificationsList');
+                const notificationBadge = document.getElementById('notificationBadge');
+                
+                // Clear current notifications
+                notificationsList.innerHTML = '';
+                
+                // Count unread notifications
+                const unreadCount = this.notifications.filter(n => !n.read).length;
+                
+                // Update notification badge
+                if (unreadCount > 0) {
+                    notificationBadge.textContent = unreadCount;
+                    notificationBadge.classList.remove('hidden');
+                } else {
+                    notificationBadge.classList.add('hidden');
+                }
+                
+                // Add notifications to the list
+                if (this.notifications.length === 0) {
+                    notificationsList.innerHTML = '<div class="no-notifications">No notifications</div>';
+                    return;
+                }
+                
+                this.notifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = `notification-item ${notification.read ? '' : 'unread'}`;
+                    notificationItem.innerHTML = `
+                        <div class="notification-icon-small">
+                            <i class="${notification.icon}"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">${notification.title}</div>
+                            <div class="notification-desc">${notification.desc}</div>
+                            <div class="notification-time">${notification.time}</div>
+                        </div>
+                    `;
+                    
+                    // Mark as read when clicked
+                    notificationItem.addEventListener('click', () => {
+                        if (!notification.read) {
+                            notification.read = true;
+                            this.updateNotifications();
+                            this.showToast('Notification marked as read', 'success');
+                        }
+                    });
+                    
+                    notificationsList.appendChild(notificationItem);
+                });
+            }
+            
+            initializeThemeToggle() {
+                const themeToggle = document.getElementById('themeToggle');
+                const themeIcon = themeToggle.querySelector('i');
+                
+                // Set initial icon based on current theme
+                themeIcon.className = this.isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+                
+                themeToggle.addEventListener('click', () => {
+                    this.isDarkMode = !this.isDarkMode;
+                    this.setTheme(this.isDarkMode);
+                    localStorage.setItem('darkMode', this.isDarkMode);
+                    
+                    // Update icon
+                    themeIcon.className = this.isDarkMode ? 'fas fa-sun' : 'fas fa-moon';
+                    
+                    this.showToast(`${this.isDarkMode ? 'Dark' : 'Light'} mode activated`, 'success');
+                });
+            }
+            
+            setTheme(isDark) {
+                if (isDark) {
+                    document.body.classList.add('dark-mode');
+                } else {
+                    document.body.classList.remove('dark-mode');
+                }
+            }
+            
+            initializeServiceCards() {
+                const serviceCards = document.querySelectorAll('.service-card');
+                
+                serviceCards.forEach(card => {
+                    card.addEventListener('click', () => {
+                        const serviceType = card.getAttribute('data-service');
+                        this.showServiceInfo(serviceType);
+                    });
+                });
+            }
+            
+            initializeServiceInfoPanel() {
+                const serviceInfoPanel = document.getElementById('serviceInfoPanel');
+                const overlay = document.getElementById('overlay');
+                const closeInfo = document.getElementById('closeInfo');
+                const bookServiceBtn = document.getElementById('bookServiceBtn');
+                
+                // Close service info panel
+                closeInfo.addEventListener('click', () => {
+                    serviceInfoPanel.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+                
+                overlay.addEventListener('click', () => {
+                    serviceInfoPanel.classList.remove('active');
+                    overlay.classList.remove('active');
+                });
+                
+                // Book service button
+                bookServiceBtn.addEventListener('click', () => {
+                    const serviceTitle = document.getElementById('serviceTitle').textContent;
+                    serviceInfoPanel.classList.remove('active');
+                    overlay.classList.remove('active');
+                    this.showToast(`Redirecting to book ${serviceTitle}`, 'success');
+                    
+                    // In a real app, this would redirect to the booking page
+                    setTimeout(() => {
+                        window.location.href = 'book_service.html';
+                    }, 1000);
+                });
+            }
+            
+            showServiceInfo(serviceType) {
+                const service = this.services[serviceType];
+                if (!service) return;
+                
+                const serviceInfoPanel = document.getElementById('serviceInfoPanel');
+                const overlay = document.getElementById('overlay');
+                const serviceTitle = document.getElementById('serviceTitle');
+                const serviceDescription = document.getElementById('serviceDescription');
+                const serviceFeatures = document.getElementById('serviceFeatures');
+                const servicePricing = document.getElementById('servicePricing');
+                
+                // Update service info
+                serviceTitle.textContent = service.title;
+                serviceDescription.textContent = service.description;
+                servicePricing.textContent = service.pricing;
+                
+                // Update features list
+                serviceFeatures.innerHTML = '';
+                service.features.forEach(feature => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `<i class="fas fa-check"></i> ${feature}`;
+                    serviceFeatures.appendChild(li);
+                });
+                
+                // Show service info panel
+                serviceInfoPanel.classList.add('active');
+                overlay.classList.add('active');
+            }
+            
+            initializeToast() {
+                const toast = document.getElementById('toast');
+                const toastClose = document.getElementById('toastClose');
+                
+                toastClose.addEventListener('click', () => {
+                    toast.classList.remove('show');
+                });
+            }
+            
+            showToast(message, type = 'success') {
+                const toast = document.getElementById('toast');
+                const toastTitle = document.getElementById('toastTitle');
+                const toastMessage = document.getElementById('toastMessage');
+                const toastIcon = toast.querySelector('.toast-icon');
+                
+                // Set toast content
+                toastTitle.textContent = type.charAt(0).toUpperCase() + type.slice(1);
+                toastMessage.textContent = message;
+                
+                // Set toast icon based on type
+                toastIcon.className = `toast-icon ${type}`;
+                toastIcon.innerHTML = `<i class="fas fa-${type === 'success' ? 'check' : type === 'error' ? 'exclamation-triangle' : 'info-circle'}"></i>`;
+                
+                // Show toast
+                toast.classList.add('show');
+                
+                // Auto hide after 5 seconds
+                setTimeout(() => {
+                    toast.classList.remove('show');
+                }, 5000);
+            }
+        }
+
+        // Initialize the dashboard when the page loads
+        document.addEventListener('DOMContentLoaded', () => {
+            new Dashboard();
+        });
+        
+        
+        // DASHBOARD CODE
+        function loadDashboard() {
+            const bookings = JSON.parse(localStorage.getItem('fixitnow_bookings')) || [];
+            const history = JSON.parse(localStorage.getItem('fixitnow_service_history')) || [];
+            const userStats = JSON.parse(localStorage.getItem('fixitnow_user_stats')) || {};
+            
+            // Show current tracking
+            const trackingSection = document.getElementById('trackingSection') || document.querySelector('.tracking-section');
+            if (trackingSection) {
+                const latestBooking = bookings[bookings.length - 1];
+                if (latestBooking) {
+                    trackingSection.innerHTML = `
+                        <div class="tracking-card">
+                            <h3>🔄 Current Service Tracking</h3>
+                            <p><strong>Service:</strong> ${latestBooking.serviceCategoryName || latestBooking.serviceCategory} - ${latestBooking.serviceType}</p>
+                            <p><strong>Provider:</strong> ${latestBooking.providerName}</p>
+                            <p><strong>Status:</strong> ${latestBooking.serviceStatus || 'Scheduled'}</p>
+                            <p><strong>Tracking ID:</strong> ${latestBooking.trackingNumber || 'TRK-123'}</p>
+                            <p><strong>Date:</strong> ${latestBooking.preferredDate} at ${latestBooking.preferredTime}</p>
+                        </div>
+                    `;
+                } else {
+                    trackingSection.innerHTML = '<p>No active bookings. <a href="book_service.html">Book a service now!</a></p>';
+                }
+            }
+        }
+    
+    </script>
+</body>
+</html>

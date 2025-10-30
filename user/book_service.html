@@ -1,0 +1,3753 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Services - FixItNow</title>
+    <meta name="description" content="Book home services with FixItNow - plumbing, electrical, painting, carpentry, AC repair, and cleaning services">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #1e3c72;
+            --secondary: #ff6b6b;
+            --accent: #4ecdc4;
+            --success: #2ecc71;
+            --warning: #f39c12;
+            --danger: #e74c3c;
+            --dark: #2d3436;
+            --light: #f8f9fa;
+            --gray: #6c757d;
+            --sidebar-width: 260px;
+            --header-height: 70px;
+            --border-radius: 12px;
+            --shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #f5f7fb;
+            color: var(--dark);
+            display: flex;
+            min-height: 100vh;
+            overflow-x: hidden;
+            transition: var(--transition);
+        }
+
+        body.dark-theme {
+            background: #1a1d23;
+            color: #f8f9fa;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: var(--sidebar-width);
+            background: white;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            height: 100vh;
+            position: fixed;
+            left: 0;
+            top: 0;
+            z-index: 100;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+        }
+
+        body.dark-theme .sidebar {
+            background: #2d3436;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        }
+
+        .sidebar.collapsed {
+            width: 80px;
+        }
+
+        .sidebar.collapsed .sidebar-logo span,
+        .sidebar.collapsed .menu-item span,
+        .sidebar.collapsed .user-info {
+            display: none;
+        }
+
+        .sidebar.collapsed .sidebar-header {
+            justify-content: center;
+            padding: 25px 10px;
+        }
+
+        .sidebar.collapsed .menu-item {
+            padding: 14px 25px;
+            justify-content: center;
+        }
+
+        .sidebar-header {
+            padding: 25px 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .sidebar-header {
+            border-bottom: 1px solid #444;
+        }
+
+        .sidebar-logo {
+            font-weight: 800;
+            font-size: 24px;
+            color: var(--primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        .sidebar-logo i {
+            color: var(--secondary);
+            font-size: 26px;
+            flex-shrink: 0;
+        }
+
+        .sidebar-menu {
+            flex: 1;
+            padding: 20px 0;
+            overflow-y: auto;
+            transition: var(--transition);
+        }
+
+        .menu-item {
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            border-left: 4px solid transparent;
+            white-space: nowrap;
+            overflow: hidden;
+        }
+
+        body.dark-theme .menu-item {
+            color: #ddd;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+            border-left-color: var(--primary);
+        }
+
+        body.dark-theme .menu-item:hover, 
+        body.dark-theme .menu-item.active {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8f9fa;
+        }
+
+        .menu-item i {
+            font-size: 18px;
+            width: 24px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        .menu-item.active i {
+            color: var(--primary);
+        }
+
+        .sidebar-footer {
+            padding: 20px;
+            border-top: 1px solid #eee;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .sidebar-footer {
+            border-top: 1px solid #444;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .user-avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            flex-shrink: 0;
+        }
+
+        .user-info {
+            white-space: nowrap;
+            overflow: hidden;
+            transition: var(--transition);
+        }
+
+        .user-info h4 {
+            font-size: 15px;
+            margin-bottom: 3px;
+        }
+
+        .user-info p {
+            font-size: 12px;
+            color: #777;
+        }
+
+        body.dark-theme .user-info p {
+            color: #aaa;
+        }
+
+        /* User Profile Panel */
+        .user-profile-panel {
+            position: fixed;
+            bottom: 90px;
+            left: 20px;
+            width: 300px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            z-index: 1000;
+            display: none;
+            overflow: hidden;
+        }
+
+        body.dark-theme .user-profile-panel {
+            background: #2d3436;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+        }
+
+        .user-profile-panel.active {
+            display: block;
+            animation: slideUp 0.3s ease;
+        }
+
+        .user-profile-header {
+            padding: 20px;
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-profile-avatar {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            font-weight: 600;
+            color: white;
+        }
+
+        .user-profile-info h3 {
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .user-profile-info p {
+            font-size: 13px;
+            opacity: 0.9;
+        }
+
+        .user-profile-menu {
+            padding: 15px 0;
+        }
+
+        .profile-menu-item {
+            padding: 12px 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            color: #555;
+            text-decoration: none;
+            transition: var(--transition);
+            cursor: pointer;
+        }
+
+        body.dark-theme .profile-menu-item {
+            color: #ddd;
+        }
+
+        .profile-menu-item:hover {
+            background: rgba(30, 60, 114, 0.05);
+            color: var(--primary);
+        }
+
+        body.dark-theme .profile-menu-item:hover {
+            background: rgba(255, 255, 255, 0.05);
+            color: #f8f9fa;
+        }
+
+        .profile-menu-item i {
+            width: 20px;
+            text-align: center;
+            font-size: 16px;
+        }
+
+        .profile-menu-divider {
+            height: 1px;
+            background: #f0f0f0;
+            margin: 10px 0;
+        }
+
+        body.dark-theme .profile-menu-divider {
+            background: #444;
+        }
+
+        /* Logout Modal Styles */
+        .logout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 2000;
+        }
+
+        .logout-modal.active {
+            display: flex;
+        }
+
+        .logout-content {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-theme .logout-content {
+            background: #2d3436;
+        }
+
+        .logout-icon {
+            width: 70px;
+            height: 70px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #ff6b6b, #ff8e8e);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 28px;
+        }
+
+        .logout-content h3 {
+            margin-bottom: 10px;
+            color: var(--dark);
+        }
+
+        body.dark-theme .logout-content h3 {
+            color: #f8f9fa;
+        }
+
+        .logout-content p {
+            color: #666;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        body.dark-theme .logout-content p {
+            color: #aaa;
+        }
+
+        .logout-actions {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+        }
+
+        .btn-cancel {
+            background: #f8f9fa;
+            color: #666;
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-theme .btn-cancel {
+            background: #3a4047;
+            color: #aaa;
+            border-color: #444;
+        }
+
+        .btn-cancel:hover {
+            background: #e9ecef;
+        }
+
+        body.dark-theme .btn-cancel:hover {
+            background: #4a5057;
+        }
+
+        .btn-confirm {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .btn-confirm:hover {
+            background: #ff5252;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        /* Responsive adjustments for logout modal */
+        @media (max-width: 768px) {
+            .logout-actions {
+                flex-direction: column;
+            }
+            
+            .logout-actions .btn {
+                min-width: auto;
+                width: 100%;
+            }
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: var(--transition);
+        }
+
+        .main-content.expanded {
+            margin-left: 80px;
+        }
+
+        /* Header Styles */
+        .header {
+            height: var(--header-height);
+            background: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 30px;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        body.dark-theme .header {
+            background: #2d3436;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-left {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .header-left h1 {
+            font-size: 24px;
+            color: var(--primary);
+            font-weight: 700;
+        }
+
+        body.dark-theme .header-left h1 {
+            color: #f8f9fa;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            width: 250px;
+            font-size: 14px;
+            transition: var(--transition);
+            background: white;
+            color: var(--dark);
+        }
+
+        body.dark-theme .search-box input {
+            background: #3a4047;
+            border-color: #444;
+            color: #f8f9fa;
+        }
+
+        .search-box input:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        body.dark-theme .search-box input:focus {
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.3);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #777;
+        }
+
+        body.dark-theme .search-box i {
+            color: #aaa;
+        }
+
+        /* Theme Toggle */
+        .theme-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .theme-toggle {
+            background: #3a4047;
+        }
+
+        .theme-toggle:hover {
+            background: #e9ecef;
+        }
+
+        body.dark-theme .theme-toggle:hover {
+            background: #4a5057;
+        }
+
+        /* Sidebar Toggle */
+        .sidebar-toggle {
+            width: 40px;
+            height: 40px;
+            border-radius: 0;
+            background: transparent;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+            margin-right: 10px;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sidebar-toggle .bar {
+            width: 24px;
+            height: 3px;
+            background-color: var(--primary);
+            transition: var(--transition);
+            border-radius: 2px;
+        }
+
+        .sidebar-toggle:hover {
+            background: rgba(30, 60, 114, 0.1);
+        }
+
+        body.dark-theme .sidebar-toggle:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        /* Book Services Content */
+        .book-services-content {
+            padding: 30px;
+        }
+
+        /* Page Header */
+        .page-header {
+            margin-bottom: 30px;
+        }
+
+        .page-title {
+            font-size: 32px;
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        body.dark-theme .page-title {
+            color: #f8f9fa;
+        }
+
+        .page-subtitle {
+            color: var(--gray);
+            font-size: 16px;
+            max-width: 600px;
+        }
+
+        body.dark-theme .page-subtitle {
+            color: #aaa;
+        }
+
+        /* Progress Steps */
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            position: relative;
+        }
+
+        .progress-steps::before {
+            content: '';
+            position: absolute;
+            top: 15px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: #e0e0e0;
+            z-index: 1;
+        }
+
+        body.dark-theme .progress-steps::before {
+            background: #444;
+        }
+
+        .progress-bar {
+            position: absolute;
+            top: 15px;
+            left: 0;
+            height: 2px;
+            background: var(--primary);
+            z-index: 2;
+            transition: width 0.3s ease;
+        }
+
+        .step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            z-index: 3;
+        }
+
+        .step-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid #e0e0e0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 8px;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .step-icon {
+            background: #2d3436;
+            border-color: #444;
+        }
+
+        .step.active .step-icon {
+            background: var(--primary);
+            border-color: var(--primary);
+            color: white;
+        }
+
+        .step.completed .step-icon {
+            background: var(--success);
+            border-color: var(--success);
+            color: white;
+        }
+
+        .step-label {
+            font-size: 12px;
+            color: var(--gray);
+            font-weight: 500;
+        }
+
+        body.dark-theme .step-label {
+            color: #aaa;
+        }
+
+        .step.active .step-label {
+            color: var(--primary);
+        }
+
+        /* Modern Layout Grid */
+        .booking-layout {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            align-items: start;
+        }
+
+        .main-content-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+
+        /* Service Categories */
+        .service-categories {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark-theme .service-categories {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .section-title {
+            font-size: 22px;
+            color: var(--dark);
+            margin-bottom: 20px;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .section-title i {
+            color: var(--primary);
+        }
+
+        body.dark-theme .section-title {
+            color: #f8f9fa;
+        }
+
+        .categories-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 15px;
+        }
+
+        .category-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        body.dark-theme .category-card {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .category-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .category-card:hover, .category-card.active {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .category-card.active::before, .category-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .category-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 12px;
+            color: white;
+            font-size: 24px;
+        }
+
+        .category-card h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 15px;
+            color: var(--dark);
+        }
+
+        body.dark-theme .category-card h4 {
+            color: #f8f9fa;
+        }
+
+        .category-card p {
+            font-size: 12px;
+            color: var(--gray);
+        }
+
+        body.dark-theme .category-card p {
+            color: #aaa;
+        }
+
+        /* Booking Form */
+        .booking-form-container {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark-theme .booking-form-container {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+            position: relative;
+        }
+
+        .form-group.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: var(--dark);
+        }
+
+        body.dark-theme .form-label {
+            color: #f8f9fa;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: var(--transition);
+            background: white;
+            color: var(--dark);
+        }
+
+        body.dark-theme .form-input,
+        body.dark-theme .form-select,
+        body.dark-theme .form-textarea {
+            background: #3a4047;
+            border-color: #444;
+            color: #f8f9fa;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            border-color: var(--primary);
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.1);
+        }
+
+        body.dark-theme .form-input:focus,
+        body.dark-theme .form-select:focus,
+        body.dark-theme .form-textarea:focus {
+            box-shadow: 0 0 0 3px rgba(30, 60, 114, 0.3);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+        }
+
+        .form-row .form-group {
+            flex: 1;
+        }
+
+        /* New styles for address buttons */
+        .address-options {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .address-btn {
+            flex: 1;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            background: white;
+            color: var(--dark);
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        body.dark-theme .address-btn {
+            background: #3a4047;
+            border-color: #444;
+            color: #f8f9fa;
+        }
+        
+        .address-btn:hover {
+            border-color: var(--primary);
+            background: rgba(30, 60, 114, 0.05);
+        }
+        
+        body.dark-theme .address-btn:hover {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        
+        .address-btn.active {
+            border-color: var(--primary);
+            background: rgba(30, 60, 114, 0.1);
+        }
+        
+        body.dark-theme .address-btn.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        .address-input-container {
+            display: none;
+            margin-top: 15px;
+        }
+        
+        .address-input-container.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* Service Providers */
+        .service-providers {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        body.dark-theme .service-providers {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .providers-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 15px;
+        }
+
+        .provider-card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+            transition: var(--transition);
+            cursor: pointer;
+            border: 2px solid transparent;
+            position: relative;
+        }
+
+        body.dark-theme .provider-card {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .provider-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 4px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            transform: scaleX(0);
+            transition: var(--transition);
+        }
+
+        .provider-card:hover, .provider-card.selected {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+            border-color: var(--primary);
+        }
+
+        .provider-card.selected::before, .provider-card:hover::before {
+            transform: scaleX(1);
+        }
+
+        .provider-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .provider-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 18px;
+            margin-right: 15px;
+        }
+
+        .provider-info h4 {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        body.dark-theme .provider-info h4 {
+            color: #f8f9fa;
+        }
+
+        .provider-rating {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: var(--warning);
+            font-size: 14px;
+        }
+
+        .provider-details {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        body.dark-theme .provider-details {
+            color: #aaa;
+        }
+
+        .provider-price {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 18px;
+        }
+
+        .provider-description {
+            font-size: 14px;
+            color: var(--gray);
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        body.dark-theme .provider-description {
+            color: #aaa;
+        }
+
+        .provider-features {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .feature-tag {
+            background: rgba(30, 60, 114, 0.1);
+            color: var(--primary);
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        body.dark-theme .feature-tag {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .select-provider-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 10px 15px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+        }
+
+        .select-provider-btn:hover {
+            background: #152a52;
+        }
+
+        /* Booking Summary */
+        .booking-summary {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+            position: sticky;
+            top: 100px;
+        }
+
+        body.dark-theme .booking-summary {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .summary-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .summary-title i {
+            color: var(--secondary);
+        }
+
+        body.dark-theme .summary-title {
+            color: #f8f9fa;
+        }
+
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        body.dark-theme .summary-item {
+            border-bottom: 1px solid #444;
+        }
+
+        .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        .summary-label {
+            color: var(--gray);
+        }
+
+        body.dark-theme .summary-label {
+            color: #aaa;
+        }
+
+        .summary-value {
+            font-weight: 500;
+            text-align: right;
+            max-width: 60%;
+            word-break: break-word;
+            color: var(--dark);
+        }
+
+        body.dark-theme .summary-value {
+            color: #f8f9fa;
+        }
+
+        .summary-total {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .book-now-btn {
+            background: linear-gradient(135deg, var(--primary), #2a5298);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            margin-top: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .book-now-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+        }
+
+        .book-now-btn:disabled {
+            background: var(--gray);
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .booking-layout {
+                grid-template-columns: 1fr;
+            }
+            
+            .booking-summary {
+                position: static;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .search-box input {
+                width: 200px;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .providers-list {
+                grid-template-columns: 1fr;
+            }
+            
+            .address-options {
+                flex-direction: column;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            
+            .sidebar.active {
+                transform: translateX(0);
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .header {
+                padding: 0 20px;
+            }
+            
+            .search-box {
+                display: none;
+            }
+            
+            .categories-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .book-services-content {
+                padding: 20px;
+            }
+            
+            .booking-layout {
+                gap: 20px;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .categories-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+            
+            .page-title {
+                font-size: 24px;
+            }
+        }
+
+        /* Mobile Menu Toggle */
+        .menu-toggle {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: var(--primary);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .menu-toggle:hover {
+            color: var(--secondary);
+        }
+
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: block;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .category-card, .provider-card, .booking-form-container {
+            animation: fadeIn 0.5s ease forwards;
+        }
+
+        /* Toast Notification */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 1100;
+        }
+
+        .toast {
+            background: white;
+            border-radius: 8px;
+            padding: 15px 20px;
+            margin-bottom: 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            max-width: 350px;
+            transform: translateX(400px);
+            transition: transform 0.3s ease;
+        }
+
+        body.dark-theme .toast {
+            background: #2d3436;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+        }
+
+        .toast.show {
+            transform: translateX(0);
+        }
+
+        .toast.success {
+            border-left: 4px solid var(--success);
+        }
+
+        .toast.error {
+            border-left: 4px solid var(--danger);
+        }
+
+        .toast.warning {
+            border-left: 4px solid var(--warning);
+        }
+
+        .toast.info {
+            border-left: 4px solid var(--primary);
+        }
+
+        .toast-icon {
+            font-size: 20px;
+        }
+
+        .toast.success .toast-icon {
+            color: var(--success);
+        }
+
+        .toast.error .toast-icon {
+            color: var(--danger);
+        }
+
+        .toast.warning .toast-icon {
+            color: var(--warning);
+        }
+
+        .toast.info .toast-icon {
+            color: var(--primary);
+        }
+
+        .toast-content {
+            flex: 1;
+        }
+
+        .toast-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            color: var(--dark);
+        }
+
+        body.dark-theme .toast-title {
+            color: #f8f9fa;
+        }
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--gray);
+        }
+
+        body.dark-theme .toast-message {
+            color: #aaa;
+        }
+
+        .toast-close {
+            background: none;
+            border: none;
+            font-size: 16px;
+            color: var(--gray);
+            cursor: pointer;
+        }
+
+        /* Form Validation Styles */
+        .form-group.success .form-input,
+        .form-group.success .form-select,
+        .form-group.success .form-textarea {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.1);
+        }
+
+        body.dark-theme .form-group.success .form-input,
+        body.dark-theme .form-group.success .form-select,
+        body.dark-theme .form-group.success .form-textarea {
+            box-shadow: 0 0 0 3px rgba(46, 204, 113, 0.3);
+        }
+
+        .validation-message {
+            font-size: 12px;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .validation-message.show {
+            opacity: 1;
+        }
+
+        .validation-message.success {
+            color: var(--success);
+        }
+
+        .auto-save-indicator {
+            font-size: 12px;
+            color: var(--success);
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 5px;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .auto-save-indicator.show {
+            opacity: 1;
+        }
+
+        /* Enhanced Features */
+        .character-count {
+            font-size: 12px;
+            text-align: right;
+            margin-top: 5px;
+            color: var(--gray);
+        }
+
+        body.dark-theme .character-count {
+            color: #aaa;
+        }
+
+        .character-count.warning {
+            color: var(--warning);
+        }
+
+        .character-count.error {
+            color: var(--danger);
+        }
+
+        .provider-badge {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: var(--success);
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 600;
+        }
+
+        .provider-card.featured {
+            border: 2px solid var(--accent);
+        }
+
+        .provider-card.featured::before {
+            background: linear-gradient(135deg, var(--accent), var(--primary));
+        }
+
+        /* Payment Modal */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.6);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            opacity: 0;
+            visibility: hidden;
+            transition: var(--transition);
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform: translateY(30px);
+            transition: var(--transition);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        body.dark-theme .modal {
+            background: #2d3436;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-theme .modal-header {
+            border-bottom: 1px solid #444;
+        }
+
+        .modal-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        body.dark-theme .modal-title {
+            color: #f8f9fa;
+        }
+
+        .modal-close {
+            background: none;
+            border: none;
+            font-size: 20px;
+            color: var(--gray);
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .modal-close:hover {
+            color: var(--danger);
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #eee;
+            display: flex;
+            gap: 10px;
+            justify-content: flex-end;
+        }
+
+        body.dark-theme .modal-footer {
+            border-top: 1px solid #444;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #152a52;
+        }
+
+        .btn-secondary {
+            background: #f8f9fa;
+            color: var(--dark);
+            border: 1px solid #e0e0e0;
+        }
+
+        body.dark-theme .btn-secondary {
+            background: #3a4047;
+            color: #f8f9fa;
+            border-color: #444;
+        }
+
+        .btn-secondary:hover {
+            background: #e9ecef;
+        }
+
+        body.dark-theme .btn-secondary:hover {
+            background: #4a5057;
+        }
+
+        /* Confirmation Screen */
+        .confirmation-screen {
+            text-align: center;
+            padding: 40px 20px;
+        }
+
+        .confirmation-icon {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 36px;
+        }
+
+        .confirmation-title {
+            font-size: 24px;
+            margin-bottom: 10px;
+            color: var(--success);
+        }
+
+        .confirmation-message {
+            color: var(--gray);
+            margin-bottom: 30px;
+        }
+
+        body.dark-theme .confirmation-message {
+            color: #aaa;
+        }
+
+        .booking-details {
+            background: #f8f9fa;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            margin-bottom: 30px;
+            text-align: left;
+        }
+
+        body.dark-theme .booking-details {
+            background: #3a4047;
+        }
+
+        .booking-details h4 {
+            margin-bottom: 15px;
+            color: var(--primary);
+        }
+
+        body.dark-theme .booking-details h4 {
+            color: #f8f9fa;
+        }
+
+        .booking-details .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        body.dark-theme .booking-details .summary-item {
+            border-bottom: 1px solid #444;
+        }
+
+        .booking-details .summary-item:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+
+        /* Payment Methods */
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .payment-method {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        body.dark-theme .payment-method {
+            border-color: #444;
+        }
+
+        .payment-method.active {
+            border-color: var(--primary);
+            background: rgba(30, 60, 114, 0.05);
+        }
+
+        body.dark-theme .payment-method.active {
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        .payment-method i {
+            font-size: 24px;
+            margin-right: 15px;
+            width: 30px;
+            text-align: center;
+        }
+
+        .payment-method .method-name {
+            font-weight: 500;
+        }
+
+        .payment-method .method-description {
+            font-size: 12px;
+            color: var(--gray);
+            margin-top: 3px;
+        }
+
+        /* PhonePe and Google Pay specific styles */
+        .phonepay-icon {
+            color: #5F259F;
+        }
+
+        .gpay-icon {
+            color: #4285F4;
+        }
+
+        /* Payment Form */
+        .payment-form {
+            display: none;
+        }
+
+        .payment-form.active {
+            display: block;
+        }
+
+        /* UPI Payment Form */
+        .upi-form {
+            text-align: center;
+            padding: 20px 0;
+        }
+
+        .upi-qr-code {
+            width: 200px;
+            height: 200px;
+            background: #f5f5f5;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+
+        .upi-qr-code img {
+            max-width: 100%;
+            max-height: 100%;
+        }
+
+        .upi-id {
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            margin: 15px 0;
+            font-family: monospace;
+            font-size: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        body.dark-theme .upi-id {
+            background: #3a4047;
+        }
+
+        .copy-btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            font-size: 12px;
+            cursor: pointer;
+        }
+
+        .payment-instructions {
+            font-size: 14px;
+            color: var(--gray);
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        body.dark-theme .payment-instructions {
+            color: #aaa;
+        }
+
+        .payment-instructions ol {
+            padding-left: 20px;
+            margin-top: 10px;
+        }
+
+        .payment-instructions li {
+            margin-bottom: 8px;
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Animation for user profile panel */
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- Toast Container -->
+    <div class="toast-container" id="toastContainer"></div>
+
+    <!-- User Profile Panel -->
+    <div class="user-profile-panel" id="userProfilePanel">
+        <div class="user-profile-header">
+            <div class="user-profile-avatar" id="profileAvatar">U</div>
+            <div class="user-profile-info">
+                <h3 id="profileName">Loading...</h3>
+                <p id="profileType">Member</p>
+                <p id="profileEmail" style="font-size: 12px; opacity: 0.8; margin-top: 5px;">Loading...</p>
+            </div>
+        </div>
+        <div class="user-profile-menu">
+            <a href="profile.html" class="profile-menu-item">
+                <i class="fas fa-user"></i>
+                My Profile
+            </a>
+            <a href="setting.html" class="profile-menu-item">
+                <i class="fas fa-cog"></i>
+                Account Settings
+            </a>
+            <div class="profile-menu-divider"></div>
+            <a href="#" class="profile-menu-item" id="logoutBtn">
+                <i class="fas fa-sign-out-alt"></i>
+                Logout
+            </a>
+        </div>
+    </div>
+
+    <!-- Logout Confirmation Modal -->
+    <div class="logout-modal" id="logoutModal">
+        <div class="logout-content">
+            <div class="logout-icon">
+                <i class="fas fa-sign-out-alt"></i>
+            </div>
+            <h3>Confirm Logout</h3>
+            <p>Are you sure you want to logout from your account?</p>
+            <div class="logout-actions">
+                <button class="btn btn-cancel" id="cancelLogout">Cancel</button>
+                <button class="btn btn-confirm" id="confirmLogout">Yes, Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+        <div class="modal">
+            <div class="modal-header">
+                <h3 class="modal-title">Confirm Booking</h3>
+                <button class="modal-close" id="closePaymentModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="paymentForm">
+                    <div class="form-group">
+                        <label class="form-label">Payment Method</label>
+                        <div class="payment-methods">
+                            <div class="payment-method active" data-method="phonepay">
+                                <i class="fas fa-mobile-alt phonepay-icon"></i>
+                                <div>
+                                    <div class="method-name">PhonePe</div>
+                                    <div class="method-description">Pay using UPI, credit/debit card, or wallet</div>
+                                </div>
+                            </div>
+                            <div class="payment-method" data-method="gpay">
+                                <i class="fab fa-google gpay-icon"></i>
+                                <div>
+                                    <div class="method-name">Google Pay</div>
+                                    <div class="method-description">Fast and secure UPI payments</div>
+                                </div>
+                            </div>
+                            <div class="payment-method" data-method="card">
+                                <i class="fas fa-credit-card"></i>
+                                <div>
+                                    <div class="method-name">Credit/Debit Card</div>
+                                    <div class="method-description">Pay with Visa, Mastercard, or RuPay</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- PhonePe Payment Form -->
+                    <div class="payment-form active" id="phonepayForm">
+                        <div class="upi-form">
+                            <div class="upi-qr-code">
+                                <div style="text-align: center;">
+                                    <i class="fas fa-qrcode" style="font-size: 60px; color: #5F259F; margin-bottom: 10px;"></i>
+                                    <p style="font-size: 12px; color: #777;">Scan with PhonePe</p>
+                                </div>
+                            </div>
+                            <div class="upi-id">
+                                <span>fixitnow@paytm</span>
+                                <button class="copy-btn" id="copyUpiId">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <div class="payment-instructions">
+                                <p><strong>How to pay with PhonePe:</strong></p>
+                                <ol>
+                                    <li>Open PhonePe app on your phone</li>
+                                    <li>Tap on 'Scan & Pay' and scan the QR code</li>
+                                    <li>Or send payment to the UPI ID shown above</li>
+                                    <li>Enter the amount: <strong id="phonepayAmount">$125.00</strong></li>
+                                    <li>Complete the payment</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Google Pay Payment Form -->
+                    <div class="payment-form" id="gpayForm">
+                        <div class="upi-form">
+                            <div class="upi-qr-code">
+                                <div style="text-align: center;">
+                                    <i class="fab fa-google" style="font-size: 60px; color: #4285F4; margin-bottom: 10px;"></i>
+                                    <p style="font-size: 12px; color: #777;">Scan with Google Pay</p>
+                                </div>
+                            </div>
+                            <div class="upi-id">
+                                <span>fixitnow@okhdfcbank</span>
+                                <button class="copy-btn" id="copyGpayUpiId">
+                                    <i class="fas fa-copy"></i> Copy
+                                </button>
+                            </div>
+                            <div class="payment-instructions">
+                                <p><strong>How to pay with Google Pay:</strong></p>
+                                <ol>
+                                    <li>Open Google Pay app on your phone</li>
+                                    <li>Tap on 'Scan QR code' and scan the code above</li>
+                                    <li>Or send payment to the UPI ID shown above</li>
+                                    <li>Enter the amount: <strong id="gpayAmount">$125.00</strong></li>
+                                    <li>Complete the payment</li>
+                                </ol>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Card Payment Form -->
+                    <div class="payment-form" id="cardForm">
+                        <div class="form-group">
+                            <label class="form-label" for="cardNumber">Card Number</label>
+                            <input type="text" class="form-input" id="cardNumber" placeholder="1234 5678 9012 3456" maxlength="19">
+                        </div>
+                        
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label" for="expiryDate">Expiry Date</label>
+                                <input type="text" class="form-input" id="expiryDate" placeholder="MM/YY" maxlength="5">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label" for="cvv">CVV</label>
+                                <input type="text" class="form-input" id="cvv" placeholder="123" maxlength="3">
+                            </div>
+                        </div>
+                        
+                        <div class="form-group">
+                            <label class="form-label" for="cardName">Name on Card</label>
+                            <input type="text" class="form-input" id="cardName" placeholder="John Smith">
+                        </div>
+                    </div>
+                </div>
+                
+                <div id="confirmationScreen" class="confirmation-screen" style="display: none;">
+                    <div class="confirmation-icon">
+                        <i class="fas fa-check"></i>
+                    </div>
+                    <h2 class="confirmation-title">Booking Confirmed!</h2>
+                    <p class="confirmation-message">Your service has been scheduled successfully. You will receive a confirmation email shortly.</p>
+                    
+                    <div class="booking-details">
+                        <h4>Booking Details</h4>
+                        <div class="summary-item">
+                            <span>Service:</span>
+                            <span id="confirm-service">Plumbing - Leak Repair</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Provider:</span>
+                            <span id="confirm-provider">John's Plumbing Co.</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Date & Time:</span>
+                            <span id="confirm-datetime">Tomorrow, 10:00 AM</span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Address:</span>
+                            <span id="confirm-address"></span>
+                        </div>
+                        <div class="summary-item">
+                            <span>Total:</span>
+                            <span id="confirm-total">$125.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="booking-actions" style="display: flex; gap: 10px; justify-content: center;">
+                        <button class="btn btn-primary" id="printBooking">
+                            <i class="fas fa-print"></i> Print Receipt
+                        </button>
+                        <button class="btn btn-secondary" id="newBooking">
+                            <i class="fas fa-plus"></i> New Booking
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="cancelBooking">Cancel</button>
+                <button class="btn btn-primary" id="confirmPayment">
+                    <i class="fas fa-lock"></i> Confirm & Pay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <a href="dashboard.html" class="sidebar-logo">
+                <i class="fas fa-tools" aria-hidden="true"></i>
+                <span>FixItNow</span>
+            </a>
+        </div>
+        
+        <div class="sidebar-menu">
+            <a href="dashboard.html" class="menu-item">
+                <i class="fas fa-home" aria-hidden="true"></i>
+                <span>Dashboard</span>
+            </a>
+            <a href="#" class="menu-item active">
+                <i class="fas fa-calendar-alt" aria-hidden="true"></i>
+                <span>Book Services</span>
+            </a>
+            <a href="service_history.html" class="menu-item">
+                <i class="fas fa-history" aria-hidden="true"></i>
+                <span>Service History</span>
+            </a>
+            <a href="invoice.html" class="menu-item">
+                <i class="fas fa-file-invoice-dollar" aria-hidden="true"></i>
+                <span>Invoices</span>
+            </a>
+            <a href="review.html" class="menu-item">
+                <i class="fas fa-star" aria-hidden="true"></i>
+                <span>Reviews</span>
+            </a>
+            <a href="profile.html" class="menu-item">
+                <i class="fas fa-user-circle" aria-hidden="true"></i>
+                <span>Profile</span>
+            </a>
+            <a href="setting.html" class="menu-item">
+                <i class="fas fa-cog" aria-hidden="true"></i>
+                <span>Settings</span>
+            </a>
+            <a href="help.html" class="menu-item">
+                <i class="fas fa-question-circle" aria-hidden="true"></i>
+                <span>Help & Support</span>
+            </a>
+        </div>
+        
+        <!-- Enhanced Profile Section -->
+        <div class="sidebar-footer" id="userProfileSection">
+            <div class="user-profile">
+                <div class="user-avatar" id="userAvatar">U</div>
+                <div class="user-info">
+                    <h4 id="userName">Loading...</h4>
+                    <p id="userType">Member</p>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Main Content -->
+    <div class="main-content" id="mainContent">
+        <!-- Header -->
+        <div class="header">
+            <div class="header-left">
+
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Book Services</h1>
+            </div>
+            
+            <div class="header-right">
+                <div class="search-box">
+                    <i class="fas fa-search" aria-hidden="true"></i>
+                    <input type="text" placeholder="Search services, providers..." aria-label="Search services and providers" id="searchInput">
+                </div>
+                
+                <div class="theme-toggle" id="themeToggle">
+                    <i class="fas fa-moon"></i>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Book Services Content -->
+        <div class="book-services-content">
+            <!-- Progress Steps -->
+            <div class="progress-steps">
+                <div class="progress-bar" id="progressBar" style="width: 33%"></div>
+                <div class="step active" id="step1">
+                    <div class="step-icon">1</div>
+                    <span class="step-label">Select Service</span>
+                </div>
+                <div class="step" id="step2">
+                    <div class="step-icon">2</div>
+                    <span class="step-label">Details</span>
+                </div>
+                <div class="step" id="step3">
+                    <div class="step-icon">3</div>
+                    <span class="step-label">Confirm</span>
+                </div>
+            </div>
+            
+            <!-- Page Header -->
+            <div class="page-header">
+                <h1 class="page-title">Book a Service</h1>
+                <p class="page-subtitle">Select a service category, choose your preferred provider, and schedule your appointment.</p>
+            </div>
+            
+            <!-- Modern Layout Grid -->
+            <div class="booking-layout">
+                <div class="main-content-area">
+                    <!-- Service Categories -->
+                    <div class="service-categories">
+                        <h2 class="section-title">
+                            <i class="fas fa-list-alt"></i>
+                            Service Categories
+                        </h2>
+                        <div class="categories-grid" id="categoriesGrid">
+                            <!-- Categories will be populated by JavaScript -->
+                        </div>
+                    </div>
+                    
+                    <!-- Booking Form -->
+                    <div class="booking-form-container" id="bookingFormContainer">
+                        <h2 class="section-title">
+                            <i class="fas fa-clipboard-list"></i>
+                            Service Details
+                        </h2>
+                        <form id="bookingForm">
+                            <div class="form-grid">
+                                <div class="form-group" id="serviceTypeGroup">
+                                    <label class="form-label" for="serviceType">Service Type</label>
+                                    <select class="form-select" id="serviceType" name="serviceType" required>
+                                        <option value="">Select a service</option>
+                                        <!-- Options will be populated by JavaScript -->
+                                    </select>
+                                    <div class="validation-message" id="serviceTypeValidation"></div>
+                                </div>
+                                
+                                <div class="form-group" id="urgencyGroup">
+                                    <label class="form-label" for="urgency">Urgency</label>
+                                    <select class="form-select" id="urgency" name="urgency" required>
+                                        <option value="normal">Normal (Within 3 days)</option>
+                                        <option value="urgent">Urgent (Within 24 hours)</option>
+                                        <option value="emergency">Emergency (As soon as possible)</option>
+                                    </select>
+                                    <div class="validation-message" id="urgencyValidation"></div>
+                                </div>
+                                
+                                <div class="form-group" id="preferredDateGroup">
+                                    <label class="form-label" for="preferredDate">Preferred Date</label>
+                                    <input type="date" class="form-input" id="preferredDate" name="preferredDate" required>
+                                    <div class="validation-message" id="preferredDateValidation"></div>
+                                    <div class="auto-save-indicator" id="date-save-indicator">
+                                        <i class="fas fa-check"></i> Saved
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group" id="preferredTimeGroup">
+                                    <label class="form-label" for="preferredTime">Preferred Time</label>
+                                    <select class="form-select" id="preferredTime" name="preferredTime" required>
+                                        <option value="morning">Morning (8 AM - 12 PM)</option>
+                                        <option value="afternoon">Afternoon (12 PM - 4 PM)</option>
+                                        <option value="evening">Evening (4 PM - 8 PM)</option>
+                                    </select>
+                                    <div class="validation-message" id="preferredTimeValidation"></div>
+                                </div>
+                                
+                                <!-- Updated Service Address Section -->
+                                <div class="form-group full-width" id="addressGroup">
+                                    <label class="form-label">Service Address</label>
+                                    <div class="address-options">
+                                        <button type="button" class="address-btn" id="manualAddressBtn">
+                                            <i class="fas fa-pencil-alt"></i>
+                                            Manual
+                                        </button>
+                                        <button type="button" class="address-btn" id="currentLocationBtn">
+                                            <i class="fas fa-location-arrow"></i>
+                                            Use Current Location
+                                        </button>
+                                    </div>
+                                    <div class="address-input-container" id="addressInputContainer">
+                                        <input type="text" class="form-input" id="address" name="address" placeholder="Enter your full address" required>
+                                        <div class="validation-message" id="addressValidation"></div>
+                                        <div class="auto-save-indicator" id="address-save-indicator">
+                                            <i class="fas fa-check"></i> Saved
+                                        </div>
+                                    </div>
+                                </div>
+                                
+                                <div class="form-group full-width" id="problemDescriptionGroup">
+                                    <label class="form-label" for="problemDescription">Problem Description</label>
+                                    <textarea class="form-textarea" id="problemDescription" name="problemDescription" placeholder="Please describe the issue in detail..." required></textarea>
+                                    <div class="validation-message" id="problemDescriptionValidation"></div>
+                                    <div class="auto-save-indicator" id="description-save-indicator">
+                                        <i class="fas fa-check"></i> Saved
+                                    </div>
+                                    <div class="character-count" id="problemDescriptionCount">0/500</div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Service Providers -->
+                    <div class="service-providers" id="serviceProvidersSection">
+                        <h2 class="section-title">
+                            <i class="fas fa-user-hard-hat"></i>
+                            Available Providers
+                        </h2>
+                        <div class="providers-list" id="providersList">
+                            <!-- Providers will be populated by JavaScript -->
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Booking Summary -->
+                <div class="booking-summary">
+                    <h3 class="summary-title">
+                        <i class="fas fa-receipt"></i>
+                        Booking Summary
+                    </h3>
+                    <div class="summary-item">
+                        <span class="summary-label">Service Category:</span>
+                        <span class="summary-value" id="summary-category">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Service Type:</span>
+                        <span class="summary-value" id="summary-service">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Provider:</span>
+                        <span class="summary-value" id="summary-provider">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Date & Time:</span>
+                        <span class="summary-value" id="summary-datetime">Not selected</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Address:</span>
+                        <span class="summary-value" id="summary-address">Not provided</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Service Fee:</span>
+                        <span class="summary-value" id="summary-fee">$0</span>
+                    </div>
+                    <div class="summary-item">
+                        <span class="summary-label">Urgency Fee:</span>
+                        <span class="summary-value" id="summary-urgency">$0</span>
+                    </div>
+                    <div class="summary-item summary-total">
+                        <span class="summary-label">Total:</span>
+                        <span class="summary-value" id="summary-total">$0</span>
+                    </div>
+                    <button class="book-now-btn" id="bookNowBtn" type="button" disabled>
+                        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                        Book Now
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Enhanced Book Services Application with Modern Payment Options
+        class BookServicesApp {
+            constructor() {
+                this.currentStep = 1;
+                this.selectedCategory = null;
+                this.selectedProvider = null;
+                this.serviceData = {};
+                this.providersData = {};
+                this.formValidators = {};
+                this.selectedPaymentMethod = 'phonepay';
+                this.bookingInProgress = false;
+                
+                // Initialize with default user data
+                this.userData = {
+                    id: 1,
+                    profile: {
+                        fullName: "Bhavani Maktala",
+                        email: "bhavani@example.com",
+                        membership: "Premium Member",
+                        avatar: { initials: "BM" },
+                        stats: {
+                            servicesBooked: 2545,
+                            completed: 2540,
+                            pending: 5,
+                            averageRating: 4.8
+                        }
+                    }
+                };
+                
+                this.init();
+            }
+            
+            init() {
+                this.loadServiceData();
+                this.setupEventListeners();
+                this.setupFormValidation();
+                this.loadFormData();
+                this.updateProgress();
+                this.initializeThemeToggle();
+                this.initializeSidebarToggle();
+                this.initializePaymentModal();
+                this.initializeProfilePanel();
+                this.initializeAddressButtons();
+                
+                // Initialize approved providers
+                this.initializeApprovedProviders();
+                
+                // Show initial service details
+                this.selectCategory('plumbing');
+            }
+            
+            // Initialize user profile panel with data
+            initializeProfilePanel() {
+                const userProfileSection = document.getElementById('userProfileSection');
+                const userProfilePanel = document.getElementById('userProfilePanel');
+                const logoutBtn = document.getElementById('logoutBtn');
+                const logoutModal = document.getElementById('logoutModal');
+                const cancelLogout = document.getElementById('cancelLogout');
+                const confirmLogout = document.getElementById('confirmLogout');
+                
+                // Update UI with user data
+                this.updateUserProfileUI();
+                
+                if (userProfileSection && userProfilePanel) {
+                    userProfileSection.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        userProfilePanel.classList.toggle('active');
+                    });
+                    
+                    // Close profile panel when clicking outside
+                    document.addEventListener('click', (e) => {
+                        if (!e.target.closest('.sidebar-footer') && !e.target.closest('.user-profile-panel')) {
+                            userProfilePanel.classList.remove('active');
+                        }
+                    });
+                    
+                    // Open logout confirmation modal
+                    logoutBtn.addEventListener('click', (e) => {
+                        e.preventDefault();
+                        userProfilePanel.classList.remove('active');
+                        logoutModal.classList.add('active');
+                    });
+                    
+                    // Close modal when cancel is clicked
+                    cancelLogout.addEventListener('click', () => {
+                        logoutModal.classList.remove('active');
+                    });
+                    
+                    // Handle logout confirmation
+                    confirmLogout.addEventListener('click', () => {
+                        this.performLogout();
+                    });
+                    
+                    // Close modal when clicking outside
+                    logoutModal.addEventListener('click', (e) => {
+                        if (e.target === logoutModal) {
+                            logoutModal.classList.remove('active');
+                        }
+                    });
+                }
+            }
+            
+            performLogout() {
+                const confirmBtn = document.getElementById('confirmLogout');
+                const originalText = confirmBtn.innerHTML;
+                confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging out...';
+                confirmBtn.disabled = true;
+                
+                // Simulate API call or logout process
+                setTimeout(() => {
+                    // Clear user data from localStorage
+                    localStorage.removeItem('currentUser');
+                    
+                    // Close modal
+                    document.getElementById('logoutModal').classList.remove('active');
+                    
+                    // Reset button
+                    confirmBtn.innerHTML = originalText;
+                    confirmBtn.disabled = false;
+                    
+                    // Show success message
+                    this.showToast('You have been logged out successfully', 'success');
+                    
+                    // Redirect to login page after a delay
+                    setTimeout(() => {
+                        window.location.href = 'user_login.html';
+                    }, 2000);
+                    
+                }, 1500);
+            }
+            
+            // Update user profile UI with current user data
+            updateUserProfileUI() {
+                // Update sidebar user profile
+                document.getElementById('userAvatar').textContent = this.userData.profile.avatar.initials;
+                document.getElementById('userName').textContent = this.userData.profile.fullName;
+                document.getElementById('userType').textContent = this.userData.profile.membership;
+                
+                // Update profile panel
+                document.getElementById('profileAvatar').textContent = this.userData.profile.avatar.initials;
+                document.getElementById('profileName').textContent = this.userData.profile.fullName;
+                document.getElementById('profileType').textContent = this.userData.profile.membership;
+                document.getElementById('profileEmail').textContent = this.userData.profile.email;
+            }
+            
+            // Initialize theme toggle
+            initializeThemeToggle() {
+                const themeToggle = document.getElementById('themeToggle');
+                const icon = themeToggle.querySelector('i');
+                
+                // Check for saved theme preference or default to light
+                const currentTheme = localStorage.getItem('theme') || 'light';
+                if (currentTheme === 'dark') {
+                    document.body.classList.add('dark-theme');
+                    icon.className = 'fas fa-sun';
+                }
+                
+                themeToggle.addEventListener('click', function() {
+                    document.body.classList.toggle('dark-theme');
+                    
+                    if (document.body.classList.contains('dark-theme')) {
+                        localStorage.setItem('theme', 'dark');
+                        icon.className = 'fas fa-sun';
+                        this.showToast('Dark mode enabled', 'success');
+                    } else {
+                        localStorage.setItem('theme', 'light');
+                        icon.className = 'fas fa-moon';
+                        this.showToast('Light mode enabled', 'success');
+                    }
+                }.bind(this));
+            }
+            
+            // Initialize sidebar toggle
+            initializeSidebarToggle() {
+                // Mobile menu toggle
+                document.querySelector('.menu-toggle').addEventListener('click', function() {
+                    document.querySelector('.sidebar').classList.toggle('active');
+                });
+            }
+            
+            // Initialize payment modal
+            initializePaymentModal() {
+                const paymentModal = document.getElementById('paymentModal');
+                const closePaymentModal = document.getElementById('closePaymentModal');
+                const cancelBooking = document.getElementById('cancelBooking');
+                const confirmPayment = document.getElementById('confirmPayment');
+                const printBooking = document.getElementById('printBooking');
+                const newBooking = document.getElementById('newBooking');
+                const copyUpiId = document.getElementById('copyUpiId');
+                const copyGpayUpiId = document.getElementById('copyGpayUpiId');
+                
+                // Close modal events
+                [closePaymentModal, cancelBooking].forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        paymentModal.classList.remove('active');
+                    });
+                });
+                
+                // Confirm payment
+                confirmPayment.addEventListener('click', () => {
+                    this.processPaymentAndNotify();
+                });
+                
+                // Print booking
+                printBooking.addEventListener('click', () => {
+                    window.print();
+                });
+                
+                // New booking
+                newBooking.addEventListener('click', () => {
+                    this.resetForm();
+                    paymentModal.classList.remove('active');
+                });
+                
+                // Close modal when clicking outside
+                paymentModal.addEventListener('click', (e) => {
+                    if (e.target === paymentModal) {
+                        paymentModal.classList.remove('active');
+                    }
+                });
+                
+                // Payment method selection
+                document.querySelectorAll('.payment-method').forEach(method => {
+                    method.addEventListener('click', function() {
+                        document.querySelectorAll('.payment-method').forEach(m => {
+                            m.classList.remove('active');
+                        });
+                        this.classList.add('active');
+                        
+                        const methodType = this.getAttribute('data-method');
+                        this.selectedPaymentMethod = methodType;
+                        
+                        // Show the corresponding payment form
+                        document.querySelectorAll('.payment-form').forEach(form => {
+                            form.classList.remove('active');
+                        });
+                        document.getElementById(`${methodType}Form`).classList.add('active');
+                        
+                        // Update payment amount
+                        const total = document.getElementById('summary-total').textContent;
+                        document.getElementById('phonepayAmount').textContent = total;
+                        document.getElementById('gpayAmount').textContent = total;
+                    });
+                });
+                
+                // Copy UPI ID functionality
+                copyUpiId.addEventListener('click', () => {
+                    navigator.clipboard.writeText('fixitnow@paytm').then(() => {
+                        this.showToast('UPI ID copied to clipboard', 'success');
+                    });
+                });
+                
+                copyGpayUpiId.addEventListener('click', () => {
+                    navigator.clipboard.writeText('fixitnow@okhdfcbank').then(() => {
+                        this.showToast('UPI ID copied to clipboard', 'success');
+                    });
+                });
+                
+                // Format card inputs
+                document.getElementById('cardNumber').addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                    let matches = value.match(/\d{4,16}/g);
+                    let match = matches && matches[0] || '';
+                    let parts = [];
+                    
+                    for (let i=0, len=match.length; i<len; i+=4) {
+                        parts.push(match.substring(i, i+4));
+                    }
+                    
+                    if (parts.length) {
+                        e.target.value = parts.join(' ');
+                    } else {
+                        e.target.value = value;
+                    }
+                });
+                
+                document.getElementById('expiryDate').addEventListener('input', function(e) {
+                    let value = e.target.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+                    if (value.length >= 2) {
+                        e.target.value = value.substring(0, 2) + '/' + value.substring(2, 4);
+                    }
+                });
+            }
+            
+            // Initialize address buttons
+            initializeAddressButtons() {
+                const manualBtn = document.getElementById('manualAddressBtn');
+                const currentLocationBtn = document.getElementById('currentLocationBtn');
+                const addressInputContainer = document.getElementById('addressInputContainer');
+                
+                // Manual button click handler
+                manualBtn.addEventListener('click', () => {
+                    // Show the address input field
+                    addressInputContainer.classList.add('active');
+                    manualBtn.classList.add('active');
+                    currentLocationBtn.classList.remove('active');
+                    
+                    // Focus on the address input
+                    document.getElementById('address').focus();
+                });
+                
+                // Current Location button click handler - UPDATED VERSION
+                currentLocationBtn.addEventListener('click', () => {
+                    // Redirect to the location selection page
+                    window.location.href = 'user_location.html';
+                });
+            }
+            
+            // Load service data with comprehensive mock data
+            loadServiceData() {
+                this.serviceData = {
+                    plumbing: {
+                        name: "Plumbing",
+                        icon: "fa-faucet",
+                        description: "Our professional plumbing services cover all your needs from minor repairs to major installations. Our licensed plumbers are available 24/7 for emergencies.",
+                        features: [
+                            "Leak detection and repair",
+                            "Pipe installation and replacement",
+                            "Faucet and fixture installation",
+                            "Drain cleaning and unclogging",
+                            "Water heater services",
+                            "Toilet repair and installation",
+                            "Sump pump installation"
+                        ],
+                        pricing: "Starting from $75 for basic services. Free estimates for larger projects.",
+                        serviceTypes: [
+                            { value: "leak-repair", label: "Leak Repair", basePrice: 75 },
+                            { value: "pipe-installation", label: "Pipe Installation", basePrice: 100 },
+                            { value: "faucet-replacement", label: "Faucet Replacement", basePrice: 65 },
+                            { value: "drain-cleaning", label: "Drain Cleaning", basePrice: 80 },
+                            { value: "water-heater", label: "Water Heater Repair", basePrice: 120 }
+                        ]
+                    },
+                    electrical: {
+                        name: "Electrical",
+                        icon: "fa-bolt",
+                        description: "Complete electrical solutions for your home or business. Our certified electricians ensure safety and code compliance in all our work.",
+                        features: [
+                            "Electrical wiring and rewiring",
+                            "Lighting fixture installation",
+                            "Outlet and switch installation",
+                            "Circuit breaker repairs",
+                            "Electrical panel upgrades",
+                            "Ceiling fan installation",
+                            "Home safety inspections"
+                        ],
+                        pricing: "Starting from $90 for basic services. Emergency services available.",
+                        serviceTypes: [
+                            { value: "wiring", label: "Electrical Wiring", basePrice: 90 },
+                            { value: "fixture-installation", label: "Fixture Installation", basePrice: 75 },
+                            { value: "outlet-repair", label: "Outlet Repair", basePrice: 65 },
+                            { value: "panel-upgrade", label: "Panel Upgrade", basePrice: 200 },
+                            { value: "safety-inspection", label: "Safety Inspection", basePrice: 50 }
+                        ]
+                    },
+                    painting: {
+                        name: "Painting",
+                        icon: "fa-paint-roller",
+                        description: "Transform your space with our professional painting services. We use high-quality paints and techniques for a flawless finish.",
+                        features: [
+                            "Interior and exterior painting",
+                            "Color consultation",
+                            "Surface preparation and priming",
+                            "Wallpaper removal",
+                            "Drywall repair",
+                            "Cabinet refinishing",
+                            "Decorative finishes"
+                        ],
+                        pricing: "Starting from $200 per room. Free color consultation with every project.",
+                        serviceTypes: [
+                            { value: "interior-painting", label: "Interior Painting", basePrice: 200 },
+                            { value: "exterior-painting", label: "Exterior Painting", basePrice: 300 },
+                            { value: "cabinet-painting", label: "Cabinet Painting", basePrice: 150 },
+                            { value: "wallpaper-removal", label: "Wallpaper Removal", basePrice: 100 },
+                            { value: "color-consultation", label: "Color Consultation", basePrice: 50 }
+                        ]
+                    },
+                    carpentry: {
+                        name: "Carpentry",
+                        icon: "fa-tools",
+                        description: "Custom woodworking and carpentry solutions to enhance your home's functionality and aesthetics. From repairs to custom builds.",
+                        features: [
+                            "Custom furniture building",
+                            "Cabinet installation and repair",
+                            "Door and window framing",
+                            "Deck and patio construction",
+                            "Trim and molding installation",
+                            "Shelving and storage solutions",
+                            "Wood floor repairs"
+                        ],
+                        pricing: "Starting from $65/hour. Free estimates for custom projects.",
+                        serviceTypes: [
+                            { value: "furniture-building", label: "Furniture Building", basePrice: 65 },
+                            { value: "cabinet-installation", label: "Cabinet Installation", basePrice: 80 },
+                            { value: "deck-construction", label: "Deck Construction", basePrice: 100 },
+                            { value: "trim-installation", label: "Trim Installation", basePrice: 70 },
+                            { value: "shelving", label: "Shelving Solutions", basePrice: 60 }
+                        ]
+                    },
+                    ac: {
+                        name: "AC Repair",
+                        icon: "fa-wind",
+                        description: "Keep your home comfortable with our professional AC repair and maintenance services. We service all major brands and models.",
+                        features: [
+                            "AC unit repair and maintenance",
+                            "Refrigerant recharge",
+                            "Thermostat installation",
+                            "Duct cleaning and repair",
+                            "System troubleshooting",
+                            "Preventive maintenance",
+                            "Emergency repairs"
+                        ],
+                        pricing: "Starting from $80 for basic services. Maintenance plans available.",
+                        serviceTypes: [
+                            { value: "ac-repair", label: "AC Unit Repair", basePrice: 80 },
+                            { value: "maintenance", label: "Preventive Maintenance", basePrice: 60 },
+                            { value: "refrigerant-recharge", label: "Refrigerant Recharge", basePrice: 120 },
+                            { value: "thermostat-installation", label: "Thermostat Installation", basePrice: 75 },
+                            { value: "duct-cleaning", label: "Duct Cleaning", basePrice: 150 }
+                        ]
+                    },
+                    cleaning: {
+                        name: "Cleaning",
+                        icon: "fa-soap",
+                        description: "Professional cleaning services to keep your home spotless and hygienic. We use eco-friendly products and thorough techniques.",
+                        features: [
+                            "Deep cleaning services",
+                            "Move-in/move-out cleaning",
+                            "Carpet and upholstery cleaning",
+                            "Window cleaning",
+                            "Post-construction cleaning",
+                            "Regular maintenance cleaning",
+                            "Eco-friendly products"
+                        ],
+                        pricing: "Starting from $100 for basic cleaning. Custom packages available.",
+                        serviceTypes: [
+                            { value: "deep-cleaning", label: "Deep Cleaning", basePrice: 100 },
+                            { value: "move-cleaning", label: "Move-in/Move-out Cleaning", basePrice: 150 },
+                            { value: "carpet-cleaning", label: "Carpet Cleaning", basePrice: 80 },
+                            { value: "window-cleaning", label: "Window Cleaning", basePrice: 70 },
+                            { value: "maintenance-cleaning", label: "Maintenance Cleaning", basePrice: 60 }
+                        ]
+                    }
+                };
+                
+                this.renderCategories();
+            }
+            
+            // Render service categories
+            renderCategories() {
+                const categoriesGrid = document.getElementById('categoriesGrid');
+                categoriesGrid.innerHTML = '';
+                
+                Object.keys(this.serviceData).forEach(categoryKey => {
+                    const category = this.serviceData[categoryKey];
+                    const categoryCard = document.createElement('div');
+                    categoryCard.className = 'category-card';
+                    categoryCard.setAttribute('data-category', categoryKey);
+                    categoryCard.setAttribute('role', 'button');
+                    categoryCard.setAttribute('tabindex', '0');
+                    categoryCard.setAttribute('aria-label', `Select ${category.name} services`);
+                    
+                    categoryCard.innerHTML = `
+                        <div class="category-icon">
+                            <i class="fas ${category.icon}" aria-hidden="true"></i>
+                        </div>
+                        <h4>${category.name}</h4>
+                        <p>${categoryKey === 'plumbing' ? 'Leaks, installations & repairs' : 
+                              categoryKey === 'electrical' ? 'Wiring, fixtures & repairs' :
+                              categoryKey === 'painting' ? 'Interior & exterior painting' :
+                              categoryKey === 'carpentry' ? 'Furniture & woodwork' :
+                              categoryKey === 'ac' ? 'Cooling system services' :
+                              'Deep cleaning services'}</p>
+                    `;
+                    
+                    categoryCard.addEventListener('click', () => {
+                        this.selectCategory(categoryKey);
+                    });
+                    
+                    categoryCard.addEventListener('keydown', (e) => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            this.selectCategory(categoryKey);
+                        }
+                    });
+                    
+                    categoriesGrid.appendChild(categoryCard);
+                });
+            }
+            
+            // Select a service category
+            selectCategory(categoryKey) {
+                // Remove active class from all categories
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                // Add active class to selected category
+                const selectedCard = document.querySelector(`.category-card[data-category="${categoryKey}"]`);
+                if (selectedCard) {
+                    selectedCard.classList.add('active');
+                }
+                
+                this.selectedCategory = categoryKey;
+                const category = this.serviceData[categoryKey];
+                
+                // Update summary
+                document.getElementById('summary-category').textContent = category.name;
+                
+                // Update service types dropdown
+                this.updateServiceTypes(category);
+                
+                // Update providers list
+                this.updateProviders(categoryKey);
+                
+                // Save to localStorage
+                this.saveFormData();
+                
+                // Update total
+                this.updateTotal();
+                
+                // Update progress
+                this.updateProgress();
+            }
+            
+            // Update service types dropdown
+            updateServiceTypes(category) {
+                const serviceTypeSelect = document.getElementById('serviceType');
+                serviceTypeSelect.innerHTML = '<option value="">Select a service</option>';
+                
+                category.serviceTypes.forEach(service => {
+                    const option = document.createElement('option');
+                    option.value = service.value;
+                    option.textContent = service.label;
+                    option.setAttribute('data-price', service.basePrice);
+                    serviceTypeSelect.appendChild(option);
+                });
+            }
+            
+            // Update providers list
+            updateProviders(categoryKey) {
+                const providersList = document.getElementById('providersList');
+                
+                // Show loading state
+                providersList.innerHTML = `
+                    <div style="display: flex; flex-direction: column; gap: 20px;">
+                        <div style="height: 200px; background: #f0f0f0; border-radius: 12px; animation: pulse 1.5s infinite;"></div>
+                        <div style="height: 200px; background: #f0f0f0; border-radius: 12px; animation: pulse 1.5s infinite;"></div>
+                    </div>
+                `;
+
+                // Simulate API call delay
+                setTimeout(() => {
+                    // Get approved providers from localStorage
+                    const approvedProviders = JSON.parse(localStorage.getItem('approvedProviders')) || [];
+                    
+                    // Filter providers by service type
+                    const filteredProviders = approvedProviders.filter(provider => 
+                        provider.service_type && provider.service_type.toLowerCase() === categoryKey.toLowerCase()
+                    );
+
+                    // If no approved providers found for this category, show default providers
+                    let providersToShow = filteredProviders;
+                    
+                    if (providersToShow.length === 0) {
+                        // Show default mock providers as fallback
+                        providersToShow = this.getDefaultProviders(categoryKey);
+                    }
+
+                    providersList.innerHTML = '';
+
+                    if (providersToShow.length === 0) {
+                        providersList.innerHTML = `
+                            <div style="text-align: center; padding: 40px; color: #666;">
+                                <i class="fas fa-user-hard-hat" style="font-size: 48px; margin-bottom: 15px; color: #ccc;"></i>
+                                <h3>No Providers Available</h3>
+                                <p>No approved service providers found for ${this.serviceData[categoryKey]?.name || categoryKey} services.</p>
+                                <p>Please check back later or try a different service category.</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    providersToShow.forEach(provider => {
+                        const providerCard = document.createElement('div');
+                        providerCard.className = `provider-card ${provider.featured ? 'featured' : ''}`;
+                        providerCard.setAttribute('data-provider', provider.id);
+                        
+                        // Calculate provider details from approved data
+                        const businessName = provider.businessName || `${provider.name}'s ${provider.service_type ? provider.service_type.charAt(0).toUpperCase() + provider.service_type.slice(1) : 'Professional'} Services`;
+                        const description = provider.description || `Professional ${provider.service_type || 'service'} with ${provider.experience || '5'} years of experience.`;
+                        const rating = provider.rating || 4.5;
+                        const reviews = provider.reviews || Math.floor(Math.random() * 50) + 25;
+                        const hourlyRate = provider.hourlyRate || (50 + ((provider.experience || 5) * 5));
+                        const experience = provider.experience || '5';
+                        const services = provider.services || [provider.service_type ? provider.service_type.charAt(0).toUpperCase() + provider.service_type.slice(1) : 'General Services'];
+
+                        providerCard.innerHTML = `
+                            ${provider.featured ? '<div class="provider-badge">Featured</div>' : ''}
+                            <div class="provider-header">
+                                <div class="provider-avatar">${businessName.charAt(0)}</div>
+                                <div class="provider-info">
+                                    <h4>${businessName}</h4>
+                                    <div class="provider-rating">
+                                        <i class="fas fa-star" aria-hidden="true"></i>
+                                        <span>${rating} (${reviews} reviews)</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="provider-details">
+                                <span>${experience} years experience</span>
+                                <span class="provider-price">$${hourlyRate}/hr</span>
+                            </div>
+                            <p class="provider-description">${description}</p>
+                            <div class="provider-features">
+                                ${services.map(service => `<span class="feature-tag">${service}</span>`).join('')}
+                                ${provider.certified ? '<span class="feature-tag">Certified</span>' : ''}
+                                ${provider.insured ? '<span class="feature-tag">Insured</span>' : ''}
+                                <span class="feature-tag">Approved</span>
+                            </div>
+                            <button class="select-provider-btn" type="button" aria-label="Select ${businessName} as service provider">
+                                Select Provider
+                            </button>
+                        `;
+                        
+                        providerCard.querySelector('.select-provider-btn').addEventListener('click', () => {
+                            this.selectProvider({
+                                id: provider.id,
+                                businessName: businessName,
+                                fullName: provider.name,
+                                description: description,
+                                rating: rating,
+                                reviews: reviews,
+                                experience: experience,
+                                hourlyRate: hourlyRate,
+                                services: services,
+                                certified: provider.certified,
+                                insured: provider.insured,
+                                featured: provider.featured
+                            });
+                        });
+                        
+                        providersList.appendChild(providerCard);
+                    });
+                }, 1000);
+            }
+
+            // Helper method for default providers
+            getDefaultProviders(categoryKey) {
+                const categoryName = this.serviceData[categoryKey]?.name || categoryKey;
+                
+                return [
+                    {
+                        id: 'default-1',
+                        businessName: `Professional ${categoryName} Services`,
+                        name: `Professional ${categoryName}`,
+                        description: `Experienced ${categoryName.toLowerCase()} professional with excellent customer reviews.`,
+                        rating: 4.5,
+                        reviews: 89,
+                        experience: 8,
+                        hourlyRate: 75,
+                        services: [categoryName],
+                        certified: true,
+                        insured: true,
+                        featured: true,
+                        service_type: categoryKey
+                    },
+                    {
+                        id: 'default-2',
+                        businessName: `Quick ${categoryName} Solutions`,
+                        name: `Quick ${categoryName}`,
+                        description: `Fast and reliable ${categoryName.toLowerCase()} services available.`,
+                        rating: 4.3,
+                        reviews: 67,
+                        experience: 5,
+                        hourlyRate: 65,
+                        services: [categoryName],
+                        certified: true,
+                        insured: true,
+                        featured: false,
+                        service_type: categoryKey
+                    }
+                ];
+            }
+
+            // Initialize approved providers data structure
+            initializeApprovedProviders() {
+                const approvedProviders = JSON.parse(localStorage.getItem('approvedProviders')) || [];
+                
+                // If no approved providers exist yet, initialize with some sample data
+                if (approvedProviders.length === 0) {
+                    const sampleProviders = [
+                        {
+                            id: 1,
+                            name: "John Smith",
+                            email: "john@example.com",
+                            phone: "123-456-7890",
+                            service_type: "plumbing",
+                            experience: 10,
+                            status: "approved",
+                            approvalDate: new Date().toISOString(),
+                            businessName: "John's Plumbing Co.",
+                            description: "Professional plumbing services with 10+ years of experience.",
+                            rating: 4.8,
+                            reviews: 127,
+                            hourlyRate: 75,
+                            certified: true,
+                            insured: true,
+                            featured: true
+                        },
+                        {
+                            id: 2,
+                            name: "Mike Johnson",
+                            email: "mike@example.com",
+                            phone: "123-456-7891",
+                            service_type: "electrical",
+                            experience: 7,
+                            status: "approved",
+                            approvalDate: new Date().toISOString(),
+                            businessName: "Mike's Electrical Services",
+                            description: "Certified electrician with 7 years of experience.",
+                            rating: 4.5,
+                            reviews: 89,
+                            hourlyRate: 70,
+                            certified: true,
+                            insured: true,
+                            featured: false
+                        }
+                    ];
+                    
+                    localStorage.setItem('approvedProviders', JSON.stringify(sampleProviders));
+                }
+            }
+                    
+            
+            // Select a service provider
+            selectProvider(provider) {
+                // Remove selected class from all providers
+                document.querySelectorAll('.provider-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                
+                // Add selected class to clicked provider
+                const providerCard = document.querySelector(`.provider-card[data-provider="${provider.id}"]`);
+                if (providerCard) {
+                    providerCard.classList.add('selected');
+                }
+                
+                this.selectedProvider = provider;
+                
+                // Update summary
+                document.getElementById('summary-provider').textContent = provider.businessName || provider.fullName || 'Service Provider';
+                document.getElementById('summary-fee').textContent = provider.hourlyRate ? `$${provider.hourlyRate}/hr` : '$75/hr';
+                
+                // Save to localStorage
+                this.saveFormData();
+                
+                // Update total
+                this.updateTotal();
+                
+                // Update progress
+                this.updateProgress();
+            }
+            
+            // Setup event listeners
+            setupEventListeners() {
+                // Form input listeners with auto-save
+                document.getElementById('serviceType').addEventListener('change', () => {
+                    this.validateField('serviceType');
+                    document.getElementById('summary-service').textContent = this.serviceType.options[this.serviceType.selectedIndex].text;
+                    this.saveFormData();
+                    this.updateTotal();
+                    this.updateProgress();
+                });
+                
+                document.getElementById('urgency').addEventListener('change', () => {
+                    this.validateField('urgency');
+                    this.saveFormData();
+                    this.updateTotal();
+                });
+                
+                document.getElementById('preferredDate').addEventListener('change', () => {
+                    this.validateField('preferredDate');
+                    this.showAutoSaveIndicator('date');
+                    this.updateDateTimeSummary();
+                    this.saveFormData();
+                    this.updateProgress();
+                });
+                
+                document.getElementById('preferredTime').addEventListener('change', () => {
+                    this.validateField('preferredTime');
+                    this.updateDateTimeSummary();
+                    this.saveFormData();
+                });
+                
+                // Address input listener - only if manual mode is active
+                document.getElementById('address').addEventListener('input', () => {
+                    this.validateField('address');
+                    this.showAutoSaveIndicator('address');
+                    document.getElementById('summary-address').textContent = this.address.value || 'Not provided';
+                    this.saveFormData();
+                    this.updateProgress();
+                });
+                
+                document.getElementById('problemDescription').addEventListener('input', () => {
+                    this.validateField('problemDescription');
+                    this.showAutoSaveIndicator('description');
+                    this.saveFormData();
+                    
+                    // Update character count
+                    const count = this.problemDescription.value.length;
+                    const counter = document.getElementById('problemDescriptionCount');
+                    counter.textContent = `${count}/500`;
+                    
+                    if (count > 450) {
+                        counter.className = 'character-count warning';
+                    } else if (count > 500) {
+                        counter.className = 'character-count error';
+                    } else {
+                        counter.className = 'character-count';
+                    }
+                });
+                
+                // Book Now button
+                document.getElementById('bookNowBtn').addEventListener('click', () => {
+                    this.bookService();
+                });
+            }
+            
+            // Setup form validation
+            setupFormValidation() {
+                this.formValidators = {
+                    serviceType: (value) => {
+                        if (!value) return { isValid: false, message: 'Please select a service type' };
+                        return { isValid: true, message: '' };
+                    },
+                    urgency: (value) => {
+                        if (!value) return { isValid: false, message: 'Please select urgency level' };
+                        return { isValid: true, message: '' };
+                    },
+                    preferredDate: (value) => {
+                        if (!value) return { isValid: false, message: 'Please select a preferred date' };
+                        
+                        const selectedDate = new Date(value);
+                        const today = new Date();
+                        today.setHours(0, 0, 0, 0);
+                        
+                        if (selectedDate < today) {
+                            return { isValid: false, message: 'Please select a future date' };
+                        }
+                        
+                        return { isValid: true, message: '' };
+                    },
+                    preferredTime: (value) => {
+                        if (!value) return { isValid: false, message: 'Please select a preferred time' };
+                        return { isValid: true, message: '' };
+                    },
+                    address: (value) => {
+                        if (!value) return { isValid: false, message: 'Please enter your address' };
+                        if (value.length < 10) return { isValid: false, message: 'Address seems too short' };
+                        return { isValid: true, message: '' };
+                    },
+                    problemDescription: (value) => {
+                        if (!value) return { isValid: false, message: 'Please describe the problem' };
+                        if (value.length < 20) return { isValid: false, message: 'Please provide more details (at least 20 characters)' };
+                        if (value.length > 500) return { isValid: false, message: 'Description too long (max 500 characters)' };
+                        return { isValid: true, message: '' };
+                    }
+                };
+            }
+            
+            // Validate form field
+            validateField(fieldName) {
+                const field = document.getElementById(fieldName);
+                const group = document.getElementById(`${fieldName}Group`);
+                const validationMessage = document.getElementById(`${fieldName}Validation`);
+                
+                if (!this.formValidators[fieldName]) return true;
+                
+                const result = this.formValidators[fieldName](field.value);
+                
+                if (result.isValid) {
+                    group.classList.remove('error');
+                    group.classList.add('success');
+                    validationMessage.textContent = '';
+                    validationMessage.classList.remove('show', 'error');
+                } else {
+                    group.classList.remove('success');
+                    group.classList.add('error');
+                    validationMessage.textContent = result.message;
+                    validationMessage.classList.add('show', 'error');
+                }
+                
+                return result.isValid;
+            }
+            
+            // Show auto-save indicator
+            showAutoSaveIndicator(field) {
+                const indicator = document.getElementById(`${field}-save-indicator`);
+                indicator.classList.add('show');
+                
+                setTimeout(() => {
+                    indicator.classList.remove('show');
+                }, 2000);
+            }
+            
+            // Update date and time summary
+            updateDateTimeSummary() {
+                const date = document.getElementById('preferredDate').value;
+                const time = document.getElementById('preferredTime').options[document.getElementById('preferredTime').selectedIndex].text;
+                
+                if (date && time) {
+                    const formattedDate = new Date(date).toLocaleDateString('en-US', { 
+                        weekday: 'short', 
+                        year: 'numeric', 
+                        month: 'short', 
+                        day: 'numeric' 
+                    });
+                    document.getElementById('summary-datetime').textContent = `${formattedDate}, ${time}`;
+                }
+            }
+        
+            // Update total cost
+            updateTotal() {
+                let total = 0;
+                
+                // Base service fee
+                const feeElement = document.getElementById('summary-fee');
+                if (feeElement.textContent !== '$0' && this.selectedProvider) {
+                    const fee = parseFloat(this.selectedProvider.hourlyRate) || 75;
+                    total += fee;
+                }
+                
+                // Urgency fee
+                const urgency = document.getElementById('urgency').value;
+                let urgencyFee = 0;
+                if (urgency === 'urgent') urgencyFee = 25;
+                if (urgency === 'emergency') urgencyFee = 50;
+                
+                document.getElementById('summary-urgency').textContent = `$${urgencyFee}`;
+                total += urgencyFee;
+                
+                // Update total
+                document.getElementById('summary-total').textContent = `$${total}`;
+                
+                // Enable/disable book now button
+                const bookNowBtn = document.getElementById('bookNowBtn');
+                const isFormValid = this.isFormValid();
+                bookNowBtn.disabled = !isFormValid;
+            }
+            
+            // Check if form is valid
+            isFormValid() {
+                return this.selectedCategory && 
+                       document.getElementById('serviceType').value && 
+                       this.selectedProvider && 
+                       document.getElementById('preferredDate').value && 
+                       document.getElementById('address').value &&
+                       this.validateForm();
+            }
+            
+            // Validate entire form
+            validateForm() {
+                let isValid = true;
+                
+                Object.keys(this.formValidators).forEach(field => {
+                    if (!this.validateField(field)) {
+                        isValid = false;
+                    }
+                });
+                
+                return isValid;
+            }
+            
+            // Update progress steps
+            updateProgress() {
+                const steps = document.querySelectorAll('.step');
+                const progressBar = document.getElementById('progressBar');
+                
+                // Reset all steps
+                steps.forEach(step => {
+                    step.classList.remove('active', 'completed');
+                });
+                
+                // Determine current step
+                if (this.selectedCategory) {
+                    document.getElementById('step1').classList.add('completed');
+                    document.getElementById('step2').classList.add('active');
+                    progressBar.style.width = '66%';
+                }
+                
+                if (this.isFormValid()) {
+                    document.getElementById('step2').classList.add('completed');
+                    document.getElementById('step3').classList.add('active');
+                    progressBar.style.width = '100%';
+                }
+            }
+            
+            // Save form data to localStorage
+            saveFormData() {
+                const formData = {
+                    serviceCategory: this.selectedCategory,
+                    serviceType: document.getElementById('serviceType').value,
+                    urgency: document.getElementById('urgency').value,
+                    preferredDate: document.getElementById('preferredDate').value,
+                    preferredTime: document.getElementById('preferredTime').value,
+                    address: document.getElementById('address').value,
+                    problemDescription: document.getElementById('problemDescription').value,
+                    provider: this.selectedProvider ? (this.selectedProvider.businessName || this.selectedProvider.fullName) : null,
+                    providerFee: this.selectedProvider ? (this.selectedProvider.hourlyRate ? `$${this.selectedProvider.hourlyRate}/hr` : '$75/hr') : null
+                };
+                
+                localStorage.setItem('fixitnow_booking', JSON.stringify(formData));
+            }
+            
+            // Load form data from localStorage
+            loadFormData() {
+                const savedData = localStorage.getItem('fixitnow_booking');
+                
+                if (savedData) {
+                    const formData = JSON.parse(savedData);
+                    
+                    // Restore category
+                    if (formData.serviceCategory) {
+                        this.selectCategory(formData.serviceCategory);
+                    }
+                    
+                    // Restore form fields
+                    if (formData.serviceType) {
+                        document.getElementById('serviceType').value = formData.serviceType;
+                        document.getElementById('summary-service').textContent = 
+                            document.getElementById('serviceType').options[document.getElementById('serviceType').selectedIndex].text;
+                    }
+                    
+                    if (formData.urgency) {
+                        document.getElementById('urgency').value = formData.urgency;
+                    }
+                    
+                    if (formData.preferredDate) {
+                        document.getElementById('preferredDate').value = formData.preferredDate;
+                    }
+                    
+                    if (formData.preferredTime) {
+                        document.getElementById('preferredTime').value = formData.preferredTime;
+                    }
+                    
+                    if (formData.address) {
+                        document.getElementById('address').value = formData.address;
+                        document.getElementById('summary-address').textContent = formData.address;
+                    }
+                    
+                    if (formData.problemDescription) {
+                        document.getElementById('problemDescription').value = formData.problemDescription;
+                    }
+                    
+                    // Update date/time and total
+                    this.updateDateTimeSummary();
+                    this.updateTotal();
+                    this.updateProgress();
+                }
+                
+                // Initialize with today's date
+                const today = new Date().toISOString().split('T')[0];
+                document.getElementById('preferredDate').value = today;
+                document.getElementById('preferredDate').min = today;
+            }
+            
+            // Book service
+            async bookService() {
+                if (this.bookingInProgress) return;
+                
+                const btn = document.getElementById('bookNowBtn');
+                const originalText = btn.innerHTML;
+
+                // Validate form
+                if (!this.validateForm()) {
+                    this.showToast('Please fix the form errors before booking.', 'error');
+                    return;
+                }
+
+                if (!this.selectedProvider) {
+                    this.showToast('Please select a service provider before booking.', 'error');
+                    return;
+                }
+
+                this.bookingInProgress = true;
+                
+                // Show loading state
+                btn.innerHTML = '<div class="loading"></div> Processing...';
+                btn.disabled = true;
+
+                try {
+                    // Create booking data
+                    const bookingData = {
+                        serviceType: document.getElementById('serviceType').value,
+                        serviceCategory: this.selectedCategory,
+                        providerId: this.selectedProvider.id,
+                        providerName: this.selectedProvider.businessName || this.selectedProvider.fullName,
+                        customerName: this.userData.profile.fullName,
+                        customerEmail: this.userData.profile.email,
+                        address: document.getElementById('address').value,
+                        problemDescription: document.getElementById('problemDescription').value,
+                        preferredDate: document.getElementById('preferredDate').value,
+                        preferredTime: document.getElementById('preferredTime').value,
+                        totalCost: document.getElementById('summary-total').textContent,
+                        status: 'pending',
+                        createdAt: new Date().toISOString(),
+                        bookingId: 'BK-' + Date.now()
+                    };
+
+                    // Show payment modal
+                    document.getElementById('paymentModal').classList.add('active');
+                    document.getElementById('paymentForm').style.display = 'block';
+                    document.getElementById('confirmationScreen').style.display = 'none';
+                    document.querySelector('.modal-footer').style.display = 'flex';
+                    
+                    // Update payment amounts
+                    const total = document.getElementById('summary-total').textContent;
+                    document.getElementById('phonepayAmount').textContent = total;
+                    document.getElementById('gpayAmount').textContent = total;
+                    
+                    // UPDATE: Set ALL confirmation details immediately when modal opens
+                    document.getElementById('confirm-service').textContent = 
+                        `${this.serviceData[this.selectedCategory].name} - ${document.getElementById('serviceType').options[document.getElementById('serviceType').selectedIndex].text}`;
+                    document.getElementById('confirm-provider').textContent = this.selectedProvider.businessName || this.selectedProvider.fullName;
+                    document.getElementById('confirm-datetime').textContent = document.getElementById('summary-datetime').textContent;
+                    document.getElementById('confirm-address').textContent = document.getElementById('address').value;
+                    document.getElementById('confirm-total').textContent = document.getElementById('summary-total').textContent;
+                    
+                    this.showToast('Please complete payment to confirm your booking', 'info');
+
+                } catch (error) {
+                    console.error('Booking error:', error);
+                    this.showToast('Booking failed: ' + error.message, 'error');
+                } finally {
+                    // Reset button
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                    this.bookingInProgress = false;
+                }
+            }
+            
+            // Process payment and send notifications
+            async processPaymentAndNotify() {
+                const btn = document.getElementById('confirmPayment');
+                const originalText = btn.innerHTML;
+                
+                // Show loading state
+                btn.innerHTML = '<div class="loading"></div> Processing...';
+                btn.disabled = true;
+                
+                try {
+                    // Create booking data
+                    const bookingData = {
+                        bookingId: 'BK-' + Date.now(),
+                        serviceType: document.getElementById('serviceType').value,
+                        serviceCategory: this.selectedCategory,
+                        providerId: this.selectedProvider.id,
+                        providerName: this.selectedProvider.businessName || this.selectedProvider.fullName,
+                        customerName: this.userData.profile.fullName,
+                        customerEmail: this.userData.profile.email,
+                        address: document.getElementById('address').value,
+                        problemDescription: document.getElementById('problemDescription').value,
+                        preferredDate: document.getElementById('preferredDate').value,
+                        preferredTime: document.getElementById('preferredTime').value,
+                        totalCost: document.getElementById('summary-total').textContent,
+                        status: 'pending',
+                        paymentStatus: 'paid',
+                        paymentMethod: this.selectedPaymentMethod,
+                        createdAt: new Date().toISOString()
+                    };
+
+                    // Save to admin dashboard (payments)
+                    this.saveToAdminPayments(bookingData);
+                    
+                    // Send notification to provider
+                    this.sendProviderNotification(bookingData);
+                    
+                    // Show confirmation
+                    document.getElementById('paymentForm').style.display = 'none';
+                    document.getElementById('confirmationScreen').style.display = 'block';
+                    document.querySelector('.modal-footer').style.display = 'none';
+                    
+                    // Update confirmation details
+                    document.getElementById('confirm-service').textContent = 
+                        `${this.serviceData[this.selectedCategory].name} - ${document.getElementById('serviceType').options[document.getElementById('serviceType').selectedIndex].text}`;
+                    document.getElementById('confirm-provider').textContent = this.selectedProvider.businessName || this.selectedProvider.fullName;
+                    document.getElementById('confirm-datetime').textContent = document.getElementById('summary-datetime').textContent;
+                    document.getElementById('confirm-total').textContent = document.getElementById('summary-total').textContent;
+                    document.getElementById('confirm-address').textContent = document.getElementById('address').value;
+                    
+                    this.showToast('Payment processed successfully! Notification sent to provider.', 'success');
+                    
+                } catch (error) {
+                    this.showToast('Payment failed. Please try again.', 'error');
+                    console.error('Payment error:', error);
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // Save payment to admin dashboard
+            saveToAdminPayments(bookingData) {
+                // Get existing payments or initialize empty array
+                const adminPayments = JSON.parse(localStorage.getItem('admin_payments')) || [];
+                
+                // Add new payment
+                adminPayments.push({
+                    id: 'PAY-' + Date.now(),
+                    bookingId: bookingData.bookingId,
+                    customerName: bookingData.customerName,
+                    providerName: bookingData.providerName,
+                    service: `${this.serviceData[bookingData.serviceCategory].name} - ${bookingData.serviceType}`,
+                    amount: bookingData.totalCost,
+                    date: new Date().toISOString(),
+                    status: 'completed',
+                    paymentMethod: bookingData.paymentMethod,
+                    type: 'service_booking'
+                });
+                
+                // Save back to localStorage
+                localStorage.setItem('admin_payments', JSON.stringify(adminPayments));
+                
+                console.log('Payment saved to admin dashboard:', bookingData);
+            }
+
+            // Send notification to provider
+            sendProviderNotification(bookingData) {
+                // Get existing notifications or initialize empty array
+                const providerNotifications = JSON.parse(localStorage.getItem('provider_notifications')) || [];
+                
+                // Create notification
+                const notification = {
+                    id: 'NOTIF-' + Date.now(),
+                    type: 'new_booking',
+                    providerId: bookingData.providerId,
+                    bookingId: bookingData.bookingId,
+                    customerName: bookingData.customerName,
+                    serviceType: `${this.serviceData[bookingData.serviceCategory].name} - ${bookingData.serviceType}`,
+                    preferredDate: bookingData.preferredDate,
+                    preferredTime: bookingData.preferredTime,
+                    address: bookingData.address,
+                    problemDescription: bookingData.problemDescription,
+                    totalCost: bookingData.totalCost,
+                    status: 'unread',
+                    timestamp: new Date().toISOString(),
+                    requiresAction: true
+                };
+                
+                // Add to notifications
+                providerNotifications.push(notification);
+                
+                // Save back to localStorage
+                localStorage.setItem('provider_notifications', JSON.stringify(providerNotifications));
+                
+                console.log('Notification sent to provider:', notification);
+            }
+            
+            // Reset form after booking
+            resetForm() {
+                document.getElementById('bookingForm').reset();
+                localStorage.removeItem('fixitnow_booking');
+                this.selectedProvider = null;
+                this.selectedCategory = null;
+                
+                // Reset UI
+                document.querySelectorAll('.provider-card').forEach(card => {
+                    card.classList.remove('selected');
+                });
+                document.querySelectorAll('.category-card').forEach(card => {
+                    card.classList.remove('active');
+                });
+                
+                document.getElementById('summary-category').textContent = 'Not selected';
+                document.getElementById('summary-service').textContent = 'Not selected';
+                document.getElementById('summary-provider').textContent = 'Not selected';
+                document.getElementById('summary-datetime').textContent = 'Not selected';
+                document.getElementById('summary-address').textContent = 'Not provided';
+                document.getElementById('summary-fee').textContent = '$0';
+                document.getElementById('summary-urgency').textContent = '$0';
+                document.getElementById('summary-total').textContent = '$0';
+                
+                this.updateProgress();
+                
+                // Reset character count
+                document.getElementById('problemDescriptionCount').textContent = '0/500';
+                document.getElementById('problemDescriptionCount').className = 'character-count';
+            }
+            
+            // Show toast notification
+            showToast(message, type = 'info', duration = 4000) {
+                const toastContainer = document.getElementById('toastContainer');
+                const toastId = 'toast-' + Date.now();
+                
+                // Limit number of toasts
+                if (toastContainer.children.length >= 3) {
+                    toastContainer.removeChild(toastContainer.firstChild);
+                }
+                
+                const toast = document.createElement('div');
+                toast.className = `toast ${type}`;
+                toast.id = toastId;
+                toast.innerHTML = `
+                    <div class="toast-icon">
+                        <i class="fas fa-${this.getToastIcon(type)}"></i>
+                    </div>
+                    <div class="toast-content">
+                        <div class="toast-title">${this.getToastTitle(type)}</div>
+                        <div class="toast-message">${message}</div>
+                    </div>
+                    <button class="toast-close">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                toastContainer.appendChild(toast);
+                
+                // Show toast with animation
+                setTimeout(() => {
+                    toast.classList.add('show');
+                }, 10);
+                
+                // Close button
+                toast.querySelector('.toast-close').addEventListener('click', () => {
+                    this.hideToast(toastId);
+                });
+                
+                // Auto hide after duration
+                if (duration > 0) {
+                    setTimeout(() => {
+                        this.hideToast(toastId);
+                    }, duration);
+                }
+                
+                return toastId;
+            }
+            
+            // Hide toast
+            hideToast(toastId) {
+                const toast = document.getElementById(toastId);
+                if (toast) {
+                    toast.classList.remove('show');
+                    setTimeout(() => {
+                        if (toast.parentNode) {
+                            toast.parentNode.removeChild(toast);
+                        }
+                    }, 300);
+                }
+            }
+            
+            // Get toast icon based on type
+            getToastIcon(type) {
+                const icons = {
+                    'success': 'check-circle',
+                    'error': 'exclamation-circle',
+                    'warning': 'exclamation-triangle',
+                    'info': 'info-circle'
+                };
+                return icons[type] || 'info-circle';
+            }
+            
+            // Get toast title based on type
+            getToastTitle(type) {
+                const titles = {
+                    'success': 'Success',
+                    'error': 'Error',
+                    'warning': 'Warning',
+                    'info': 'Information'
+                };
+                return titles[type] || 'Information';
+            }
+            
+            // Getters for form elements
+            get serviceType() { return document.getElementById('serviceType'); }
+            get address() { return document.getElementById('address'); }
+            get problemDescription() { return document.getElementById('problemDescription'); }
+        }
+
+        // Initialize the application when DOM is loaded
+        document.addEventListener('DOMContentLoaded', () => {
+            window.bookServicesApp = new BookServicesApp();
+        });
+    </script>
+</body>
+</html>

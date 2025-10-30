@@ -1,0 +1,924 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>About Us - sahakar</title>
+    <meta name="description" content="Learn about sahakar - revolutionizing home services through technology and connecting homeowners with trusted professionals">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            /* LIGHT MODE */
+            --bg-gradient: linear-gradient(135deg, #f0e4d4 0%, #d6c9a4 100%);
+            --text-primary: #0b1a34;
+            --text-secondary: #4e5d4e;
+            --accent-gradient: linear-gradient(90deg, #4e5d4e, #8b3a3a);
+            --highlight: #4e5d4e;
+            --card-bg: rgba(255,255,255,0.85);
+            --card-border: rgba(78,93,78,0.25);
+            --shadow: rgba(0,0,0,0.12);
+            --progress-bg: rgba(78,93,78,0.15);
+            --decoration-1: linear-gradient(135deg, #4e5d4e, #8b3a3a);
+            --decoration-2: linear-gradient(135deg, #d6c9a4, #f0e4d4);
+            --decoration-3: linear-gradient(135deg, #0b1a34, #4e5d4e);
+            --decoration-4: linear-gradient(135deg, #8b3a3a, #d6c9a4);
+        }
+
+        [data-theme="dark"] {
+            /* DARK MODE */
+            --bg-gradient: linear-gradient(135deg, #0b1a34 0%, #1a2a44 100%);
+            --text-primary: #f0e4d4;
+            --text-secondary: #d6c9a4;
+            --accent-gradient: linear-gradient(90deg, #4e5d4e, #8b3a3a);
+            --highlight: #8b3a3a;
+            --card-bg: rgba(11,26,52,0.65);
+            --card-border: rgba(78,93,78,0.35);
+            --shadow: rgba(0,0,0,0.3);
+            --progress-bg: rgba(240,228,212,0.15);
+            --decoration-1: linear-gradient(135deg, #4e5d4e, #8b3a3a);
+            --decoration-2: linear-gradient(135deg, #8b3a3a, #d6c9a4);
+            --decoration-3: linear-gradient(135deg, #0b1a34, #4e5d4e);
+            --decoration-4: linear-gradient(135deg, #d6c9a4, #f0e4d4);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            color: var(--text-primary);
+            min-height: 100vh;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Navigation with Full Width Background */
+        .navbar-container {
+            width: 100%;
+            background: var(--card-bg);
+            border-bottom: 1px solid var(--card-border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding-left: 20px;
+            padding-right: 20px;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 32px;
+            color: var(--text-primary);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo i {
+            font-size: 36px;
+            color: var(--highlight);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 35px;
+        }
+
+        .nav-links li a {
+            text-decoration: none;
+            color: var(--text-primary);
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 8px 16px;
+            border-radius: 8px;
+        }
+
+        .nav-links li a:hover {
+            color: var(--highlight);
+            background: rgba(78, 93, 78, 0.1);
+        }
+
+        .nav-links li a.active {
+            color: var(--highlight);
+            background: rgba(78, 93, 78, 0.1);
+            font-weight: 600;
+        }
+
+        .get-started-btn {
+            padding: 14px 32px;
+            background: var(--decoration-1);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 6px 20px var(--shadow);
+            font-size: 15px;
+        }
+
+        .get-started-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 12px 30px var(--shadow);
+        }
+
+        /* About Us Hero Section */
+        .about-hero {
+            padding: 100px 0 80px;
+            background: var(--decoration-3);
+            color: white;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .about-hero::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1000 100" fill="%23ffffff" opacity="0.1"><polygon points="1000,100 1000,0 0,100"></polygon></svg>');
+            background-size: cover;
+        }
+
+        .about-hero-content {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 2;
+        }
+
+        .about-hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            padding: 10px 24px;
+            border-radius: 30px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 25px;
+        }
+
+        .about-hero-title {
+            font-size: 3.5rem;
+            font-weight: 800;
+            margin-bottom: 20px;
+            line-height: 1.1;
+        }
+
+        .about-hero-subtitle {
+            font-size: 1.3rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        /* About Content Sections */
+        .about-section {
+            padding: 100px 0;
+        }
+
+        .about-section:nth-child(even) {
+            background: var(--card-bg);
+        }
+
+        .section-header {
+            text-align: center;
+            margin-bottom: 70px;
+        }
+
+        .section-badge {
+            display: inline-block;
+            background: rgba(78, 93, 78, 0.1);
+            color: var(--highlight);
+            padding: 8px 20px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .section-title {
+            font-size: 3rem;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .section-subtitle {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .content-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 60px;
+            align-items: center;
+        }
+
+        .content-text {
+            font-size: 1.1rem;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .content-text p {
+            margin-bottom: 25px;
+        }
+
+        .content-visual {
+            background: var(--decoration-1);
+            border-radius: 25px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 25px 50px var(--shadow);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .content-visual i {
+            font-size: 120px;
+            opacity: 0.8;
+        }
+
+        /* Problem Statement Section */
+        .problem-statement {
+            background: var(--decoration-2);
+        }
+
+        .problem-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+        }
+
+        .problem-card {
+            background: var(--card-bg);
+            padding: 40px 30px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow);
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+
+        .problem-card:hover {
+            transform: translateY(-10px);
+        }
+
+        .problem-icon {
+            width: 80px;
+            height: 80px;
+            background: var(--decoration-1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 25px;
+            color: white;
+            font-size: 32px;
+        }
+
+        .problem-title {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .problem-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Solution Section */
+        .solution-features {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+        }
+
+        .feature-card {
+            background: var(--card-bg);
+            padding: 35px 25px;
+            border-radius: 20px;
+            box-shadow: 0 15px 40px var(--shadow);
+            text-align: center;
+            border-top: 4px solid var(--highlight);
+            transition: all 0.3s ease;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 50px var(--shadow);
+        }
+
+        .feature-icon {
+            width: 70px;
+            height: 70px;
+            background: rgba(78, 93, 78, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: var(--highlight);
+            font-size: 28px;
+        }
+
+        .feature-title {
+            font-size: 1.3rem;
+            color: var(--text-primary);
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .feature-description {
+            color: var(--text-secondary);
+            line-height: 1.7;
+        }
+
+        /* Team Section */
+        .team-section {
+            background: var(--card-bg);
+        }
+
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .team-card {
+            text-align: center;
+            padding: 30px;
+            border-radius: 20px;
+            background: var(--card-bg);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .team-avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: var(--decoration-1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+            color: white;
+            font-size: 40px;
+            font-weight: 700;
+        }
+
+        .team-name {
+            font-size: 1.4rem;
+            color: var(--text-primary);
+            margin-bottom: 5px;
+            font-weight: 700;
+        }
+
+        .team-role {
+            color: var(--highlight);
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        .team-description {
+            color: var(--text-secondary);
+            line-height: 1.6;
+        }
+
+        /* CTA Section */
+        .cta-section {
+            padding: 100px 0;
+            background: var(--decoration-3);
+            color: white;
+            text-align: center;
+        }
+
+        .cta-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .cta-title {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            font-weight: 800;
+        }
+
+        .cta-description {
+            font-size: 1.2rem;
+            opacity: 0.9;
+            margin-bottom: 40px;
+            line-height: 1.7;
+        }
+
+        /* Footer */
+        .footer {
+            background: var(--text-primary);
+            color: white;
+            padding: 80px 0 30px;
+        }
+
+        .footer-content {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1.5fr;
+            gap: 50px;
+            margin-bottom: 50px;
+        }
+
+        .footer-column {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .footer-title {
+            font-size: 1.3rem;
+            margin-bottom: 25px;
+            font-weight: 700;
+        }
+
+        .footer-logo {
+            font-size: 28px;
+            font-weight: 800;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .footer-logo i {
+            color: var(--highlight);
+        }
+
+        .footer-description {
+            color: rgba(255, 255, 255, 0.8);
+            line-height: 1.7;
+            margin-bottom: 25px;
+            font-size: 15px;
+        }
+
+        .social-links {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-link {
+            width: 45px;
+            height: 45px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .social-link:hover {
+            background: var(--highlight);
+            transform: translateY(-3px);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 12px;
+        }
+
+        .footer-links a {
+            color: rgba(255, 255, 255, 0.8);
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .footer-links a:hover {
+            color: white;
+            transform: translateX(5px);
+        }
+
+        .footer-links i {
+            font-size: 12px;
+            color: var(--highlight);
+        }
+
+        .copyright {
+            text-align: center;
+            padding-top: 30px;
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            color: rgba(255, 255, 255, 0.7);
+            font-size: 14px;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .about-hero-title {
+                font-size: 2.8rem;
+            }
+
+            .section-title {
+                font-size: 2.5rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr 1fr;
+                gap: 40px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                flex-direction: column;
+                gap: 20px;
+                padding: 20px 0;
+            }
+
+            .nav-links {
+                gap: 15px;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            .about-hero-title {
+                font-size: 2.2rem;
+            }
+
+            .section-title {
+                font-size: 2rem;
+            }
+
+            .footer-content {
+                grid-template-columns: 1fr;
+                gap: 30px;
+            }
+
+            .problem-grid, .solution-features, .team-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .about-hero-title {
+                font-size: 1.8rem;
+            }
+
+            .about-section {
+                padding: 60px 0;
+            }
+
+            .section-title {
+                font-size: 1.8rem;
+            }
+        }
+
+        .get-started-white {
+            background: white;
+            color: var(--text-primary);
+        }
+
+        [data-theme="dark"] .get-started-white {
+            background: var(--card-bg);
+            color: var(--text-primary);
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="navbar-container">
+        <nav class="navbar">
+            <a href="get_started.html" class="logo">
+                <i class="fas fa-tools" aria-hidden="true"></i>
+                sahakar
+            </a>
+            <ul class="nav-links">
+                <li><a href="get_started.html">Home</a></li>
+                <li><a href="get_started.html#services">Services</a></li>
+                <li><a href="get_started.html#how-it-works">How It Works</a></li>
+                <li><a href="#" class="active">About Us</a></li>
+                <li><a href="get_started.html#contact">Contact</a></li>
+            </ul>
+            <button class="get-started-btn" onclick="window.location.href='role_selection.html'">
+                <i class="fas fa-rocket" aria-hidden="true"></i>
+                Get Started
+            </button>
+        </nav>
+    </div>
+
+    <!-- About Hero Section -->
+    <section class="about-hero">
+        <div class="container">
+            <div class="about-hero-content">
+                <span class="about-hero-badge">
+                    <i class="fas fa-star" aria-hidden="true"></i> Web Based Application Project
+                </span>
+                <h1 class="about-hero-title">About sahakar</h1>
+                <p class="about-hero-subtitle">
+                    Revolutionizing home services through technology - connecting homeowners with trusted professionals
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Project Overview Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Project Overview</span>
+                <h2 class="section-title">sahakar - All Services at One Place</h2>
+                <p class="section-subtitle">A comprehensive web platform transforming the home services industry</p>
+            </div>
+            <div class="content-grid">
+                <div class="content-text">
+                    <p>
+                        <strong>sahakar</strong> is an innovative web-based platform designed to bridge the gap between homeowners and local home service professionals. Our mission is to simplify the process of finding, booking, and managing home services while empowering skilled professionals to grow their businesses.
+                    </p>
+                    <p>
+                        The platform connects users with verified local service providers including plumbers, electricians, appliance technicians, carpenters, and more based on real-time location and availability. Users can easily view service provider profiles, book jobs, and track service status through an intuitive interface.
+                    </p>
+                    <p>
+                        For service providers, sahakar offers powerful tools to register, manage job requests, update availability, and communicate effectively with clients. Our advanced features include secure authentication, role-based access control, real-time notifications, and asynchronous processing using message queues for seamless booking confirmations and job updates.
+                    </p>
+                </div>
+                <div class="content-visual">
+                    <i class="fas fa-home" aria-hidden="true"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Problem Statement Section -->
+    <section class="about-section problem-statement">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">The Challenge</span>
+                <h2 class="section-title">Problem Statement</h2>
+                <p class="section-subtitle">Addressing the critical gaps in the home services industry</p>
+            </div>
+            <div class="problem-grid">
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <i class="fas fa-clock" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="problem-title">Time-Consuming Process</h3>
+                    <p class="problem-description">
+                        Traditional methods of finding reliable home service professionals involve word-of-mouth referrals, unverified online listings, or outdated contact directories, causing significant delays in getting services.
+                    </p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <i class="fas fa-shield-alt" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="problem-title">Lack of Reliability</h3>
+                    <p class="problem-description">
+                        Homeowners often face unreliable service providers, unavailability issues, and substandard service quality due to the absence of proper verification and rating systems.
+                    </p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <i class="fas fa-users" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="problem-title">Limited Opportunities for Providers</h3>
+                    <p class="problem-description">
+                        Local service professionals struggle with limited digital visibility, relying on manual bookings and local contacts, which restricts their customer base and earning potential.
+                    </p>
+                </div>
+                <div class="problem-card">
+                    <div class="problem-icon">
+                        <i class="fas fa-tools" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="problem-title">Inefficient Management</h3>
+                    <p class="problem-description">
+                        Both customers and service providers lack centralized tools for managing bookings, availability, job status tracking, and effective communication, leading to disjointed experiences.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Solution Section -->
+    <section class="about-section">
+        <div class="container">
+            <div class="section-header">
+                <span class="section-badge">Our Solution</span>
+                <h2 class="section-title">How sahakar Solves These Challenges</h2>
+                <p class="section-subtitle">A comprehensive digital platform designed for modern home service needs</p>
+            </div>
+            <div class="solution-features">
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-map-marker-alt" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Location-Based Matching</h3>
+                    <p class="feature-description">
+                        Connect with verified local service professionals based on real-time location and availability for faster service delivery.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-user-shield" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Verified Professionals</h3>
+                    <p class="feature-description">
+                        All service providers undergo thorough verification and background checks to ensure quality and reliability.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-calendar-check" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Real-Time Booking</h3>
+                    <p class="feature-description">
+                        Book services instantly with real-time availability tracking and automated scheduling for both customers and providers.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-bell" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Smart Notifications</h3>
+                    <p class="feature-description">
+                        Stay updated with real-time notifications for booking confirmations, job updates, and service completion alerts.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-star" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Rating & Review System</h3>
+                    <p class="feature-description">
+                        Comprehensive rating system helps maintain service quality and build trust within the community.
+                    </p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">
+                        <i class="fas fa-lock" aria-hidden="true"></i>
+                    </div>
+                    <h3 class="feature-title">Secure Platform</h3>
+                    <p class="feature-description">
+                        Advanced security features including role-based access control and secure authentication protect user data.
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta-section">
+        <div class="container">
+            <div class="cta-content">
+                <h2 class="cta-title">Ready to Experience the Future of Home Services?</h2>
+                <p class="cta-description">
+                    Join thousands of satisfied customers and service providers who have transformed their home service experience with sahakar.
+                </p>
+                <button class="get-started-btn get-started-white" onclick="window.location.href='role_selection.html'">
+                    <i class="fas fa-rocket" aria-hidden="true"></i>
+                     Get Started Today
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-column">
+                    <div class="footer-logo">
+                        <i class="fas fa-tools" aria-hidden="true"></i>
+                        sahakar
+                    </div>
+                    <p class="footer-description">
+                        Your trusted partner for professional home services. Connecting skilled professionals with homeowners for reliable, quality service experiences.
+                    </p>
+                    <div class="social-links">
+                        <a href="#" class="social-link" aria-label="Facebook"><i class="fab fa-facebook-f" aria-hidden="true"></i></a>
+                        <a href="#" class="social-link" aria-label="Twitter"><i class="fab fa-twitter" aria-hidden="true"></i></a>
+                        <a href="#" class="social-link" aria-label="Instagram"><i class="fab fa-instagram" aria-hidden="true"></i></a>
+                        <a href="#" class="social-link" aria-label="LinkedIn"><i class="fab fa-linkedin-in" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 class="footer-title">Quick Links</h3>
+                    <ul class="footer-links">
+                        <li><a href="get_started.html"><i class="fas fa-chevron-right" aria-hidden="true"></i> Home</a></li>
+                        <li><a href="get_started.html#services"><i class="fas fa-chevron-right" aria-hidden="true"></i> Services</a></li>
+                        <li><a href="get_started.html#how-it-works"><i class="fas fa-chevron-right" aria-hidden="true"></i> How It Works</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> About Us</a></li>
+                        <li><a href="get_started.html#contact"><i class="fas fa-chevron-right" aria-hidden="true"></i> Contact</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-column">
+                    <h3 class="footer-title">Our Services</h3>
+                    <ul class="footer-links">
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Plumbing</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Electrical</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Carpentry</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Appliance Repair</a></li>
+                        <li><a href="#"><i class="fas fa-chevron-right" aria-hidden="true"></i> Cleaning</a></li>
+                    </ul>
+                </div>
+                
+                <div class="footer-column">
+                    <h3 class="footer-title">Contact Info</h3>
+                    <ul class="footer-links">
+                        <li><a href="tel:+916303048612"><i class="fas fa-phone" aria-hidden="true"></i> +91 6303048612</a></li>
+                        <li><a href="mailto:sahakarweb@gmail.com"><i class="fas fa-envelope" aria-hidden="true"></i> sahakarweb@gmail.com</a></li>
+                        <li><a href="#"><i class="fas fa-map-marker-alt" aria-hidden="true"></i> Hyderabad, Telangana, India</a></li>
+                        <li><a href="#"><i class="fas fa-clock" aria-hidden="true"></i> 24/7 Support Available</a></li>
+                        <li><a href="#"><i class="fas fa-star" aria-hidden="true"></i> 4.8/5 Customer Rating</a></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="copyright">
+                <p>&copy; 2024 sahakar. All rights reserved. | Web Based Application Project </p>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Simple animation for elements when they come into view
+        document.addEventListener('DOMContentLoaded', function() {
+            const observerOptions = {
+                threshold: 0.1,
+                rootMargin: '0px 0px -50px 0px'
+            };
+
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }
+                });
+            }, observerOptions);
+
+            // Observe animated elements
+            const animatedElements = document.querySelectorAll('.problem-card, .feature-card, .team-card');
+            animatedElements.forEach(el => {
+                el.style.opacity = '0';
+                el.style.transform = 'translateY(30px)';
+                el.style.transition = 'all 0.6s ease';
+                observer.observe(el);
+            });
+        });
+    </script>
+</body>
+</html>

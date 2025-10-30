@@ -1,0 +1,3367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard - Service Provider Portal</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: #f0f2f5;
+            color: #2d3748;
+            min-height: 100vh;
+        }
+
+        .dashboard-container {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Sidebar Styles */
+        .sidebar {
+            width: 260px;
+            background: linear-gradient(180deg, #2d3748 0%, #4a5568 100%);
+            color: white;
+            padding: 0;
+            position: fixed;
+            height: 100vh;
+            overflow-y: auto;
+            box-shadow: 2px 0 15px rgba(0,0,0,0.2);
+        }
+
+        .logo-area {
+            padding: 25px 20px;
+            border-bottom: 1px solid #4a5568;
+            background: #2d3748;
+        }
+
+        .logo-area h2 {
+            font-size: 22px;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-area i {
+            font-size: 24px;
+            background: #4a6cf7;
+            padding: 10px;
+            border-radius: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+            padding: 20px 0;
+        }
+
+        .nav-links li {
+            margin-bottom: 5px;
+        }
+
+        .nav-links a {
+            color: #e2e8f0;
+            text-decoration: none;
+            padding: 14px 25px;
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            font-weight: 500;
+            cursor: pointer;
+            border-left: 4px solid transparent;
+        }
+
+        .nav-links a:hover {
+            background: #4a5568;
+            color: white;
+            border-left: 4px solid #4a6cf7;
+        }
+
+        .nav-links a.active {
+            background: #4a5568;
+            color: white;
+            border-left: 4px solid #4a6cf7;
+        }
+
+        .nav-links i {
+            margin-right: 12px;
+            font-size: 18px;
+            width: 20px;
+            text-align: center;
+        }
+
+        /* Main Content Styles */
+        .main-content {
+            flex: 1;
+            margin-left: 260px;
+            padding: 25px;
+        }
+
+        /* Header Styles */
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            padding: 20px 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            margin-bottom: 30px;
+            border: none;
+        }
+
+        .header-left h1 {
+            color: #2d3748;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .header-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            background: #4a6cf7;
+            padding: 10px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            color: white;
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+        }
+
+        .user-profile:hover {
+            background: #3b5bdb;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(74, 108, 247, 0.4);
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 12px;
+            font-size: 16px;
+            border: 2px solid rgba(255,255,255,0.5);
+        }
+
+        .user-name {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        /* Page Content */
+        .page-content {
+            display: none;
+        }
+
+        .page-content.active {
+            display: block;
+        }
+
+        /* Stats Grid */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .stat-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            display: flex;
+            align-items: center;
+            transition: all 0.3s ease;
+            border: none;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .stat-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 6px;
+            height: 100%;
+        }
+
+        .stat-card:nth-child(1)::before { background: #e53e3e; }
+        .stat-card:nth-child(2)::before { background: #3182ce; }
+        .stat-card:nth-child(3)::before { background: #38a169; }
+        .stat-card:nth-child(4)::before { background: #d69e2e; }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .stat-card:nth-child(1) .stat-icon { background: #e53e3e; }
+        .stat-card:nth-child(2) .stat-icon { background: #3182ce; }
+        .stat-card:nth-child(3) .stat-icon { background: #38a169; }
+        .stat-card:nth-child(4) .stat-icon { background: #d69e2e; }
+
+        .stat-info {
+            flex: 1;
+        }
+
+        .stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Content Grid */
+        .content-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 30px;
+        }
+
+        .chart-card, .tasks-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            border: none;
+        }
+
+        .chart-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+
+        .tasks-card {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.3);
+        }
+
+        .card-header h3 {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .card-header a {
+            color: rgba(255,255,255,0.9);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 15px;
+            transition: all 0.3s ease;
+        }
+
+        .card-header a:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .chart-placeholder {
+            height: 250px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px dashed rgba(255,255,255,0.3);
+        }
+
+        .task-list {
+            list-style: none;
+        }
+
+        .task-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .task-item:last-child {
+            border-bottom: none;
+        }
+
+        .task-check {
+            margin-right: 12px;
+        }
+
+        .task-check input {
+            accent-color: #ffd700;
+            transform: scale(1.2);
+        }
+
+        .task-content {
+            flex: 1;
+        }
+
+        .task-text {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .task-time {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Recent Activity */
+        .recent-activity {
+            background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            color: white;
+        }
+
+        .activity-list {
+            list-style: none;
+        }
+
+        .activity-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+        }
+
+        .activity-item:last-child {
+            border-bottom: none;
+        }
+
+        .activity-icon {
+            width: 40px;
+            height: 40px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            color: white;
+        }
+
+        .activity-content {
+            flex: 1;
+        }
+
+        .activity-text {
+            font-weight: 500;
+            margin-bottom: 5px;
+        }
+
+        .activity-time {
+            font-size: 12px;
+            opacity: 0.8;
+        }
+
+        /* Page Specific Styles */
+        .page-title {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            color: #2d3748;
+        }
+
+        .page-description {
+            color: #718096;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        /* Services Page Styles */
+        .services-container, .appointments-container, .payments-container, .analytics-container, .settings-container, .profile-container {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            padding: 25px;
+            margin-bottom: 30px;
+        }
+
+        .services-header, .appointments-header, .payments-header, .analytics-header, .settings-header, .profile-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .services-header h3, .appointments-header h3, .payments-header h3, .analytics-header h3, .settings-header h3, .profile-header h3 {
+            font-size: 20px;
+            color: #2d3748;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: #4a6cf7;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #3b5bdb;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(74, 108, 247, 0.3);
+        }
+
+        .btn-edit {
+            background: #38a169;
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-delete {
+            background: #e53e3e;
+            color: white;
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-edit:hover {
+            background: #2f855a;
+        }
+
+        .btn-delete:hover {
+            background: #c53030;
+        }
+
+        .btn-secondary {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-secondary:hover {
+            background: #cbd5e0;
+        }
+
+        .btn-small {
+            padding: 6px 12px;
+            font-size: 14px;
+        }
+
+        .btn-success {
+            background: #38a169;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #2f855a;
+        }
+
+        .btn-danger {
+            background: #e53e3e;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c53030;
+        }
+
+        .services-table, .appointments-table, .payments-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .services-table th,
+        .services-table td,
+        .appointments-table th,
+        .appointments-table td,
+        .payments-table th,
+        .payments-table td {
+            padding: 15px;
+            text-align: left;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .services-table th,
+        .appointments-table th,
+        .payments-table th {
+            background: #f7fafc;
+            color: #4a5568;
+            font-weight: 600;
+        }
+
+        .services-table tr:hover,
+        .appointments-table tr:hover,
+        .payments-table tr:hover {
+            background: #f7fafc;
+        }
+
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-available {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .status-unavailable {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-pending {
+            background: #fef5e7;
+            color: #d69e2e;
+        }
+
+        .status-in-progress {
+            background: #e6fffa;
+            color: #234e52;
+        }
+
+        .status-completed {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .status-cancelled {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .status-paid {
+            background: #c6f6d5;
+            color: #276749;
+        }
+
+        .status-pending-payment {
+            background: #fef5e7;
+            color: #d69e2e;
+        }
+
+        .status-failed {
+            background: #fed7d7;
+            color: #c53030;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 8px;
+        }
+
+        /* Filter Controls */
+        .filter-controls {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            background: white;
+            font-size: 14px;
+            min-width: 150px;
+        }
+
+        /* Earnings Summary */
+        .earnings-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .earning-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            border-left: 4px solid #4a6cf7;
+        }
+
+        .earning-amount {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .earning-label {
+            color: #718096;
+            font-size: 14px;
+            font-weight: 500;
+        }
+
+        /* Analytics Charts */
+        .analytics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+
+        .chart-container {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            height: 350px;
+        }
+
+        .chart-container h3 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        .chart-wrapper {
+            height: 280px;
+            position: relative;
+        }
+
+        /* Performance Metrics */
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+            margin-top: 25px;
+        }
+
+        .metric-card {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .metric-card h4 {
+            font-size: 16px;
+            color: #4a5568;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .metric-value {
+            font-size: 32px;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 10px;
+        }
+
+        .metric-change {
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        .metric-change.positive {
+            color: #38a169;
+        }
+
+        .metric-change.negative {
+            color: #e53e3e;
+        }
+
+        /* Profile Page Styles */
+        .profile-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .profile-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .profile-section h3 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .profile-avatar-container {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .profile-avatar {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            background: #4a6cf7;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 36px;
+            font-weight: bold;
+            border: 4px solid #e2e8f0;
+        }
+
+        .profile-info h4 {
+            font-size: 20px;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .profile-info p {
+            color: #718096;
+            margin-bottom: 10px;
+        }
+
+        .avatar-upload {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .avatar-upload-btn {
+            padding: 8px 16px;
+            background: #e2e8f0;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        .avatar-upload-btn:hover {
+            background: #cbd5e0;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        .form-control:focus {
+            border-color: #4a6cf7;
+            outline: none;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.2);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .form-check {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-check input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .profile-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 25px;
+        }
+
+        /* Settings Styles */
+        .settings-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .settings-section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+
+        .settings-section h3 {
+            font-size: 18px;
+            color: #2d3748;
+            margin-bottom: 20px;
+            font-weight: 600;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .danger-zone {
+            border: 2px solid #fed7d7;
+            background: #fff5f5;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 30px;
+        }
+
+        .danger-zone h4 {
+            color: #c53030;
+            margin-bottom: 10px;
+            font-size: 16px;
+        }
+
+        .danger-zone p {
+            color: #718096;
+            margin-bottom: 15px;
+            font-size: 14px;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: 12px;
+            width: 500px;
+            max-width: 90%;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .modal-header {
+            padding: 20px 25px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .modal-header h3 {
+            font-size: 20px;
+            color: #2d3748;
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+            color: #718096;
+        }
+
+        .close-btn:hover {
+            color: #2d3748;
+        }
+
+        .modal-body {
+            padding: 25px;
+        }
+
+        .modal-footer {
+            padding: 20px 25px;
+            border-top: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn-cancel {
+            background: #e2e8f0;
+            color: #4a5568;
+        }
+
+        .btn-cancel:hover {
+            background: #cbd5e0;
+        }
+
+        /* Page Content Areas */
+        #services-page .chart-placeholder {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a24 100%);
+            color: white;
+        }
+
+        #appointments-page .chart-placeholder {
+            background: linear-gradient(135deg, #48cae4 0%, #0096c7 100%);
+            color: white;
+        }
+
+        #analytics-page .chart-placeholder {
+            background: linear-gradient(135deg, #51cf66 0%, #40c057 100%);
+            color: white;
+        }
+
+        #payments-page .chart-placeholder {
+            background: linear-gradient(135deg, #ffd43b 0%, #fcc419 100%);
+            color: white;
+        }
+
+        #settings-page .chart-placeholder {
+            background: linear-gradient(135deg, #a29bfe 0%, #6c5ce7 100%);
+            color: white;
+        }
+
+        #profile-page .chart-placeholder {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 100%);
+            color: white;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1024px) {
+            .content-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .settings-grid, .profile-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+            }
+            
+            .main-content {
+                margin-left: 0;
+            }
+            
+            .dashboard-container {
+                flex-direction: column;
+            }
+            
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .services-header, .appointments-header, .payments-header, .analytics-header, .settings-header, .profile-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 15px;
+            }
+
+            .services-table, .appointments-table, .payments-table {
+                display: block;
+                overflow-x: auto;
+            }
+
+            .filter-controls {
+                flex-direction: column;
+            }
+
+            .earnings-summary {
+                grid-template-columns: 1fr;
+            }
+
+            .analytics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .metrics-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-avatar-container {
+                flex-direction: column;
+                text-align: center;
+            }
+
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Notification Styles */
+        .notification-icon {
+            position: relative;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #f8f9fa;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-right: 10px;
+        }
+
+        .notification-icon:hover {
+            background: #e9ecef;
+        }
+
+        .notification-badge {
+            position: absolute;
+            top: -2px;
+            right: -2px;
+            background: #e53e3e;
+            color: white;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            font-size: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .notifications-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            width: 400px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            z-index: 100;
+            margin-top: 5px;
+            display: none;
+            max-height: 500px;
+            overflow-y: auto;
+        }
+
+        .notifications-panel.active {
+            display: block;
+        }
+
+        .notifications-header {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notifications-header h3 {
+            font-size: 16px;
+            color: #2d3748;
+        }
+
+        .mark-all-read {
+            background: none;
+            border: none;
+            color: #4a6cf7;
+            font-size: 13px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .notification-item {
+            padding: 15px 20px;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            gap: 12px;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+
+        .notification-item:hover {
+            background: #f7fafc;
+        }
+
+        .notification-item.unread {
+            background: #f0f9ff;
+        }
+
+        .notification-item:last-child {
+            border-bottom: none;
+        }
+
+        .notification-icon-small {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            background: rgba(74, 108, 247, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #4a6cf7;
+            font-size: 14px;
+            flex-shrink: 0;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #2d3748;
+        }
+
+        .notification-desc {
+            font-size: 13px;
+            color: #718096;
+            margin-bottom: 5px;
+            line-height: 1.4;
+        }
+
+        .notification-time {
+            font-size: 11px;
+            color: #a0aec0;
+        }
+
+        .notification-actions {
+            display: flex;
+            gap: 8px;
+            margin-top: 8px;
+        }
+
+        .no-notifications {
+            padding: 30px 20px;
+            text-align: center;
+            color: #718096;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="logo-area">
+                <h2><i class="fas fa-building"></i> Provider Portal</h2>
+            </div>
+            <ul class="nav-links">
+                <li><a href="#" class="nav-link active" data-page="dashboard"><i class="fas fa-home"></i> Dashboard</a></li>
+                <li><a href="#" class="nav-link" data-page="services"><i class="fas fa-concierge-bell"></i> Services</a></li>
+                <li><a href="#" class="nav-link" data-page="appointments"><i class="fas fa-calendar-check"></i> Appointments</a></li>
+                <li><a href="#" class="nav-link" data-page="payments"><i class="fas fa-credit-card"></i> Payments</a></li>
+                <li><a href="#" class="nav-link" data-page="analytics"><i class="fas fa-chart-line"></i> Analytics</a></li>
+                <li><a href="#" class="nav-link" data-page="settings"><i class="fas fa-cog"></i> Settings</a></li>
+                <li><a href="#" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+            </ul>
+        </div>
+
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Header -->
+            <div class="header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Service Provider Dashboard</h1>
+                </div>
+                <div class="header-right">
+                    <!-- Notification Icon -->
+                    <div class="notification-icon" id="notificationIcon">
+                        <i class="fas fa-bell"></i>
+                        <span class="notification-badge" id="notificationBadge" style="display: none;">0</span>
+                        <div class="notifications-panel" id="notificationsPanel">
+                            <div class="notifications-header">
+                                <h3>Notifications</h3>
+                                <button class="mark-all-read" id="markAllRead">Mark all as read</button>
+                            </div>
+                            <div id="notificationsList"></div>
+                        </div>
+                    </div>
+                    
+                    <div class="user-profile" id="userProfileBtn">
+                        <div class="user-avatar" id="userAvatar">U</div>
+                        <span class="user-name" id="userName">User</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page-content active">
+                <!-- Stats Grid -->
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-calendar-check"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="todaysAppointments">0</div>
+                            <div class="stat-label">Today's Appointments</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-users"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="activeClients">0</div>
+                            <div class="stat-label">Active Clients</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-dollar-sign"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="monthlyRevenue">$0</div>
+                            <div class="stat-label">Monthly Revenue</div>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <div class="stat-info">
+                            <div class="stat-value" id="averageRating">0.0</div>
+                            <div class="stat-label">Average Rating</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Content Grid -->
+                <div class="content-grid">
+                    <div class="chart-card">
+                        <div class="card-header">
+                            <h3>Performance Overview</h3>
+                            <a href="#">View Report</a>
+                        </div>
+                        <div class="chart-placeholder">
+                            <div style="text-align: center;">
+                                <i class="fas fa-chart-line" style="font-size: 48px; margin-bottom: 15px;"></i>
+                                <p>Performance Chart</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tasks-card">
+                        <div class="card-header">
+                            <h3>Today's Tasks</h3>
+                            <a href="#">View All</a>
+                        </div>
+                        <ul class="task-list" id="tasksList">
+                            <!-- Tasks will be populated here -->
+                        </ul>
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="recent-activity">
+                    <div class="card-header">
+                        <h3>Recent Activity</h3>
+                        <a href="#">View All</a>
+                    </div>
+                    <ul class="activity-list" id="recentActivityList">
+                        <!-- Activity will be populated here -->
+                    </ul>
+                </div>
+            </div>
+
+            <!-- Services Page -->
+            <div id="services-page" class="page-content">
+                <h2 class="page-title">Services Management</h2>
+                <p class="page-description">Manage your service offerings, pricing, and availability.</p>
+                
+                <div class="services-container">
+                    <div class="services-header">
+                        <h3>My Services</h3>
+                        <button class="btn btn-primary" id="addServiceBtn">
+                            <i class="fas fa-plus"></i> Add New Service
+                        </button>
+                    </div>
+                    
+                    <table class="services-table">
+                        <thead>
+                            <tr>
+                                <th>Service Name</th>
+                                <th>Description</th>
+                                <th>Price</th>
+                                <th>Availability</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="servicesTableBody">
+                            <!-- Services will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Appointments Page -->
+            <div id="appointments-page" class="page-content">
+                <h2 class="page-title">Appointments</h2>
+                <p class="page-description">View and manage your upcoming appointments and jobs.</p>
+                
+                <div class="appointments-container">
+                    <div class="appointments-header">
+                        <h3>My Jobs</h3>
+                        <div class="filter-controls">
+                            <select class="filter-select" id="statusFilter">
+                                <option value="all">All Statuses</option>
+                                <option value="pending">Pending</option>
+                                <option value="confirmed">Confirmed</option>
+                                <option value="in-progress">In Progress</option>
+                                <option value="completed">Completed</option>
+                                <option value="cancelled">Cancelled</option>
+                            </select>
+                            <button class="btn btn-secondary btn-small" id="refreshJobsBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table class="appointments-table">
+                        <thead>
+                            <tr>
+                                <th>Job ID</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="appointmentsTableBody">
+                            <!-- Appointments will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Payments Page -->
+            <div id="payments-page" class="page-content">
+                <h2 class="page-title">Payments</h2>
+                <p class="page-description">Track your earnings, transactions, and financial reports.</p>
+                
+                <div class="payments-container">
+                    <!-- Earnings Summary -->
+                    <div class="earnings-summary">
+                        <div class="earning-card">
+                            <div class="earning-amount" id="lifetimeEarnings">$0.00</div>
+                            <div class="earning-label">Lifetime Earnings</div>
+                        </div>
+                        <div class="earning-card">
+                            <div class="earning-amount" id="monthlyEarnings">$0.00</div>
+                            <div class="earning-label">This Month</div>
+                        </div>
+                        <div class="earning-card">
+                            <div class="earning-amount" id="weeklyEarnings">$0.00</div>
+                            <div class="earning-label">This Week</div>
+                        </div>
+                        <div class="earning-card">
+                            <div class="earning-amount" id="pendingAmount">$0.00</div>
+                            <div class="earning-label">Pending Payments</div>
+                        </div>
+                    </div>
+
+                    <div class="payments-header">
+                        <h3>Transaction History</h3>
+                        <div class="filter-controls">
+                            <select class="filter-select" id="paymentStatusFilter">
+                                <option value="all">All Payments</option>
+                                <option value="paid">Paid</option>
+                                <option value="pending">Pending</option>
+                                <option value="failed">Failed</option>
+                            </select>
+                            <select class="filter-select" id="timeFilter">
+                                <option value="all">All Time</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                                <option value="quarter">This Quarter</option>
+                            </select>
+                            <button class="btn btn-secondary btn-small" id="refreshPaymentsBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                    
+                    <table class="payments-table">
+                        <thead>
+                            <tr>
+                                <th>Transaction ID</th>
+                                <th>Customer</th>
+                                <th>Service</th>
+                                <th>Date</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Payment Method</th>
+                            </tr>
+                        </thead>
+                        <tbody id="paymentsTableBody">
+                            <!-- Payments will be populated here -->
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Analytics Page -->
+            <div id="analytics-page" class="page-content">
+                <h2 class="page-title">Analytics</h2>
+                <p class="page-description">View detailed analytics and performance metrics for your business.</p>
+                
+                <div class="analytics-container">
+                    <!-- Performance Metrics -->
+                    <div class="metrics-grid">
+                        <div class="metric-card">
+                            <h4>Completion Rate</h4>
+                            <div class="metric-value">92%</div>
+                            <div class="metric-change positive">+5% from last month</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Customer Satisfaction</h4>
+                            <div class="metric-value">4.8/5</div>
+                            <div class="metric-change positive">+0.2 from last month</div>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Response Time</h4>
+                            <div class="metric-value">2.1h</div>
+                            <div class="metric-change negative">+0.3h from last month</div>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="analytics-grid">
+                        <div class="chart-container">
+                            <h3>Revenue Trend</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="revenueChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Service Popularity</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="serviceChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Job Status Distribution</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="statusChart"></canvas>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <h3>Monthly Performance</h3>
+                            <div class="chart-wrapper">
+                                <canvas id="performanceChart"></canvas>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="analytics-header">
+                        <h3>Performance Insights</h3>
+                        <div class="filter-controls">
+                            <select class="filter-select" id="analyticsTimeFilter">
+                                <option value="month">Last Month</option>
+                                <option value="quarter">Last Quarter</option>
+                                <option value="year">Last Year</option>
+                                <option value="all">All Time</option>
+                            </select>
+                            <button class="btn btn-secondary btn-small" id="refreshAnalyticsBtn">
+                                <i class="fas fa-sync-alt"></i> Refresh
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page-content">
+                <h2 class="page-title">My Profile</h2>
+                <p class="page-description">Manage your personal information and profile settings.</p>
+                
+                <div class="profile-container">
+                    <div class="profile-grid">
+                        <!-- Personal Information -->
+                        <div class="profile-section">
+                            <h3>Personal Information</h3>
+                            <div class="profile-avatar-container">
+                                <div class="profile-avatar" id="profileAvatar">U</div>
+                                <div class="profile-info">
+                                    <h4 id="profileName">User Name</h4>
+                                    <p id="profileEmail">user@example.com</p>
+                                    <p>Service Provider</p>
+                                    <div class="avatar-upload">
+                                        <button class="avatar-upload-btn" id="changeAvatarBtn">
+                                            <i class="fas fa-camera"></i> Change Photo
+                                        </button>
+                                        <input type="file" id="avatarUpload" accept="image/*" style="display: none;">
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <form id="profileForm">
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label for="firstName">First Name</label>
+                                        <input type="text" id="firstName" class="form-control" value="John">
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastName">Last Name</label>
+                                        <input type="text" id="lastName" class="form-control" value="Doe">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="email">Email Address</label>
+                                    <input type="email" id="email" class="form-control" value="john.doe@example.com">
+                                </div>
+                                <div class="form-group">
+                                    <label for="phone">Phone Number</label>
+                                    <input type="tel" id="phone" class="form-control" value="+1 (555) 123-4567">
+                                </div>
+                                <div class="form-group">
+                                    <label for="serviceType">Service Type</label>
+                                    <select id="serviceType" class="form-control">
+                                        <option value="plumbing">Plumbing</option>
+                                        <option value="electrical">Electrical</option>
+                                        <option value="hvac">HVAC</option>
+                                        <option value="carpentry">Carpentry</option>
+                                        <option value="painting">Painting</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="experience">Years of Experience</label>
+                                    <input type="number" id="experience" class="form-control" value="5" min="0" max="50">
+                                </div>
+                                <div class="form-group">
+                                    <label for="bio">Bio/Description</label>
+                                    <textarea id="bio" class="form-control" rows="4" placeholder="Tell customers about yourself and your services...">Experienced service provider with 5+ years in the industry. Committed to quality work and customer satisfaction.</textarea>
+                                </div>
+                                <div class="profile-actions">
+                                    <button type="button" class="btn btn-primary" id="saveProfileBtn">
+                                        <i class="fas fa-save"></i> Save Changes
+                                    </button>
+                                    <button type="button" class="btn btn-secondary" id="cancelProfileBtn">
+                                        <i class="fas fa-times"></i> Cancel
+                                    </button>
+                                </div>
+                            </form>
+                        </div>
+
+                        <!-- Account Security -->
+                        <div class="profile-section">
+                            <h3>Account Security</h3>
+                            
+                            <div class="form-group">
+                                <label for="currentPassword">Current Password</label>
+                                <input type="password" id="currentPassword" class="form-control" placeholder="Enter current password">
+                            </div>
+                            <div class="form-group">
+                                <label for="newPassword">New Password</label>
+                                <input type="password" id="newPassword" class="form-control" placeholder="Enter new password">
+                            </div>
+                            <div class="form-group">
+                                <label for="confirmPassword">Confirm New Password</label>
+                                <input type="password" id="confirmPassword" class="form-control" placeholder="Confirm new password">
+                            </div>
+                            
+                            <div class="profile-actions">
+                                <button type="button" class="btn btn-primary" id="changePasswordBtn">
+                                    <i class="fas fa-key"></i> Change Password
+                                </button>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 30px;">
+                                <div class="form-check">
+                                    <input type="checkbox" id="emailNotifications" checked>
+                                    <label for="emailNotifications">Email notifications for new appointments</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" id="smsNotifications">
+                                    <label for="smsNotifications">SMS notifications for urgent requests</label>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <div class="form-check">
+                                    <input type="checkbox" id="marketingEmails">
+                                    <label for="marketingEmails">Receive marketing emails and updates</label>
+                                </div>
+                            </div>
+
+                            <div class="profile-actions">
+                                <button type="button" class="btn btn-primary" id="savePreferencesBtn">
+                                    <i class="fas fa-save"></i> Save Preferences
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Settings Page -->
+            <div id="settings-page" class="page-content">
+                <h2 class="page-title">Settings</h2>
+                <p class="page-description">Configure your business settings and preferences.</p>
+                
+                <div class="settings-container">
+                    <div class="settings-grid">
+                        <!-- Business Settings -->
+                        <div class="settings-section">
+                            <h3>Business Information</h3>
+                            
+                            <div class="form-group">
+                                <label for="businessName">Business Name</label>
+                                <input type="text" id="businessName" class="form-control" value="John's Professional Services">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessAddress">Business Address</label>
+                                <input type="text" id="businessAddress" class="form-control" value="123 Main Street, City, State 12345">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessPhone">Business Phone</label>
+                                <input type="tel" id="businessPhone" class="form-control" value="+1 (555) 123-4567">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessEmail">Business Email</label>
+                                <input type="email" id="businessEmail" class="form-control" value="contact@johnservices.com">
+                            </div>
+                            <div class="form-group">
+                                <label for="businessWebsite">Website</label>
+                                <input type="url" id="businessWebsite" class="form-control" value="https://johnservices.com">
+                            </div>
+                            
+                            <div class="settings-actions">
+                                <button type="button" class="btn btn-primary" id="saveBusinessBtn">
+                                    <i class="fas fa-save"></i> Save Business Info
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- System Settings -->
+                        <div class="settings-section">
+                            <h3>System Settings</h3>
+                            
+                            <div class="form-group">
+                                <label for="timezone">Timezone</label>
+                                <select id="timezone" class="form-control">
+                                    <option value="est">Eastern Time (ET)</option>
+                                    <option value="cst">Central Time (CT)</option>
+                                    <option value="mst">Mountain Time (MT)</option>
+                                    <option value="pst" selected>Pacific Time (PT)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="dateFormat">Date Format</label>
+                                <select id="dateFormat" class="form-control">
+                                    <option value="mm/dd/yyyy">MM/DD/YYYY</option>
+                                    <option value="dd/mm/yyyy">DD/MM/YYYY</option>
+                                    <option value="yyyy-mm-dd">YYYY-MM-DD</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="currency">Currency</label>
+                                <select id="currency" class="form-control">
+                                    <option value="usd" selected>US Dollar ($)</option>
+                                    <option value="eur">Euro (€)</option>
+                                    <option value="gbp">British Pound (£)</option>
+                                    <option value="cad">Canadian Dollar (C$)</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label for="language">Language</label>
+                                <select id="language" class="form-control">
+                                    <option value="en" selected>English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                    <option value="de">German</option>
+                                </select>
+                            </div>
+
+                            <div class="settings-actions">
+                                <button type="button" class="btn btn-primary" id="saveSystemBtn">
+                                    <i class="fas fa-save"></i> Save System Settings
+                                </button>
+                            </div>
+
+                            <!-- Danger Zone -->
+                            <div class="danger-zone">
+                                <h4>Danger Zone</h4>
+                                <p>Once you delete your account, there is no going back. Please be certain.</p>
+                                <button type="button" class="btn btn-danger" id="deleteAccountBtn">
+                                    <i class="fas fa-trash"></i> Delete Account
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Service Modal -->
+    <div id="serviceModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">Add New Service</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="serviceForm">
+                    <input type="hidden" id="serviceId">
+                    <div class="form-group">
+                        <label for="serviceName">Service Name</label>
+                        <input type="text" id="serviceName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="serviceDescription">Description</label>
+                        <textarea id="serviceDescription" class="form-control" rows="3"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="servicePrice">Price ($)</label>
+                        <input type="number" id="servicePrice" class="form-control" min="0" step="0.01" required>
+                    </div>
+                    <div class="form-group">
+                        <div class="form-check">
+                            <input type="checkbox" id="serviceAvailability" checked>
+                            <label for="serviceAvailability">Available for booking</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel">Cancel</button>
+                <button class="btn btn-primary" id="saveServiceBtn">Save Service</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status Update Modal -->
+    <div id="statusModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update Job Status</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="statusForm">
+                    <input type="hidden" id="jobId">
+                    <div class="form-group">
+                        <label for="jobStatus">Status</label>
+                        <select id="jobStatus" class="form-control" required>
+                            <option value="pending">Pending</option>
+                            <option value="confirmed">Confirmed</option>
+                            <option value="in-progress">In Progress</option>
+                            <option value="completed">Completed</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="statusNotes">Notes (Optional)</label>
+                        <textarea id="statusNotes" class="form-control" rows="3" placeholder="Add any notes about this job..."></textarea>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel">Cancel</button>
+                <button class="btn btn-primary" id="saveStatusBtn">Update Status</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Account Confirmation Modal -->
+    <div id="deleteAccountModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Account</h3>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your account? This action cannot be undone.</p>
+                <p>All your data, including services, appointments, and payment history will be permanently deleted.</p>
+                <div class="form-group">
+                    <label for="confirmDelete">Type "DELETE" to confirm:</label>
+                    <input type="text" id="confirmDelete" class="form-control" placeholder="DELETE">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-cancel">Cancel</button>
+                <button class="btn btn-danger" id="confirmDeleteBtn">Delete Account</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in and display username
+        document.addEventListener('DOMContentLoaded', function() {
+            const username = localStorage.getItem('provider_username') || 'Provider';
+            
+            // Display user name in top right corner
+            const userNameElement = document.getElementById('userName');
+            const userAvatarElement = document.getElementById('userAvatar');
+            const profileNameElement = document.getElementById('profileName');
+            const profileAvatarElement = document.getElementById('profileAvatar');
+            
+            userNameElement.textContent = username;
+            userAvatarElement.textContent = username.charAt(0).toUpperCase();
+            profileNameElement.textContent = username;
+            profileAvatarElement.textContent = username.charAt(0).toUpperCase();
+
+            // Initialize notification system
+            window.providerNotifications = new ProviderNotificationSystem();
+
+            // User profile button functionality - goes directly to profile page
+            const userProfileBtn = document.getElementById('userProfileBtn');
+            
+            userProfileBtn.addEventListener('click', function() {
+                // Remove active class from all sidebar links
+                document.querySelectorAll('.nav-link').forEach(nav => nav.classList.remove('active'));
+                
+                // Hide all page contents
+                document.querySelectorAll('.page-content').forEach(page => page.classList.remove('active'));
+                
+                // Show the profile page
+                document.getElementById('profile-page').classList.add('active');
+                
+                // Update page title
+                document.getElementById('pageTitle').textContent = 'My Profile';
+                
+                // Load profile data
+                loadProfile();
+            });
+            
+            // Sidebar navigation functionality
+            const navLinks = document.querySelectorAll('.nav-link');
+            const pageContents = document.querySelectorAll('.page-content');
+            const pageTitle = document.getElementById('pageTitle');
+
+            // Page titles mapping
+            const pageTitles = {
+                'dashboard': 'Service Provider Dashboard',
+                'services': 'Services Management',
+                'appointments': 'Appointments',
+                'payments': 'Payments & Earnings',
+                'analytics': 'Analytics & Insights',
+                'settings': 'Account Settings'
+            };
+
+            navLinks.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    
+                    // Remove active class from all links
+                    navLinks.forEach(nav => nav.classList.remove('active'));
+                    
+                    // Add active class to clicked link
+                    this.classList.add('active');
+                    
+                    // Hide all page contents
+                    pageContents.forEach(page => page.classList.remove('active'));
+                    
+                    // Show the selected page
+                    const pageId = this.getAttribute('data-page');
+                    const selectedPage = document.getElementById(`${pageId}-page`);
+                    if (selectedPage) {
+                        selectedPage.classList.add('active');
+                        pageTitle.textContent = pageTitles[pageId] || 'Service Provider Portal';
+                        
+                        // Load data if page is selected
+                        if (pageId === 'services') {
+                            loadServices();
+                        } else if (pageId === 'appointments') {
+                            loadAppointments();
+                        } else if (pageId === 'payments') {
+                            loadPayments();
+                        } else if (pageId === 'analytics') {
+                            loadAnalytics();
+                        } else if (pageId === 'settings') {
+                            loadSettings();
+                        }
+                    }
+                });
+            });
+
+            // Logout functionality
+            document.getElementById('logoutBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                if (confirm('Are you sure you want to logout?')) {
+                    localStorage.removeItem('provider_username');
+                    window.location.href = 'login.html';
+                }
+            });
+
+            // Auto-refresh dashboard every 10 seconds
+            setInterval(() => {
+                if (window.providerNotifications) {
+                    window.providerNotifications.loadNotifications();
+                }
+            }, 10000);
+
+            // Initialize all button functionality
+            initializeButtons();
+        });
+
+        // Initialize all buttons with proper event listeners
+        function initializeButtons() {
+            // Services Management
+            const serviceModal = document.getElementById('serviceModal');
+            const addServiceBtn = document.getElementById('addServiceBtn');
+            const closeModalBtns = document.querySelectorAll('.close-btn, .btn-cancel');
+            const saveServiceBtn = document.getElementById('saveServiceBtn');
+            const serviceForm = document.getElementById('serviceForm');
+
+            // Open modal for adding new service
+            addServiceBtn.addEventListener('click', function() {
+                document.getElementById('modalTitle').textContent = 'Add New Service';
+                serviceForm.reset();
+                document.getElementById('serviceId').value = '';
+                serviceModal.style.display = 'flex';
+            });
+
+            // Close modal
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    serviceModal.style.display = 'none';
+                    document.getElementById('statusModal').style.display = 'none';
+                    document.getElementById('deleteAccountModal').style.display = 'none';
+                });
+            });
+
+            // Close modal when clicking outside
+            window.addEventListener('click', function(e) {
+                if (e.target === serviceModal) {
+                    serviceModal.style.display = 'none';
+                }
+                if (e.target === document.getElementById('statusModal')) {
+                    document.getElementById('statusModal').style.display = 'none';
+                }
+                if (e.target === document.getElementById('deleteAccountModal')) {
+                    document.getElementById('deleteAccountModal').style.display = 'none';
+                }
+            });
+
+            // Save service
+            saveServiceBtn.addEventListener('click', function() {
+                const serviceId = document.getElementById('serviceId').value;
+                const serviceName = document.getElementById('serviceName').value;
+                const serviceDescription = document.getElementById('serviceDescription').value;
+                const servicePrice = document.getElementById('servicePrice').value;
+                const serviceAvailability = document.getElementById('serviceAvailability').checked;
+                
+                if (!serviceName || !servicePrice) {
+                    alert('Please fill in all required fields');
+                    return;
+                }
+                
+                if (serviceId) {
+                    // Update existing service
+                    updateService(serviceId, serviceName, serviceDescription, servicePrice, serviceAvailability);
+                } else {
+                    // Add new service
+                    addService(serviceName, serviceDescription, servicePrice, serviceAvailability);
+                }
+                
+                serviceModal.style.display = 'none';
+            });
+
+            // Appointments Management
+            const refreshJobsBtn = document.getElementById('refreshJobsBtn');
+            const statusFilter = document.getElementById('statusFilter');
+            const saveStatusBtn = document.getElementById('saveStatusBtn');
+
+            // Refresh jobs
+            refreshJobsBtn.addEventListener('click', function() {
+                loadAppointments();
+            });
+
+            // Filter jobs by status
+            statusFilter.addEventListener('change', function() {
+                loadAppointments();
+            });
+
+            // Save status update
+            saveStatusBtn.addEventListener('click', function() {
+                const jobId = document.getElementById('jobId').value;
+                const jobStatus = document.getElementById('jobStatus').value;
+                const statusNotes = document.getElementById('statusNotes').value;
+                
+                updateJobStatus(jobId, jobStatus, statusNotes);
+                document.getElementById('statusModal').style.display = 'none';
+            });
+
+            // Payments Management
+            const refreshPaymentsBtn = document.getElementById('refreshPaymentsBtn');
+            const paymentStatusFilter = document.getElementById('paymentStatusFilter');
+            const timeFilter = document.getElementById('timeFilter');
+
+            // Refresh payments
+            refreshPaymentsBtn.addEventListener('click', function() {
+                loadPayments();
+            });
+
+            // Filter payments
+            paymentStatusFilter.addEventListener('change', function() {
+                loadPayments();
+            });
+
+            timeFilter.addEventListener('change', function() {
+                loadPayments();
+            });
+
+            // Analytics Management
+            const refreshAnalyticsBtn = document.getElementById('refreshAnalyticsBtn');
+            const analyticsTimeFilter = document.getElementById('analyticsTimeFilter');
+
+            // Refresh analytics
+            refreshAnalyticsBtn.addEventListener('click', function() {
+                loadAnalytics();
+            });
+
+            // Filter analytics
+            analyticsTimeFilter.addEventListener('change', function() {
+                loadAnalytics();
+            });
+
+            // Profile Management
+            const changeAvatarBtn = document.getElementById('changeAvatarBtn');
+            const avatarUpload = document.getElementById('avatarUpload');
+            const saveProfileBtn = document.getElementById('saveProfileBtn');
+            const cancelProfileBtn = document.getElementById('cancelProfileBtn');
+            const changePasswordBtn = document.getElementById('changePasswordBtn');
+            const savePreferencesBtn = document.getElementById('savePreferencesBtn');
+
+            // Change avatar
+            changeAvatarBtn.addEventListener('click', function() {
+                avatarUpload.click();
+            });
+
+            avatarUpload.addEventListener('change', function(e) {
+                if (e.target.files && e.target.files[0]) {
+                    const reader = new FileReader();
+                    reader.onload = function(event) {
+                        // In a real app, you would upload the image to your server
+                        // For demo purposes, we'll just show a success message
+                        alert('Profile picture updated successfully!');
+                    };
+                    reader.readAsDataURL(e.target.files[0]);
+                }
+            });
+
+            // Save profile
+            saveProfileBtn.addEventListener('click', function() {
+                const firstName = document.getElementById('firstName').value;
+                const lastName = document.getElementById('lastName').value;
+                const email = document.getElementById('email').value;
+                const phone = document.getElementById('phone').value;
+                const serviceType = document.getElementById('serviceType').value;
+                const experience = document.getElementById('experience').value;
+                const bio = document.getElementById('bio').value;
+
+                // Update profile display
+                document.getElementById('profileName').textContent = `${firstName} ${lastName}`;
+                document.getElementById('profileEmail').textContent = email;
+                document.getElementById('userName').textContent = `${firstName} ${lastName}`;
+                document.getElementById('userAvatar').textContent = firstName.charAt(0).toUpperCase();
+                document.getElementById('profileAvatar').textContent = firstName.charAt(0).toUpperCase();
+
+                // Save to localStorage (in real app, this would be an API call)
+                const profileData = {
+                    firstName,
+                    lastName,
+                    email,
+                    phone,
+                    serviceType,
+                    experience,
+                    bio
+                };
+                localStorage.setItem('provider_profile', JSON.stringify(profileData));
+
+                alert('Profile updated successfully!');
+            });
+
+            // Cancel profile changes
+            cancelProfileBtn.addEventListener('click', function() {
+                loadProfile();
+            });
+
+            // Change password
+            changePasswordBtn.addEventListener('click', function() {
+                const currentPassword = document.getElementById('currentPassword').value;
+                const newPassword = document.getElementById('newPassword').value;
+                const confirmPassword = document.getElementById('confirmPassword').value;
+
+                if (!currentPassword || !newPassword || !confirmPassword) {
+                    alert('Please fill in all password fields');
+                    return;
+                }
+
+                if (newPassword !== confirmPassword) {
+                    alert('New passwords do not match');
+                    return;
+                }
+
+                if (newPassword.length < 6) {
+                    alert('Password must be at least 6 characters long');
+                    return;
+                }
+
+                // In a real app, you would verify current password and update via API
+                alert('Password changed successfully!');
+                
+                // Clear password fields
+                document.getElementById('currentPassword').value = '';
+                document.getElementById('newPassword').value = '';
+                document.getElementById('confirmPassword').value = '';
+            });
+
+            // Save preferences
+            savePreferencesBtn.addEventListener('click', function() {
+                const emailNotifications = document.getElementById('emailNotifications').checked;
+                const smsNotifications = document.getElementById('smsNotifications').checked;
+                const marketingEmails = document.getElementById('marketingEmails').checked;
+
+                // Save preferences to localStorage (in real app, this would be an API call)
+                const preferences = {
+                    emailNotifications,
+                    smsNotifications,
+                    marketingEmails
+                };
+                localStorage.setItem('provider_preferences', JSON.stringify(preferences));
+
+                alert('Preferences saved successfully!');
+            });
+
+            // Settings Management
+            const saveBusinessBtn = document.getElementById('saveBusinessBtn');
+            const saveSystemBtn = document.getElementById('saveSystemBtn');
+            const deleteAccountBtn = document.getElementById('deleteAccountBtn');
+            const confirmDeleteBtn = document.getElementById('confirmDeleteBtn');
+            const deleteAccountModal = document.getElementById('deleteAccountModal');
+
+            // Save business info
+            saveBusinessBtn.addEventListener('click', function() {
+                const businessName = document.getElementById('businessName').value;
+                const businessAddress = document.getElementById('businessAddress').value;
+                const businessPhone = document.getElementById('businessPhone').value;
+                const businessEmail = document.getElementById('businessEmail').value;
+                const businessWebsite = document.getElementById('businessWebsite').value;
+
+                // Save to localStorage (in real app, this would be an API call)
+                const businessData = {
+                    businessName,
+                    businessAddress,
+                    businessPhone,
+                    businessEmail,
+                    businessWebsite
+                };
+                localStorage.setItem('provider_business', JSON.stringify(businessData));
+
+                alert('Business information saved successfully!');
+            });
+
+            // Save system settings
+            saveSystemBtn.addEventListener('click', function() {
+                const timezone = document.getElementById('timezone').value;
+                const dateFormat = document.getElementById('dateFormat').value;
+                const currency = document.getElementById('currency').value;
+                const language = document.getElementById('language').value;
+
+                // Save to localStorage (in real app, this would be an API call)
+                const systemData = {
+                    timezone,
+                    dateFormat,
+                    currency,
+                    language
+                };
+                localStorage.setItem('provider_system', JSON.stringify(systemData));
+
+                alert('System settings saved successfully!');
+            });
+
+            // Delete account
+            deleteAccountBtn.addEventListener('click', function() {
+                deleteAccountModal.style.display = 'flex';
+            });
+
+            confirmDeleteBtn.addEventListener('click', function() {
+                const confirmText = document.getElementById('confirmDelete').value;
+                
+                if (confirmText !== 'DELETE') {
+                    alert('Please type "DELETE" to confirm account deletion');
+                    return;
+                }
+
+                // In a real app, this would call an API to delete the account
+                alert('Account deletion request submitted. You will be logged out.');
+                
+                // Logout and redirect
+                localStorage.removeItem('provider_username');
+                localStorage.removeItem('provider_profile');
+                localStorage.removeItem('provider_preferences');
+                localStorage.removeItem('provider_business');
+                localStorage.removeItem('provider_system');
+                window.location.href = 'login.html';
+            });
+        }
+
+        // Provider Notification System
+        class ProviderNotificationSystem {
+            constructor() {
+                this.notifications = [];
+                this.init();
+            }
+
+            init() {
+                this.loadNotifications();
+                this.setupNotificationPolling();
+                this.setupNotificationHandlers();
+            }
+
+            // Load notifications from localStorage
+            loadNotifications() {
+                this.notifications = JSON.parse(localStorage.getItem('provider_notifications')) || [];
+                this.updateNotificationBadge();
+                this.updateNotificationsPanel();
+                this.updateDashboardStats();
+            }
+
+            // Setup polling for new notifications
+            setupNotificationPolling() {
+                setInterval(() => {
+                    this.loadNotifications();
+                }, 5000); // Check every 5 seconds
+            }
+
+            // Setup notification handlers
+            setupNotificationHandlers() {
+                const notificationIcon = document.getElementById('notificationIcon');
+                const notificationsPanel = document.getElementById('notificationsPanel');
+                const markAllRead = document.getElementById('markAllRead');
+
+                // Toggle notifications panel
+                notificationIcon.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    notificationsPanel.classList.toggle('active');
+                });
+
+                // Mark all as read
+                markAllRead.addEventListener('click', () => {
+                    this.markAllAsRead();
+                });
+
+                // Close notifications when clicking outside
+                document.addEventListener('click', (e) => {
+                    if (!e.target.closest('.notification-icon')) {
+                        notificationsPanel.classList.remove('active');
+                    }
+                });
+            }
+
+            // Update notification badge
+            updateNotificationBadge() {
+                const unreadCount = this.notifications.filter(n => n.status === 'unread').length;
+                const badge = document.getElementById('notificationBadge');
+                if (badge) {
+                    badge.textContent = unreadCount;
+                    badge.style.display = unreadCount > 0 ? 'flex' : 'none';
+                }
+            }
+
+            // Update notifications panel
+            updateNotificationsPanel() {
+                const notificationsList = document.getElementById('notificationsList');
+                if (!notificationsList) return;
+
+                notificationsList.innerHTML = '';
+
+                if (this.notifications.length === 0) {
+                    notificationsList.innerHTML = '<div class="no-notifications">No notifications</div>';
+                    return;
+                }
+
+                // Sort notifications by timestamp (newest first)
+                const sortedNotifications = [...this.notifications].sort((a, b) => 
+                    new Date(b.timestamp) - new Date(a.timestamp)
+                );
+
+                sortedNotifications.forEach(notification => {
+                    const notificationItem = document.createElement('div');
+                    notificationItem.className = `notification-item ${notification.status === 'unread' ? 'unread' : ''}`;
+                    notificationItem.innerHTML = `
+                        <div class="notification-icon-small">
+                            <i class="fas fa-calendar-plus"></i>
+                        </div>
+                        <div class="notification-content">
+                            <div class="notification-title">${this.getNotificationTitle(notification)}</div>
+                            <div class="notification-desc">${this.getNotificationDescription(notification)}</div>
+                            <div class="notification-time">${this.formatTime(notification.timestamp)}</div>
+                            ${notification.requiresAction ? `
+                                <div class="notification-actions">
+                                    <button class="btn btn-success btn-small accept-booking" data-booking-id="${notification.bookingId}">Accept</button>
+                                    <button class="btn btn-danger btn-small reject-booking" data-booking-id="${notification.bookingId}">Reject</button>
+                                    <button class="btn btn-secondary btn-small view-details" data-booking-id="${notification.bookingId}">Details</button>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                    notificationsList.appendChild(notificationItem);
+                });
+
+                // Add event listeners to action buttons
+                this.setupNotificationActionHandlers();
+            }
+
+            getNotificationTitle(notification) {
+                switch (notification.type) {
+                    case 'new_booking':
+                        return 'New Booking Request';
+                    case 'booking_accepted':
+                        return 'Booking Accepted';
+                    case 'booking_rejected':
+                        return 'Booking Rejected';
+                    default:
+                        return 'Notification';
+                }
+            }
+
+            getNotificationDescription(notification) {
+                switch (notification.type) {
+                    case 'new_booking':
+                        return `${notification.customerName} requested ${notification.serviceType} for ${new Date(notification.preferredDate).toLocaleDateString()}`;
+                    case 'booking_accepted':
+                        return `You accepted booking from ${notification.customerName}`;
+                    case 'booking_rejected':
+                        return `You rejected booking from ${notification.customerName}`;
+                    default:
+                        return notification.message || '';
+                }
+            }
+
+            formatTime(timestamp) {
+                const date = new Date(timestamp);
+                const now = new Date();
+                const diffMs = now - date;
+                const diffMins = Math.floor(diffMs / 60000);
+                const diffHours = Math.floor(diffMs / 3600000);
+                const diffDays = Math.floor(diffMs / 86400000);
+
+                if (diffMins < 1) return 'Just now';
+                if (diffMins < 60) return `${diffMins} min ago`;
+                if (diffHours < 24) return `${diffHours} hours ago`;
+                if (diffDays < 7) return `${diffDays} days ago`;
+                return date.toLocaleDateString();
+            }
+
+            setupNotificationActionHandlers() {
+                // Accept booking buttons
+                document.querySelectorAll('.accept-booking').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const bookingId = e.target.getAttribute('data-booking-id');
+                        await this.handleBookingAction(bookingId, 'accept');
+                    });
+                });
+
+                // Reject booking buttons
+                document.querySelectorAll('.reject-booking').forEach(btn => {
+                    btn.addEventListener('click', async (e) => {
+                        const bookingId = e.target.getAttribute('data-booking-id');
+                        await this.handleBookingAction(bookingId, 'reject');
+                    });
+                });
+
+                // View details buttons
+                document.querySelectorAll('.view-details').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        const bookingId = e.target.getAttribute('data-booking-id');
+                        this.viewBookingDetails(bookingId);
+                    });
+                });
+            }
+
+            async handleBookingAction(bookingId, action) {
+                try {
+                    const notification = this.notifications.find(n => n.bookingId === bookingId);
+                    if (!notification) return;
+
+                    // Update notification
+                    notification.type = `booking_${action}ed`;
+                    notification.status = 'read';
+                    notification.requiresAction = false;
+                    notification.actionTimestamp = new Date().toISOString();
+
+                    // Save updated notifications
+                    localStorage.setItem('provider_notifications', JSON.stringify(this.notifications));
+
+                    // Update booking status in appointments
+                    this.updateBookingStatus(bookingId, action === 'accept' ? 'confirmed' : 'rejected');
+
+                    // Reload notifications and appointments
+                    this.loadNotifications();
+                    if (typeof loadAppointments === 'function') {
+                        loadAppointments();
+                    }
+
+                    // Show confirmation
+                    alert(`Booking ${action}ed successfully!`);
+
+                } catch (error) {
+                    console.error(`Error ${action}ing booking:`, error);
+                    alert(`Failed to ${action} booking. Please try again.`);
+                }
+            }
+
+            updateBookingStatus(bookingId, status) {
+                // Get existing appointments or initialize empty array
+                const appointments = JSON.parse(localStorage.getItem('provider_appointments')) || [];
+                
+                // Find and update the booking
+                const bookingIndex = appointments.findIndex(app => app.bookingId === bookingId);
+                if (bookingIndex !== -1) {
+                    appointments[bookingIndex].status = status;
+                    localStorage.setItem('provider_appointments', JSON.stringify(appointments));
+                } else {
+                    // Create new appointment if not exists
+                    const notification = this.notifications.find(n => n.bookingId === bookingId);
+                    if (notification) {
+                        appointments.push({
+                            bookingId: notification.bookingId,
+                            customerName: notification.customerName,
+                            service: notification.serviceType,
+                            date: notification.preferredDate,
+                            amount: notification.totalCost,
+                            status: status,
+                            address: notification.address,
+                            problemDescription: notification.problemDescription
+                        });
+                        localStorage.setItem('provider_appointments', JSON.stringify(appointments));
+                    }
+                }
+            }
+
+            viewBookingDetails(bookingId) {
+                const notification = this.notifications.find(n => n.bookingId === bookingId);
+                if (notification) {
+                    const details = `
+Customer: ${notification.customerName}
+Service: ${notification.serviceType}
+Date: ${new Date(notification.preferredDate).toLocaleDateString()}
+Time: ${notification.preferredTime}
+Address: ${notification.address}
+Problem: ${notification.problemDescription}
+Amount: ${notification.totalCost}
+                    `;
+                    alert('Booking Details:\n\n' + details);
+                }
+            }
+
+            async markAllAsRead() {
+                this.notifications.forEach(notification => {
+                    notification.status = 'read';
+                });
+                
+                localStorage.setItem('provider_notifications', JSON.stringify(this.notifications));
+                this.loadNotifications();
+            }
+
+            // Update dashboard statistics based on notifications and appointments
+            updateDashboardStats() {
+                const appointments = JSON.parse(localStorage.getItem('provider_appointments')) || [];
+                const today = new Date().toDateString();
+                
+                // Today's appointments
+                const todaysAppointments = appointments.filter(app => 
+                    new Date(app.date).toDateString() === today && 
+                    ['confirmed', 'in-progress'].includes(app.status)
+                ).length;
+                
+                // Active clients (unique customers)
+                const activeClients = [...new Set(appointments.map(app => app.customerName))].length;
+                
+                // Monthly revenue
+                const currentMonth = new Date().getMonth();
+                const currentYear = new Date().getFullYear();
+                const monthlyRevenue = appointments
+                    .filter(app => {
+                        const appDate = new Date(app.date);
+                        return appDate.getMonth() === currentMonth && 
+                               appDate.getFullYear() === currentYear &&
+                               app.status === 'completed';
+                    })
+                    .reduce((sum, app) => {
+                        const amount = parseFloat(app.amount.replace('$', '')) || 0;
+                        return sum + amount;
+                    }, 0);
+
+                // Update dashboard stats
+                document.getElementById('todaysAppointments').textContent = todaysAppointments;
+                document.getElementById('activeClients').textContent = activeClients;
+                document.getElementById('monthlyRevenue').textContent = `$${monthlyRevenue}`;
+                
+                // Update tasks list
+                this.updateTasksList(appointments);
+                
+                // Update recent activity
+                this.updateRecentActivity();
+            }
+
+            updateTasksList(appointments) {
+                const tasksList = document.getElementById('tasksList');
+                if (!tasksList) return;
+
+                const today = new Date().toDateString();
+                const todaysTasks = appointments.filter(app => 
+                    new Date(app.date).toDateString() === today && 
+                    ['confirmed', 'in-progress'].includes(app.status)
+                );
+
+                tasksList.innerHTML = '';
+
+                if (todaysTasks.length === 0) {
+                    tasksList.innerHTML = `
+                        <li class="task-item">
+                            <div class="task-check">
+                                <input type="checkbox" disabled>
+                            </div>
+                            <div class="task-content">
+                                <div class="task-text">No tasks scheduled for today</div>
+                                <div class="task-time">Check back later for new appointments</div>
+                            </div>
+                        </li>
+                    `;
+                    return;
+                }
+
+                todaysTasks.forEach(task => {
+                    const taskItem = document.createElement('li');
+                    taskItem.className = 'task-item';
+                    taskItem.innerHTML = `
+                        <div class="task-check">
+                            <input type="checkbox">
+                        </div>
+                        <div class="task-content">
+                            <div class="task-text">${task.service} for ${task.customerName}</div>
+                            <div class="task-time">${task.status === 'confirmed' ? 'Scheduled' : 'In Progress'} • ${task.address}</div>
+                        </div>
+                    `;
+                    tasksList.appendChild(taskItem);
+                });
+            }
+
+            updateRecentActivity() {
+                const activityList = document.getElementById('recentActivityList');
+                if (!activityList) return;
+
+                // Combine notifications and appointments for activity feed
+                const activities = [
+                    ...this.notifications.slice(0, 5).map(notif => ({
+                        type: 'notification',
+                        title: this.getNotificationTitle(notif),
+                        description: this.getNotificationDescription(notif),
+                        time: notif.timestamp,
+                        icon: 'fa-calendar-plus'
+                    })),
+                    ...(JSON.parse(localStorage.getItem('provider_appointments')) || [])
+                        .slice(0, 3)
+                        .map(app => ({
+                            type: 'appointment',
+                            title: `Appointment ${app.status}`,
+                            description: `${app.service} for ${app.customerName}`,
+                            time: app.date,
+                            icon: 'fa-tools'
+                        }))
+                ];
+
+                // Sort by time (newest first)
+                activities.sort((a, b) => new Date(b.time) - new Date(a.time));
+
+                activityList.innerHTML = '';
+
+                if (activities.length === 0) {
+                    activityList.innerHTML = `
+                        <li class="activity-item">
+                            <div class="activity-icon">
+                                <i class="fas fa-info-circle"></i>
+                            </div>
+                            <div class="activity-content">
+                                <div class="activity-text">No recent activity</div>
+                                <div class="activity-time">Complete jobs to see activity here</div>
+                            </div>
+                        </li>
+                    `;
+                    return;
+                }
+
+                activities.forEach(activity => {
+                    const activityItem = document.createElement('li');
+                    activityItem.className = 'activity-item';
+                    activityItem.innerHTML = `
+                        <div class="activity-icon">
+                            <i class="fas ${activity.icon}"></i>
+                        </div>
+                        <div class="activity-content">
+                            <div class="activity-text">${activity.title}</div>
+                            <div class="activity-desc">${activity.description}</div>
+                            <div class="activity-time">${this.formatTime(activity.time)}</div>
+                        </div>
+                    `;
+                    activityList.appendChild(activityItem);
+                });
+            }
+        }
+
+        // Load appointments function
+        function loadAppointments() {
+            let appointments = JSON.parse(localStorage.getItem('provider_appointments')) || [];
+            const selectedStatus = document.getElementById('statusFilter').value;
+            
+            // Filter by status if needed
+            if (selectedStatus !== 'all') {
+                appointments = appointments.filter(appointment => appointment.status === selectedStatus);
+            }
+            
+            renderAppointments(appointments);
+        }
+
+        // Render appointments in the table
+        function renderAppointments(appointments) {
+            const appointmentsTableBody = document.getElementById('appointmentsTableBody');
+            if (!appointmentsTableBody) return;
+            
+            appointmentsTableBody.innerHTML = '';
+            
+            if (appointments.length === 0) {
+                appointmentsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px;">
+                            No appointments found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            appointments.forEach(appointment => {
+                const row = document.createElement('tr');
+                const statusClass = `status-${appointment.status.replace('-', '')}`;
+                const statusText = appointment.status.charAt(0).toUpperCase() + appointment.status.slice(1).replace('-', ' ');
+                
+                row.innerHTML = `
+                    <td>${appointment.bookingId || appointment.id}</td>
+                    <td>${appointment.customerName}</td>
+                    <td>${appointment.service}</td>
+                    <td>${formatDate(appointment.date)}</td>
+                    <td>${appointment.amount}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            ${appointment.status === 'pending' ? `
+                                <button class="btn btn-success btn-small accept-booking" data-booking-id="${appointment.bookingId || appointment.id}">
+                                    <i class="fas fa-check"></i> Accept
+                                </button>
+                                <button class="btn btn-danger btn-small reject-booking" data-booking-id="${appointment.bookingId || appointment.id}">
+                                    <i class="fas fa-times"></i> Reject
+                                </button>
+                            ` : `
+                                <button class="btn btn-edit update-status" data-id="${appointment.bookingId || appointment.id}">
+                                    <i class="fas fa-edit"></i> Update Status
+                                </button>
+                            `}
+                        </div>
+                    </td>
+                `;
+                appointmentsTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to action buttons
+            document.querySelectorAll('.accept-booking, .reject-booking').forEach(btn => {
+                btn.addEventListener('click', async function() {
+                    const bookingId = this.getAttribute('data-booking-id');
+                    const action = this.classList.contains('accept-booking') ? 'accept' : 'reject';
+                    
+                    if (window.providerNotifications) {
+                        await window.providerNotifications.handleBookingAction(bookingId, action);
+                    }
+                });
+            });
+            
+            // Add event listeners to update status buttons
+            document.querySelectorAll('.update-status').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const jobId = this.getAttribute('data-id');
+                    openStatusModal(jobId);
+                });
+            });
+        }
+
+        // Format date for display
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Open status update modal
+        function openStatusModal(jobId) {
+            const appointments = JSON.parse(localStorage.getItem('provider_appointments')) || [];
+            const appointment = appointments.find(a => a.id === jobId || a.bookingId === jobId);
+            
+            if (appointment) {
+                document.getElementById('jobId').value = appointment.id || appointment.bookingId;
+                document.getElementById('jobStatus').value = appointment.status;
+                document.getElementById('statusNotes').value = appointment.notes || '';
+                
+                document.getElementById('statusModal').style.display = 'flex';
+            }
+        }
+
+        // Update job status
+        function updateJobStatus(jobId, status, notes) {
+            const appointments = JSON.parse(localStorage.getItem('provider_appointments')) || [];
+            const appointmentIndex = appointments.findIndex(a => a.id === jobId || a.bookingId === jobId);
+            
+            if (appointmentIndex !== -1) {
+                appointments[appointmentIndex].status = status;
+                appointments[appointmentIndex].notes = notes;
+                
+                localStorage.setItem('provider_appointments', JSON.stringify(appointments));
+                
+                // Reload appointments with current filter
+                loadAppointments();
+                
+                // Show success message
+                alert('Job status updated successfully!');
+            }
+        }
+
+        // Load services from localStorage or initialize with sample data
+        function loadServices() {
+            let services = JSON.parse(localStorage.getItem('provider_services')) || [];
+            
+            // If no services, initialize with sample data
+            if (services.length === 0) {
+                services = [
+                    {
+                        id: '1',
+                        name: 'Plumbing Repair',
+                        description: 'Fix leaks, clogs, and other plumbing issues',
+                        price: 75.00,
+                        availability: true
+                    },
+                    {
+                        id: '2',
+                        name: 'Electrical Installation',
+                        description: 'Install outlets, switches, and light fixtures',
+                        price: 100.00,
+                        availability: true
+                    },
+                    {
+                        id: '3',
+                        name: 'HVAC Maintenance',
+                        description: 'Regular maintenance for heating and cooling systems',
+                        price: 120.00,
+                        availability: false
+                    }
+                ];
+                localStorage.setItem('provider_services', JSON.stringify(services));
+            }
+            
+            renderServices(services);
+        }
+
+        // Render services in the table
+        function renderServices(services) {
+            const servicesTableBody = document.getElementById('servicesTableBody');
+            if (!servicesTableBody) return;
+            
+            servicesTableBody.innerHTML = '';
+            
+            if (services.length === 0) {
+                servicesTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="5" style="text-align: center; padding: 30px;">
+                            No services found. <a href="#" id="addFirstService">Add your first service</a>
+                        </td>
+                    </tr>
+                `;
+                
+                document.getElementById('addFirstService').addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.getElementById('addServiceBtn').click();
+                });
+                
+                return;
+            }
+            
+            services.forEach(service => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${service.name}</td>
+                    <td>${service.description}</td>
+                    <td>$${parseFloat(service.price).toFixed(2)}</td>
+                    <td>
+                        <span class="status-badge ${service.availability ? 'status-available' : 'status-unavailable'}">
+                            ${service.availability ? 'Available' : 'Unavailable'}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn btn-edit edit-service" data-id="${service.id}">
+                                <i class="fas fa-edit"></i> Edit
+                            </button>
+                            <button class="btn btn-delete delete-service" data-id="${service.id}">
+                                <i class="fas fa-trash"></i> Delete
+                            </button>
+                        </div>
+                    </td>
+                `;
+                servicesTableBody.appendChild(row);
+            });
+            
+            // Add event listeners to edit and delete buttons
+            document.querySelectorAll('.edit-service').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-id');
+                    editService(serviceId);
+                });
+            });
+            
+            document.querySelectorAll('.delete-service').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const serviceId = this.getAttribute('data-id');
+                    deleteService(serviceId);
+                });
+            });
+        }
+
+        // Add a new service
+        function addService(name, description, price, availability) {
+            const services = JSON.parse(localStorage.getItem('provider_services')) || [];
+            const newService = {
+                id: Date.now().toString(),
+                name,
+                description,
+                price: parseFloat(price),
+                availability
+            };
+            
+            services.push(newService);
+            localStorage.setItem('provider_services', JSON.stringify(services));
+            renderServices(services);
+            
+            // Show success message
+            alert('Service added successfully!');
+        }
+
+        // Edit an existing service
+        function editService(serviceId) {
+            const services = JSON.parse(localStorage.getItem('provider_services')) || [];
+            const service = services.find(s => s.id === serviceId);
+            
+            if (service) {
+                document.getElementById('modalTitle').textContent = 'Edit Service';
+                document.getElementById('serviceId').value = service.id;
+                document.getElementById('serviceName').value = service.name;
+                document.getElementById('serviceDescription').value = service.description;
+                document.getElementById('servicePrice').value = service.price;
+                document.getElementById('serviceAvailability').checked = service.availability;
+                
+                document.getElementById('serviceModal').style.display = 'flex';
+            }
+        }
+
+        // Update an existing service
+        function updateService(serviceId, name, description, price, availability) {
+            const services = JSON.parse(localStorage.getItem('provider_services')) || [];
+            const serviceIndex = services.findIndex(s => s.id === serviceId);
+            
+            if (serviceIndex !== -1) {
+                services[serviceIndex] = {
+                    id: serviceId,
+                    name,
+                    description,
+                    price: parseFloat(price),
+                    availability
+                };
+                
+                localStorage.setItem('provider_services', JSON.stringify(services));
+                renderServices(services);
+                
+                // Show success message
+                alert('Service updated successfully!');
+            }
+        }
+
+        // Delete a service
+        function deleteService(serviceId) {
+            if (confirm('Are you sure you want to delete this service?')) {
+                const services = JSON.parse(localStorage.getItem('provider_services')) || [];
+                const filteredServices = services.filter(s => s.id !== serviceId);
+                
+                localStorage.setItem('provider_services', JSON.stringify(filteredServices));
+                renderServices(filteredServices);
+                
+                // Show success message
+                alert('Service deleted successfully!');
+            }
+        }
+
+        // Load payments from localStorage or initialize with sample data
+        function loadPayments() {
+            let payments = JSON.parse(localStorage.getItem('provider_payments')) || [];
+            const selectedStatus = document.getElementById('paymentStatusFilter').value;
+            const selectedTime = document.getElementById('timeFilter').value;
+            
+            // If no payments, initialize with sample data
+            if (payments.length === 0) {
+                payments = [
+                    {
+                        id: 'TXN-001',
+                        customerName: 'John Smith',
+                        service: 'Plumbing Repair',
+                        date: '2023-06-15',
+                        amount: 75.00,
+                        status: 'paid',
+                        paymentMethod: 'Credit Card'
+                    },
+                    {
+                        id: 'TXN-002',
+                        customerName: 'Sarah Johnson',
+                        service: 'Electrical Installation',
+                        date: '2023-06-16',
+                        amount: 100.00,
+                        status: 'paid',
+                        paymentMethod: 'PayPal'
+                    },
+                    {
+                        id: 'TXN-003',
+                        customerName: 'Michael Brown',
+                        service: 'HVAC Maintenance',
+                        date: '2023-06-10',
+                        amount: 120.00,
+                        status: 'paid',
+                        paymentMethod: 'Bank Transfer'
+                    },
+                    {
+                        id: 'TXN-004',
+                        customerName: 'Emily Davis',
+                        service: 'Plumbing Repair',
+                        date: '2023-06-18',
+                        amount: 85.00,
+                        status: 'pending',
+                        paymentMethod: 'Credit Card'
+                    },
+                    {
+                        id: 'TXN-005',
+                        customerName: 'Robert Wilson',
+                        service: 'Electrical Installation',
+                        date: '2023-06-05',
+                        amount: 150.00,
+                        status: 'failed',
+                        paymentMethod: 'Credit Card'
+                    }
+                ];
+                localStorage.setItem('provider_payments', JSON.stringify(payments));
+            }
+            
+            // Filter by status if needed
+            if (selectedStatus !== 'all') {
+                payments = payments.filter(payment => payment.status === selectedStatus);
+            }
+            
+            // Filter by time if needed
+            if (selectedTime !== 'all') {
+                const now = new Date();
+                let startDate;
+                
+                switch(selectedTime) {
+                    case 'week':
+                        startDate = new Date(now.setDate(now.getDate() - 7));
+                        break;
+                    case 'month':
+                        startDate = new Date(now.setMonth(now.getMonth() - 1));
+                        break;
+                    case 'quarter':
+                        startDate = new Date(now.setMonth(now.getMonth() - 3));
+                        break;
+                }
+                
+                payments = payments.filter(payment => new Date(payment.date) >= startDate);
+            }
+            
+            renderPayments(payments);
+            updateEarningsSummary(payments);
+        }
+
+        // Render payments in the table
+        function renderPayments(payments) {
+            const paymentsTableBody = document.getElementById('paymentsTableBody');
+            if (!paymentsTableBody) return;
+            
+            paymentsTableBody.innerHTML = '';
+            
+            if (payments.length === 0) {
+                paymentsTableBody.innerHTML = `
+                    <tr>
+                        <td colspan="7" style="text-align: center; padding: 30px;">
+                            No transactions found.
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+            
+            payments.forEach(payment => {
+                const row = document.createElement('tr');
+                const statusClass = `status-${payment.status.replace(' ', '-')}`;
+                const statusText = payment.status.charAt(0).toUpperCase() + payment.status.slice(1);
+                
+                row.innerHTML = `
+                    <td>${payment.id}</td>
+                    <td>${payment.customerName}</td>
+                    <td>${payment.service}</td>
+                    <td>${formatDate(payment.date)}</td>
+                    <td>$${parseFloat(payment.amount).toFixed(2)}</td>
+                    <td>
+                        <span class="status-badge ${statusClass}">
+                            ${statusText}
+                        </span>
+                    </td>
+                    <td>${payment.paymentMethod}</td>
+                `;
+                paymentsTableBody.appendChild(row);
+            });
+        }
+
+        // Update earnings summary
+        function updateEarningsSummary(payments) {
+            const allPayments = JSON.parse(localStorage.getItem('provider_payments')) || [];
+            const paidPayments = allPayments.filter(p => p.status === 'paid');
+            const pendingPayments = allPayments.filter(p => p.status === 'pending');
+            
+            // Calculate totals
+            const lifetimeTotal = paidPayments.reduce((sum, payment) => sum + payment.amount, 0);
+            
+            // Calculate monthly total (last 30 days)
+            const thirtyDaysAgo = new Date();
+            thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+            const monthlyTotal = paidPayments
+                .filter(p => new Date(p.date) >= thirtyDaysAgo)
+                .reduce((sum, payment) => sum + payment.amount, 0);
+            
+            // Calculate weekly total (last 7 days)
+            const sevenDaysAgo = new Date();
+            sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+            const weeklyTotal = paidPayments
+                .filter(p => new Date(p.date) >= sevenDaysAgo)
+                .reduce((sum, payment) => sum + payment.amount, 0);
+            
+            // Calculate pending total
+            const pendingTotal = pendingPayments.reduce((sum, payment) => sum + payment.amount, 0);
+            
+            // Update UI
+            document.getElementById('lifetimeEarnings').textContent = `$${lifetimeTotal.toFixed(2)}`;
+            document.getElementById('monthlyEarnings').textContent = `$${monthlyTotal.toFixed(2)}`;
+            document.getElementById('weeklyEarnings').textContent = `$${weeklyTotal.toFixed(2)}`;
+            document.getElementById('pendingAmount').textContent = `$${pendingTotal.toFixed(2)}`;
+        }
+
+        // Analytics Management
+        let revenueChart, serviceChart, statusChart, performanceChart;
+
+        // Load analytics data and render charts
+        function loadAnalytics() {
+            // Destroy existing charts if they exist
+            if (revenueChart) revenueChart.destroy();
+            if (serviceChart) serviceChart.destroy();
+            if (statusChart) statusChart.destroy();
+            if (performanceChart) performanceChart.destroy();
+
+            // Render charts
+            renderRevenueChart();
+            renderServiceChart();
+            renderStatusChart();
+            renderPerformanceChart();
+        }
+
+        // Render Revenue Trend Chart
+        function renderRevenueChart() {
+            const ctx = document.getElementById('revenueChart').getContext('2d');
+            revenueChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Monthly Revenue',
+                        data: [1200, 1900, 1500, 2200, 1800, 2500],
+                        borderColor: '#4a6cf7',
+                        backgroundColor: 'rgba(74, 108, 247, 0.1)',
+                        borderWidth: 3,
+                        fill: true,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'top'
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            },
+                            ticks: {
+                                callback: function(value) {
+                                    return '$' + value;
+                                }
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Service Popularity Chart
+        function renderServiceChart() {
+            const ctx = document.getElementById('serviceChart').getContext('2d');
+            serviceChart = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['Plumbing', 'Electrical', 'HVAC', 'Carpentry', 'Painting'],
+                    datasets: [{
+                        label: 'Jobs Completed',
+                        data: [12, 8, 6, 4, 3],
+                        backgroundColor: [
+                            '#4a6cf7',
+                            '#38a169',
+                            '#d69e2e',
+                            '#e53e3e',
+                            '#805ad5'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: 'rgba(0, 0, 0, 0.1)'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Job Status Distribution Chart
+        function renderStatusChart() {
+            const ctx = document.getElementById('statusChart').getContext('2d');
+            statusChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Completed', 'In Progress', 'Pending', 'Cancelled'],
+                    datasets: [{
+                        data: [45, 20, 25, 10],
+                        backgroundColor: [
+                            '#38a169',
+                            '#3182ce',
+                            '#d69e2e',
+                            '#e53e3e'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        // Render Monthly Performance Chart
+        function renderPerformanceChart() {
+            const ctx = document.getElementById('performanceChart').getContext('2d');
+            performanceChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Revenue', 'Jobs Completed', 'Customer Satisfaction', 'Response Time', 'Repeat Clients'],
+                    datasets: [{
+                        label: 'Current Month',
+                        data: [85, 78, 92, 65, 70],
+                        backgroundColor: 'rgba(74, 108, 247, 0.2)',
+                        borderColor: '#4a6cf7',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#4a6cf7'
+                    }, {
+                        label: 'Last Month',
+                        data: [70, 65, 85, 60, 55],
+                        backgroundColor: 'rgba(56, 161, 105, 0.2)',
+                        borderColor: '#38a169',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#38a169'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: {
+                                display: true
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 100
+                        }
+                    }
+                }
+            });
+        }
+
+        // Load profile data
+        function loadProfile() {
+            // Load profile data from localStorage
+            const profileData = JSON.parse(localStorage.getItem('provider_profile')) || {};
+            if (profileData.firstName) {
+                document.getElementById('firstName').value = profileData.firstName;
+                document.getElementById('lastName').value = profileData.lastName;
+                document.getElementById('email').value = profileData.email;
+                document.getElementById('phone').value = profileData.phone;
+                document.getElementById('serviceType').value = profileData.serviceType || 'plumbing';
+                document.getElementById('experience').value = profileData.experience || '5';
+                document.getElementById('bio').value = profileData.bio || '';
+            }
+
+            // Load preferences from localStorage
+            const preferences = JSON.parse(localStorage.getItem('provider_preferences')) || {};
+            document.getElementById('emailNotifications').checked = preferences.emailNotifications !== false;
+            document.getElementById('smsNotifications').checked = preferences.smsNotifications || false;
+            document.getElementById('marketingEmails').checked = preferences.marketingEmails || false;
+        }
+
+        // Load settings data
+        function loadSettings() {
+            // Load business data from localStorage
+            const businessData = JSON.parse(localStorage.getItem('provider_business')) || {};
+            if (businessData.businessName) {
+                document.getElementById('businessName').value = businessData.businessName;
+                document.getElementById('businessAddress').value = businessData.businessAddress;
+                document.getElementById('businessPhone').value = businessData.businessPhone;
+                document.getElementById('businessEmail').value = businessData.businessEmail;
+                document.getElementById('businessWebsite').value = businessData.businessWebsite;
+            }
+
+            // Load system data from localStorage
+            const systemData = JSON.parse(localStorage.getItem('provider_system')) || {};
+            if (systemData.timezone) {
+                document.getElementById('timezone').value = systemData.timezone;
+                document.getElementById('dateFormat').value = systemData.dateFormat;
+                document.getElementById('currency').value = systemData.currency;
+                document.getElementById('language').value = systemData.language;
+            }
+        }
+
+        // Initialize the dashboard
+        loadServices();
+        loadAppointments();
+        loadPayments();
+        loadAnalytics();
+        loadProfile();
+        loadSettings();
+    </script>
+</body>  
+</html>

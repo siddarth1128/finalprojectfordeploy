@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Provider Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: #f8fafc;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
+            padding: 35px;
+            border: 2px solid #e3ebff;
+        }
+
+        .register-header {
+            text-align: center;
+            margin-bottom: 25px;
+        }
+
+        .register-header h2 {
+            font-size: 24px;
+            font-weight: 700;
+            margin-bottom: 5px;
+            color: #2d3748;
+        }
+
+        .subtitle {
+            color: #718096;
+            font-size: 14px;
+        }
+
+        .form-row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .form-group {
+            flex: 1;
+            margin-bottom: 15px;
+        }
+
+        .form-group.full-width {
+            flex: 0 0 100%;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #2d3748;
+            font-size: 13px;
+        }
+
+        .input-with-icon {
+            position: relative;
+        }
+
+        .input-with-icon i {
+            position: absolute;
+            left: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 14px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px 12px 12px 40px;
+            border: 1px solid #e2e8f0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus {
+            outline: none;
+            border-color: #4a6cf7;
+            box-shadow: 0 0 0 3px rgba(74, 108, 247, 0.1);
+        }
+
+        .file-upload {
+            border: 2px dashed #e2e8f0;
+            border-radius: 10px;
+            padding: 15px;
+            text-align: center;
+            background: #f8fafc;
+            cursor: pointer;
+            margin-top: 5px;
+        }
+
+        .file-upload i {
+            font-size: 20px;
+            color: #4a6cf7;
+            margin-bottom: 8px;
+        }
+
+        .file-upload p {
+            color: #718096;
+            margin-bottom: 10px;
+            font-size: 12px;
+        }
+
+        .file-upload label {
+            background: #4a6cf7;
+            color: white;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-block;
+            font-size: 13px;
+        }
+
+        .file-upload input[type="file"] {
+            display: none;
+        }
+
+        .file-name {
+            margin-top: 8px;
+            font-size: 12px;
+            color: #4a5568;
+        }
+
+        .password-rules {
+            font-size: 11px;
+            color: #718096;
+            margin-top: 4px;
+        }
+
+        .register-btn {
+            width: 100%;
+            padding: 14px;
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 10px;
+        }
+
+        .register-btn:hover {
+            background: #3b5bdb;
+            transform: translateY(-1px);
+        }
+
+        .register-btn:disabled {
+            background: #a0aec0;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .login-link {
+            margin-top: 20px;
+            font-size: 13px;
+            color: #718096;
+            text-align: center;
+        }
+
+        .login-link a {
+            color: #4a6cf7;
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .error-message {
+            color: #e53e3e;
+            font-size: 12px;
+            margin-top: 5px;
+            display: none;
+        }
+
+        .loading {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 8px;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* New styles from second code */
+        .notification {
+            display: none;
+            padding: 12px 16px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            border-left: 4px solid;
+        }
+
+        .notification-success {
+            background: #d1fae5;
+            color: #065f46;
+            border-color: #10b981;
+        }
+
+        .notification-error {
+            background: #fee2e2;
+            color: #7f1d1d;
+            border-color: #ef4444;
+        }
+
+        .notification-info {
+            background: #dbeafe;
+            color: #1e3a8a;
+            border-color: #3b82f6;
+        }
+
+        .approval-status {
+            display: none;
+            text-align: center;
+            padding: 30px;
+        }
+
+        .status-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+        }
+
+        .approved-icon {
+            color: #10b981;
+        }
+
+        .rejected-icon {
+            color: #ef4444;
+        }
+
+        .status-message {
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .status-description {
+            color: #6b7280;
+            margin-bottom: 20px;
+        }
+
+        .redirect-btn {
+            background: #4a6cf7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .redirect-btn:hover {
+            background: #3b5bdb;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 25px 20px;
+            }
+            
+            .form-row {
+                flex-direction: column;
+                gap: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- Notification for submission status (from second code) -->
+        <div class="notification notification-info" id="pendingNotification">
+            <i class="fas fa-clock"></i> Registration submitted successfully! Waiting for admin approval.
+        </div>
+        
+        <!-- Approval Status Section (from second code) -->
+        <div class="approval-status" id="approvedStatus">
+            <div class="status-icon approved-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h3 class="status-message">Application Approved!</h3>
+            <p class="status-description">Your service provider account has been approved by the administrator.</p>
+            <button class="redirect-btn" id="goToLoginBtn">Go to Login</button>
+        </div>
+
+        <!-- Rejection Status Section (from second code) -->
+        <div class="approval-status" id="rejectedStatus">
+            <div class="status-icon rejected-icon">
+                <i class="fas fa-times-circle"></i>
+            </div>
+            <h3 class="status-message">Application Rejected</h3>
+            <p class="status-description">Your application has been rejected. Please review your details and resubmit.</p>
+            <button class="redirect-btn" id="tryAgainBtn">Try Again</button>
+        </div>
+        
+        <div class="register-header" id="registerHeader">
+            <h2>Create Account</h2>
+            <p class="subtitle">Join our professional service provider network</p>
+        </div>
+        
+        <form id="registerForm">
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="name">Full Name *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-user"></i>
+                        <input type="text" id="name" name="name" placeholder="Full name" required>
+                    </div>
+                    <div class="error-message" id="name-error">Please enter your full name</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="phone">Phone *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-phone"></i>
+                        <input type="tel" id="phone" name="phone" placeholder="Phone number" required>
+                    </div>
+                    <div class="error-message" id="phone-error">Please enter a valid phone number</div>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="email">Email *</label>
+                <div class="input-with-icon">
+                    <i class="fas fa-envelope"></i>
+                    <input type="email" id="email" name="email" placeholder="Email address" required>
+                </div>
+                <div class="error-message" id="email-error">Please enter a valid email address</div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="service_type">Service Type *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-briefcase"></i>
+                        <select id="service_type" name="service_type" required>
+                            <option value="">Select service</option>
+                            <option value="plumbing">Plumbing</option>
+                            <option value="electrical">Electrical</option>
+                            <option value="carpentry">Carpentry</option>
+                            <option value="painting">Painting</option>
+                            <option value="ac">AC Repair</option>
+                            <option value="cleaning">Cleaning</option>
+                        </select>
+                    </div>
+                    <div class="error-message" id="service_type-error">Please select a service type</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="experience">Experience (Years) *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                        <input type="number" id="experience" name="experience" placeholder="Years" min="0" max="50" required>
+                    </div>
+                    <div class="error-message" id="experience-error">Please enter years of experience</div>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label for="password">Password *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" name="password" placeholder="Password" required>
+                    </div>
+                    <p class="password-rules">Min. 8 characters</p>
+                    <div class="error-message" id="password-error">Password must be at least 8 characters</div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="confirm_password">Confirm Password *</label>
+                    <div class="input-with-icon">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="confirm_password" name="confirm_password" placeholder="Confirm password" required>
+                    </div>
+                    <div class="error-message" id="confirm_password-error">Passwords do not match</div>
+                </div>
+            </div>
+
+            <div class="form-group full-width">
+                <label>License Image *</label>
+                <div class="file-upload">
+                    <i class="fas fa-id-card"></i>
+                    <p>Upload your professional license (Required)</p>
+                    <label for="licenseImage">Choose File</label>
+                    <input type="file" id="licenseImage" name="licenseImage" accept="image/*" required>
+                    <div class="file-name" id="fileName">No file chosen</div>
+                </div>
+                <div class="error-message" id="license-error">Please upload your professional license</div>
+            </div>
+
+            <button type="submit" class="register-btn" id="registerBtn">
+                Create Account
+            </button>
+        </form>
+        
+        <p class="login-link">
+            Already have an account? <a href="#" id="loginLink">Login here</a>
+        </p>
+    </div>
+
+    <script>
+        let statusCheckInterval = null;
+
+        // Check if there's a pending application for this session (from second code)
+        function checkApplicationStatus() {
+            const currentApplication = JSON.parse(localStorage.getItem('currentApplication')) || null;
+            
+            if (currentApplication) {
+                const approvedProviders = JSON.parse(localStorage.getItem('approvedProviders')) || [];
+                const rejectedProviders = JSON.parse(localStorage.getItem('rejectedProviders')) || [];
+                
+                // Check if application was approved
+                const isApproved = approvedProviders.some(provider => 
+                    provider.email === currentApplication.email && 
+                    provider.name === currentApplication.name
+                );
+                
+                // Check if application was rejected
+                const isRejected = rejectedProviders.some(provider => 
+                    provider.email === currentApplication.email && 
+                    provider.name === currentApplication.name
+                );
+                
+                if (isApproved) {
+                    showApprovedStatus();
+                    clearInterval(statusCheckInterval);
+                } else if (isRejected) {
+                    showRejectedStatus();
+                    clearInterval(statusCheckInterval);
+                } else {
+                    // Still pending, show pending notification
+                    document.getElementById('pendingNotification').style.display = 'block';
+                    document.getElementById('registerForm').style.display = 'block';
+                    document.getElementById('registerHeader').style.display = 'block';
+                }
+            }
+        }
+
+        function showApprovedStatus() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('registerHeader').style.display = 'none';
+            document.getElementById('pendingNotification').style.display = 'none';
+            document.getElementById('approvedStatus').style.display = 'block';
+            
+            // Remove current application from storage
+            localStorage.removeItem('currentApplication');
+        }
+
+        function showRejectedStatus() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('registerHeader').style.display = 'none';
+            document.getElementById('pendingNotification').style.display = 'none';
+            document.getElementById('rejectedStatus').style.display = 'block';
+            
+            // Remove current application from storage
+            localStorage.removeItem('currentApplication');
+        }
+
+        // Original form submission with enhancements from second code
+        document.getElementById('registerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            // Reset error messages
+            document.querySelectorAll('.error-message').forEach(error => {
+                error.style.display = 'none';
+            });
+
+            // Get form values
+            const name = document.getElementById('name').value.trim();
+            const phone = document.getElementById('phone').value.trim();
+            const email = document.getElementById('email').value.trim();
+            const service_type = document.getElementById('service_type').value;
+            const experience = document.getElementById('experience').value;
+            const password = document.getElementById('password').value;
+            const confirmPassword = document.getElementById('confirm_password').value;
+            const licenseFile = document.getElementById('licenseImage').files[0];
+
+            // Validation flags
+            let isValid = true;
+
+            // Validate name
+            if (!name) {
+                document.getElementById('name-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate phone
+            if (!phone) {
+                document.getElementById('phone-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate email
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!email || !emailRegex.test(email)) {
+                document.getElementById('email-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate service type
+            if (!service_type) {
+                document.getElementById('service_type-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate experience
+            if (!experience || experience < 0 || experience > 50) {
+                document.getElementById('experience-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate password
+            if (!password || password.length < 8) {
+                document.getElementById('password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate confirm password
+            if (password !== confirmPassword) {
+                document.getElementById('confirm_password-error').style.display = 'block';
+                isValid = false;
+            }
+
+            // Validate license (now mandatory)
+            if (!licenseFile) {
+                document.getElementById('license-error').style.display = 'block';
+                isValid = false;
+            }
+
+            if (!isValid) {
+                return;
+            }
+
+            const button = document.getElementById('registerBtn');
+            const originalText = button.innerHTML;
+            button.innerHTML = '<div class="loading"></div> Registering...';
+            button.disabled = true;
+
+            try {
+                // Get file (from second code)
+                const file = document.getElementById('licenseImage').files[0];
+                let licenseImageData = null;
+
+                if (file) {
+                    try {
+                        licenseImageData = await new Promise((resolve, reject) => {
+                            const reader = new FileReader();
+                            reader.onload = (e) => resolve(e.target.result);
+                            reader.onerror = reject;
+                            reader.readAsDataURL(file);
+                        });
+                    } catch (error) {
+                        alert('Error reading file. Please try again.');
+                        button.innerHTML = originalText;
+                        button.disabled = false;
+                        return;
+                    }
+                }
+
+                // Prepare form data for backend
+                const formData = {
+                    name: name,
+                    phone: phone,
+                    email: email,
+                    service_type: service_type,
+                    experience: parseInt(experience),
+                    password: password,
+                    // Additional data for local storage (from second code)
+                    id: Date.now(), // Generate unique ID
+                    licenseImage: file ? file.name : null,
+                    licenseImageData: licenseImageData,
+                    status: 'pending', // Initial status
+                    registrationDate: new Date().toISOString()
+                };
+
+                console.log('Sending registration data:', formData);
+
+                // Send registration data to backend (original functionality)
+                const response = await fetch('http://localhost:9000/provider/register', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const result = await response.json();
+                console.log('Registration response:', result);
+
+                if (result.success) {
+                    // Store in localStorage for admin to see (from second code)
+                    const pendingApprovals = JSON.parse(localStorage.getItem('pendingApprovals')) || [];
+                    pendingApprovals.push(formData);
+                    localStorage.setItem('pendingApprovals', JSON.stringify(pendingApprovals));
+
+                    // Store current application for status tracking (from second code)
+                    localStorage.setItem('currentApplication', JSON.stringify(formData));
+
+                    // Show success notification (from second code)
+                    document.getElementById('pendingNotification').style.display = 'block';
+                    
+                    // Start checking status periodically (from second code)
+                    statusCheckInterval = setInterval(checkApplicationStatus, 5000);
+                    
+                    // Scroll to top to show notification
+                    window.scrollTo(0, 0);
+
+                    // Reset form
+                    document.getElementById('registerForm').reset();
+                    document.getElementById('fileName').textContent = 'No file chosen';
+
+                } else {
+                    // Show specific error message from backend
+                    let errorMessage = result.message || 'Registration failed. Please try again.';
+                    
+                    // Handle specific error cases
+                    if (result.message && result.message.includes('already exists')) {
+                        document.getElementById('email-error').textContent = 'Email already registered';
+                        document.getElementById('email-error').style.display = 'block';
+                    } else {
+                        alert(errorMessage);
+                    }
+                    
+                    button.innerHTML = originalText;
+                    button.disabled = false;
+                }
+            } catch (error) {
+                console.error('Registration error:', error);
+                alert('Network error. Please check if the server is running on http://localhost:9000');
+                button.innerHTML = originalText;
+                button.disabled = false;
+            }
+        });
+
+        // Real-time validation for better UX (from first code)
+        document.getElementById('confirm_password').addEventListener('input', function() {
+            const password = document.getElementById('password').value;
+            const confirmPassword = this.value;
+            
+            if (confirmPassword && password !== confirmPassword) {
+                document.getElementById('confirm_password-error').style.display = 'block';
+            } else {
+                document.getElementById('confirm_password-error').style.display = 'none';
+            }
+        });
+
+        document.getElementById('password').addEventListener('input', function() {
+            if (this.value.length < 8) {
+                document.getElementById('password-error').style.display = 'block';
+            } else {
+                document.getElementById('password-error').style.display = 'none';
+            }
+            
+            // Also check confirm password when password changes
+            const confirmPassword = document.getElementById('confirm_password').value;
+            if (confirmPassword && this.value !== confirmPassword) {
+                document.getElementById('confirm_password-error').style.display = 'block';
+            } else {
+                document.getElementById('confirm_password-error').style.display = 'none';
+            }
+        });
+
+        // File upload display (from first code)
+        document.getElementById('licenseImage').addEventListener('change', function() {
+            const fileName = document.getElementById('fileName');
+            fileName.textContent = this.files.length > 0 ? this.files[0].name : 'No file chosen';
+            
+            // Hide license error if file is selected
+            if (this.files.length > 0) {
+                document.getElementById('license-error').style.display = 'none';
+            }
+        });
+
+        // Real-time validation for other fields (from first code)
+        const fieldsToValidate = ['name', 'phone', 'email', 'service_type', 'experience'];
+        fieldsToValidate.forEach(fieldId => {
+            const field = document.getElementById(fieldId);
+            if (field) {
+                field.addEventListener('input', function() {
+                    const errorElement = document.getElementById(`${fieldId}-error`);
+                    if (errorElement) {
+                        errorElement.style.display = 'none';
+                    }
+                });
+            }
+        });
+
+        // Set today's date as minimum for any date fields (if added later)
+        const today = new Date().toISOString().split('T')[0];
+        document.querySelectorAll('input[type="date"]').forEach(input => {
+            input.min = today;
+        });
+
+        // Redirect to login page (from second code)
+        document.getElementById('goToLoginBtn').addEventListener('click', function() {
+            window.location.href = 'provider_login.html';
+        });
+
+        // Try again after rejection (from second code)
+        document.getElementById('tryAgainBtn').addEventListener('click', function() {
+            document.getElementById('registerForm').style.display = 'block';
+            document.getElementById('registerHeader').style.display = 'block';
+            document.getElementById('rejectedStatus').style.display = 'none';
+        });
+
+        // Login link functionality - redirect to dashboard
+        document.getElementById('loginLink').addEventListener('click', function(e) {
+            e.preventDefault();
+            window.location.href = 'provider_dashboard.html';
+        });
+
+        // Check application status on page load (from second code)
+        document.addEventListener('DOMContentLoaded', function() {
+            checkApplicationStatus();
+            if (document.getElementById('pendingNotification').style.display === 'block') {
+                statusCheckInterval = setInterval(checkApplicationStatus, 9000);
+            }
+        });
+    </script>
+</body>
+</html>
