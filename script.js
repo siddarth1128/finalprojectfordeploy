@@ -21,7 +21,8 @@ const User = require("./models/User");
 
 // Middleware
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' })); // Increased limit for file uploads
+app.use(express.urlencoded({ limit: '50mb', extended: true }));
 app.use(express.static("public"));
 app.use(express.static("welcome"));
 app.use('/admin', express.static('admin'));

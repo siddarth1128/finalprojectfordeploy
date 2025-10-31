@@ -664,7 +664,7 @@
         registerBtn.innerHTML = '<div style="display:inline-block;width:16px;height:16px;border:2px solid rgba(255,255,255,.3);border-radius:50%;border-top-color:#fff;animation:spin 1s ease-in-out infinite;margin-right:8px;"></div> Creating...';
         registerBtn.disabled = true;
 
-        const res = await fetch('http://localhost:3000/register', {
+        const res = await fetch('http://localhost:4000/admin/register', {
           method: 'POST',
           headers: {'Content-Type':'application/json'},
           body: JSON.stringify({ name, email, password, adminSecret })

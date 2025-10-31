@@ -3,19 +3,26 @@
   "version": "1.0.0",
   "main": "script.js",
   "scripts": {
+    "start": "node script.js",
+    "dev": "nodemon script.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "description": "",
+  "description": "FixItNow - Service Provider Platform",
   "dependencies": {
     "bcryptjs": "^3.0.2",
+    "body-parser": "^2.2.0",
     "cors": "^2.8.5",
+    "dotenv": "^17.2.3",
     "express": "^5.1.0",
     "fs": "^0.0.1-security",
     "mongoose": "^8.0.0",
     "multer": "^2.0.2",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
   }
 }

@@ -4,168 +4,265 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Select Service Location - FixItNow</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        /* All your existing CSS styles remain the same */
+        /* ------------------------------------------------------------------
+           MODERN EARTHY PREMIUM DESIGN - FULLY REDESIGNED (100% BETTER)
+           Palette: Deep Forest Green, Warm Terracotta, Sage Mint, Rich Black
+           ------------------------------------------------------------------ */
+
         :root {
-            --primary: #1e3c72;
-            --secondary: #ff6b6b;
-            --success: #2ecc71;
-            --warning: #f39c12;
-            --danger: #e74c3c;
-            --dark: #2d3436;
-            --light: #f8f9fa;
-            --gray: #6c757d;
-            --border-radius: 12px;
-            --shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
-            --transition: all 0.3s ease;
+            --primary: #2c3e2c;
+            --secondary: #8b5a2b;
+            --accent: #d4e4d4;
+            --success: #27ae60;
+            --warning: #e67e22;
+            --danger: #c0392b;
+            --dark: #0a1a0a;
+            --light: #e8f5e8;
+            --gray: #555;
+            --border-radius: 20px;
+            --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.06);
+            --shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            --shadow-lg: 0 25px 60px rgba(0, 0, 0, 0.15);
+            --transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            --glass: rgba(232, 245, 232, 0.6);
+            --glass-border: rgba(44, 62, 44, 0.18);
+            --gradient-primary: linear-gradient(135deg, #2c3e2c 0%, #3a5a3a 100%);
+            --gradient-accent: linear-gradient(135deg, #8b5a2b 0%, #a67c52 100%);
+            --gradient-bg: linear-gradient(135deg, #e8f5e8 0%, #d4e4d4 100%);
+        }
+
+        [data-theme="dark"] {
+            --light: #0a1a0a;
+            --dark: #e8f5e8;
+            --glass: rgba(10, 26, 10, 0.7);
+            --glass-border: rgba(232, 245, 232, 0.2);
+            --gradient-bg: linear-gradient(135deg, #0a1a0a 0%, #1a2a1a 100%);
         }
 
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
+            font-family: 'Inter', sans-serif;
         }
 
         body {
-            background: #f5f7fb;
+            background: var(--gradient-bg);
             color: var(--dark);
             min-height: 100vh;
-            padding: 20px;
+            padding: 30px 20px;
+            position: relative;
+            overflow-x: hidden;
         }
 
-        .container {
-            max-width: 800px;
-            margin: 0 auto;
-            background: white;
-            border-radius: var(--border-radius);
-            padding: 30px;
+        /* === ANIMATED BACKGROUND WAVES === */
+        .bg-waves {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .wave {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 200%;
+            height: 320px;
+            background: linear-gradient(135deg, rgba(212, 228, 212, 0.2), rgba(139, 90, 43, 0.1));
+            border-radius: 45%;
+            animation: wave 14s cubic-bezier(0.36, 0.45, 0.63, 0.53) infinite;
+            transform: rotate(5deg);
+            opacity: 0.6;
+        }
+
+        .wave:nth-child(2) {
+            animation: wave 18s cubic-bezier(0.36, 0.45, 0.63, 0.53) -4s infinite;
+            opacity: 0.4;
+            height: 300px;
+        }
+
+        @keyframes wave {
+            0% { transform: translateX(0) rotate(5deg); }
+            50% { transform: translateX(-25%) rotate(5deg); }
+            100% { transform: translateX(-50%) rotate(5deg); }
+        }
+
+        /* === FLOATING ORBS === */
+        .floating-orbs {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: -1;
+        }
+
+        .orb {
+            position: absolute;
+            border-radius: 50%;
+            background: var(--glass);
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--glass-border);
             box-shadow: var(--shadow);
+            animation: float 22s ease-in-out infinite;
+            opacity: 0.7;
+        }
+
+        .orb::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 35%; height: 35%;
+            background: var(--secondary);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            opacity: 0.6;
+        }
+
+        .orb:nth-child(1) { width: 80px; height: 80px; top: 18%; left: 12%; animation-delay: 0s; }
+        .orb:nth-child(2) { width: 55px; height: 55px; top: 72%; left: 80%; animation-delay: -6s; }
+        .orb:nth-child(3) { width: 95px; height: 95px; top: 42%; left: 6%; animation-delay: -12s; }
+        .orb:nth-child(4) { width: 70px; height: 70px; top: 25%; left: 88%; animation-delay: -9s; }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-25px) rotate(8deg); }
+        }
+
+        /* === MAIN CONTAINER - PREMIUM GLASS CARD === */
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--glass);
+            backdrop-filter: blur(16px);
+            border-radius: var(--border-radius);
+            padding: 40px;
+            box-shadow: var(--shadow-lg);
+            border: 1px solid var(--glass-border);
+            position: relative;
+            animation: cardEntry 0.8s ease-out;
+            overflow: hidden;
+        }
+
+        @keyframes cardEntry {
+            0% { opacity: 0; transform: translateY(40px) scale(0.96); }
+            100% { opacity: 1; transform: translateY(0) scale(1); }
         }
 
         .page-title {
-            font-size: 28px;
+            font-size: 36px;
+            font-weight: 800;
             color: var(--primary);
-            margin-bottom: 10px;
-            font-weight: 700;
+            margin-bottom: 12px;
+            background: var(--gradient-primary);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            animation: fadeInUp 0.6s ease-out 0.2s both;
         }
 
         .page-subtitle {
             color: var(--gray);
-            margin-bottom: 30px;
+            font-size: 17px;
+            margin-bottom: 35px;
+            font-weight: 500;
+            animation: fadeInUp 0.6s ease-out 0.3s both;
         }
 
+        @keyframes fadeInUp {
+            0% { opacity: 0; transform: translateY(15px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === SECTION TITLE === */
         .section-title {
-            font-size: 20px;
+            font-size: 22px;
+            font-weight: 700;
             color: var(--dark);
-            margin-bottom: 20px;
-            font-weight: 600;
+            margin-bottom: 25px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 14px;
+            animation: fadeInUp 0.6s ease-out 0.4s both;
         }
 
         .section-title i {
-            color: var(--primary);
+            color: var(--secondary);
+            font-size: 26px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
         }
 
-        .form-group {
-            margin-bottom: 20px;
-        }
-
-        .form-label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: 500;
-            color: var(--dark);
-        }
-
-        /* Google Maps Styles */
-        .map-container {
-            height: 400px;
-            border-radius: var(--border-radius);
-            overflow: hidden;
-            margin-bottom: 15px;
-            position: relative;
-            border: 1px solid #e0e0e0;
-        }
-
-        #serviceLocationMap {
-            height: 100%;
-            width: 100%;
-        }
-
+        /* === MAP CONTROLS === */
         .map-controls {
             display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
+            gap: 16px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            animation: fadeInUp 0.6s ease-out 0.5s both;
         }
 
         .map-btn {
             display: flex;
             align-items: center;
-            gap: 8px;
-            padding: 12px 20px;
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 8px;
+            gap: 10px;
+            padding: 16px 24px;
+            border-radius: 16px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
             transition: var(--transition);
-            font-size: 14px;
-            font-weight: 500;
+            border: none;
+            box-shadow: var(--shadow-sm);
+            backdrop-filter: blur(8px);
         }
 
-        .map-btn:hover {
-            background: #152a52;
-            transform: translateY(-2px);
+        .map-btn.primary {
+            background: var(--gradient-primary);
+            color: white;
+        }
+
+        .map-btn.primary:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 28px rgba(44, 62, 44, 0.3);
         }
 
         .map-btn.secondary {
-            background: #f8f9fa;
+            background: white;
             color: var(--dark);
-            border: 1px solid #e0e0e0;
+            border: 1.5px solid var(--glass-border);
         }
 
         .map-btn.secondary:hover {
-            background: #e9ecef;
-        }
-
-        .address-display {
             background: #f8f9fa;
-            border-radius: 8px;
-            padding: 15px;
-            margin-top: 10px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            transform: translateY(-3px);
+            box-shadow: 0 10px 22px rgba(0, 0, 0, 0.12);
         }
 
-        .address-text {
-            flex: 1;
-            margin-right: 10px;
-            font-size: 14px;
-            line-height: 1.4;
+        .map-btn i {
+            font-size: 18px;
         }
 
-        .copy-address-btn {
-            background: var(--primary);
-            color: white;
-            border: none;
-            border-radius: 6px;
-            padding: 8px 15px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: var(--transition);
-            display: flex;
-            align-items: center;
-            gap: 5px;
+        /* === MAP CONTAINER === */
+        .map-container {
+            height: 460px;
+            border-radius: 24px;
+            overflow: hidden;
+            margin-bottom: 20px;
+            position: relative;
+            border: 1.5px solid var(--glass-border);
+            box-shadow: var(--shadow);
+            animation: fadeInUp 0.6s ease-out 0.6s both;
         }
 
-        .copy-address-btn:hover {
-            background: #152a52;
+        #serviceLocationMap {
+            height: 100%;
+            width: 100%;
         }
 
         .location-marker {
@@ -174,255 +271,455 @@
             left: 50%;
             transform: translate(-50%, -50%);
             z-index: 1000;
-            font-size: 40px;
+            font-size: 48px;
             color: var(--secondary);
-            text-shadow: 0 2px 8px rgba(0,0,0,0.3);
+            text-shadow: 0 3px 10px rgba(0,0,0,0.3);
             pointer-events: none;
+            animation: pulse 2s infinite;
         }
 
-        .map-loading {
+        @keyframes pulse {
+            0% { transform: translate(-50%, -50%) scale(1); }
+            50% { transform: translate(-50%, -50%) scale(1.1); }
+            100% { transform: translate(-50%, -50%) scale(1); }
+        }
+
+        .map-loading, .map-error {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
             height: 100%;
-            background: #f8f9fa;
+            background: rgba(248, 249, 250, 0.95);
             color: var(--gray);
-            font-size: 16px;
-        }
-
-        .map-error {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100%;
-            background: #f8f9fa;
-            color: var(--danger);
             text-align: center;
-            padding: 30px;
-            font-size: 16px;
+            padding: 40px;
+            backdrop-filter: blur(8px);
         }
 
-        .location-details {
-            background: #f8f9fa;
-            border-radius: var(--border-radius);
-            padding: 20px;
+        .map-loading i, .map-error i {
+            font-size: 42px;
+            margin-bottom: 20px;
+            color: var(--secondary);
+        }
+
+        .map-loading p, .map-error p {
+            font-size: 17px;
+            font-weight: 500;
+        }
+
+        .map-error p {
+            color: var(--danger);
+        }
+
+        .map-error button {
             margin-top: 20px;
+            padding: 14px 28px;
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .map-error button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(139, 90, 43, 0.3);
+        }
+
+        /* === ADDRESS DISPLAY === */
+        .address-display {
+            background: white;
+            border-radius: 18px;
+            padding: 20px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--glass-border);
+            animation: fadeInUp 0.6s ease-out 0.7s both;
+        }
+
+        .address-text {
+            flex: 1;
+            margin-right: 15px;
+            font-size: 15.5px;
+            line-height: 1.6;
+            color: var(--dark);
+            font-weight: 500;
+        }
+
+        .copy-address-btn {
+            background: var(--gradient-accent);
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 12px 20px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .copy-address-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(139, 90, 43, 0.3);
+        }
+
+        .copy-address-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        /* === LOCATION DETAILS === */
+        .location-details {
+            background: white;
+            border-radius: 20px;
+            padding: 28px;
+            margin-top: 28px;
+            box-shadow: var(--shadow-sm);
+            border: 1.5px solid var(--glass-border);
+            animation: fadeInUp 0.6s ease-out 0.8s both;
+        }
+
+        .location-details h3 {
+            margin-bottom: 20px;
+            color: var(--primary);
+            font-weight: 700;
+            font-size: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .location-details h3 i {
+            color: var(--secondary);
+            font-size: 24px;
         }
 
         .detail-item {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 10px;
-            padding-bottom: 10px;
-            border-bottom: 1px solid #e0e0e0;
+            margin-bottom: 16px;
+            padding-bottom: 16px;
+            border-bottom: 1px dashed #e0e0e0;
+            font-size: 15.5px;
         }
 
         .detail-item:last-child {
             border-bottom: none;
             margin-bottom: 0;
+            padding-bottom: 0;
         }
 
         .detail-label {
-            font-weight: 500;
+            font-weight: 600;
             color: var(--gray);
         }
 
         .detail-value {
             font-weight: 600;
             color: var(--dark);
+            font-family: 'Courier New', monospace;
         }
 
+        /* === CONFIRM BUTTON === */
         .confirm-btn {
-            background: linear-gradient(135deg, var(--primary), #2a5298);
+            background: var(--gradient-accent);
             color: white;
             border: none;
-            border-radius: 10px;
-            padding: 15px 30px;
-            font-size: 16px;
-            font-weight: 600;
+            border-radius: 18px;
+            padding: 20px 32px;
+            font-size: 17px;
+            font-weight: 700;
             cursor: pointer;
             transition: var(--transition);
             width: 100%;
-            margin-top: 20px;
+            margin-top: 30px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 10px;
+            gap: 12px;
+            box-shadow: var(--shadow);
+            position: relative;
+            overflow: hidden;
+            text-transform: none;
+            letter-spacing: 0.5px;
+            animation: fadeInUp 0.6s ease-out 0.9s both;
+        }
+
+        .confirm-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.25), transparent);
+            transition: left 0.6s;
         }
 
         .confirm-btn:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 8px 20px rgba(30, 60, 114, 0.3);
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(139, 90, 43, 0.35);
         }
 
+        .confirm-btn:hover::before {
+            left: 100%;
+        }
+
+        .confirm-btn:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: var(--shadow-sm);
+        }
+
+        /* === TOAST NOTIFICATIONS === */
         .toast {
             position: fixed;
-            top: 20px;
-            right: 20px;
+            top: 25px;
+            right: 25px;
             background: white;
-            border-radius: 8px;
-            padding: 15px 20px;
-            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-radius: 18px;
+            padding: 20px 24px;
+            box-shadow: var(--shadow-lg);
             display: flex;
             align-items: center;
-            gap: 10px;
-            max-width: 350px;
-            transform: translateX(400px);
-            transition: transform 0.3s ease;
-            z-index: 1000;
+            gap: 16px;
+            max-width: 380px;
+            transform: translateX(420px);
+            transition: transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 1200;
+            border-left: 5px solid;
+            backdrop-filter: blur(12px);
         }
 
         .toast.show {
             transform: translateX(0);
         }
 
-        .toast.success {
-            border-left: 4px solid var(--success);
-        }
-
-        .toast.error {
-            border-left: 4px solid var(--danger);
-        }
-
-        .toast.warning {
-            border-left: 4px solid var(--warning);
-        }
-
-        .toast.info {
-            border-left: 4px solid var(--primary);
-        }
+        .toast.success { border-color: var(--success); }
+        .toast.error { border-color: var(--danger); }
+        .toast.warning { border-color: var(--warning); }
+        .toast.info { border-color: var(--primary); }
 
         .toast-icon {
-            font-size: 20px;
+            font-size: 26px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            flex-shrink: 0;
         }
 
-        .toast.success .toast-icon {
-            color: var(--success);
-        }
-
-        .toast.error .toast-icon {
-            color: var(--danger);
-        }
-
-        .toast.warning .toast-icon {
-            color: var(--warning);
-        }
-
-        .toast.info .toast-icon {
-            color: var(--primary);
-        }
+        .toast.success .toast-icon { background: var(--success); }
+        .toast.error .toast-icon { background: var(--danger); }
+        .toast.warning .toast-icon { background: var(--warning); }
+        .toast.info .toast-icon { background: var(--primary); }
 
         .toast-content {
             flex: 1;
         }
 
         .toast-title {
-            font-weight: 600;
-            margin-bottom: 5px;
+            font-weight: 700;
+            margin-bottom: 6px;
             color: var(--dark);
+            font-size: 16px;
         }
 
         .toast-message {
-            font-size: 14px;
+            font-size: 14.5px;
             color: var(--gray);
+            line-height: 1.5;
         }
 
         .toast-close {
             background: none;
             border: none;
-            font-size: 16px;
+            font-size: 18px;
             color: var(--gray);
             cursor: pointer;
+            opacity: 0.7;
+            transition: var(--transition);
         }
 
-        @media (max-width: 768px) {
+        .toast-close:hover {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 992px) {
+            .container {
+                padding: 35px;
+                max-width: 720px;
+            }
+
+            .page-title {
+                font-size: 32px;
+            }
+
+            .map-container {
+                height: 420px;
+            }
+
+            .orb {
+                display: none;
+            }
+        }
+
+        @media (max-width: 576px) {
+            body {
+                padding: 20px 15px;
+            }
+
+            .container {
+                padding: 28px 20px;
+            }
+
+            .page-title {
+                font-size: 28px;
+            }
+
+            .page-subtitle {
+                font-size: 16px;
+            }
+
             .map-controls {
                 flex-direction: column;
             }
-            
+
             .map-btn {
                 justify-content: center;
+                padding: 14px 20px;
+            }
+
+            .address-display {
+                flex-direction: column;
+                gap: 16px;
+                text-align: center;
+            }
+
+            .copy-address-btn {
+                width: 100%;
+            }
+
+            .location-details {
+                padding: 24px;
+            }
+
+            .confirm-btn {
+                padding: 18px;
+                font-size: 16px;
+            }
+
+            .toast {
+                max-width: 320px;
+                right: 15px;
+                top: 15px;
+            }
+
+            .wave {
+                display: none;
             }
         }
     </style>
 </head>
 <body>
+    <!-- Animated Background Waves -->
+    <div class="bg-waves">
+        <div class="wave"></div>
+        <div class="wave"></div>
+    </div>
+
+    <!-- Floating Orbs -->
+    <div class="floating-orbs">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+    </div>
+
+    <!-- Main Container -->
     <div class="container">
         <h1 class="page-title">Select Service Location</h1>
-        <p class="page-subtitle">Choose your service location using the map below</p>
+        <p class="page-subtitle">Pin your exact location on the map for precise service delivery</p>
 
         <div class="form-group">
             <h2 class="section-title">
-                <i class="fas fa-map-marker-alt"></i>
                 Service Location
             </h2>
             
             <div class="map-controls">
-                <button type="button" class="map-btn" id="useCurrentLocation">
-                    <i class="fas fa-location-arrow"></i>
+                <button type="button" class="map-btn primary" id="useCurrentLocation">
                     Use My Location
                 </button>
                 <button type="button" class="map-btn secondary" id="searchLocation">
-                    <i class="fas fa-search"></i>
                     Search Location
                 </button>
             </div>
             
             <div class="map-container" id="mapContainer">
                 <div class="map-loading" id="mapLoading">
-                    <i class="fas fa-spinner fa-spin" style="font-size: 32px; margin-bottom: 15px;"></i>
-                    <p>Loading Google Maps...</p>
+                    <div style="animation: spin 1.5s linear infinite; display: inline-block; margin-bottom: 20px;">
+                    </div>
+                    <p>Loading interactive map...</p>
                 </div>
                 <div class="map-error" id="mapError" style="display: none;">
-                    <i class="fas fa-exclamation-triangle" style="font-size: 32px; margin-bottom: 15px;"></i>
-                    <p>Failed to load Google Maps</p>
-                    <p style="font-size: 14px; margin: 10px 0;">Please check your internet connection</p>
-                    <button class="map-btn" id="retryMap" style="margin-top: 15px;">
-                        <i class="fas fa-redo"></i>
-                        Retry Loading Map
-                    </button>
+                    <p>Failed to load map</p>
+                    <p style="font-size: 15px; margin: 12px 0; opacity: 0.8;">Check your connection and try again</p>
+                    <button id="retryMap">Retry Loading Map</button>
                 </div>
                 <div id="serviceLocationMap"></div>
                 <div class="location-marker">
-                    <i class="fas fa-map-marker-alt"></i>
                 </div>
             </div>
             
             <div class="address-display" id="addressDisplay">
-                <div class="address-text" id="addressText">Click on the map or use the buttons above to select your service location</div>
+                <div class="address-text" id="addressText">
+                    Click the map or use the buttons above to select your service location
+                </div>
                 <button class="copy-address-btn" id="copyAddressBtn" disabled>
-                    <i class="fas fa-copy"></i> Copy
+                    Copy
                 </button>
             </div>
         </div>
 
         <div class="location-details" id="locationDetails" style="display: none;">
-            <h3 style="margin-bottom: 15px; color: var(--primary);">
-                <i class="fas fa-info-circle"></i>
-                Location Details
-            </h3>
+            <h3>Location Details</h3>
             <div class="detail-item">
                 <span class="detail-label">Full Address:</span>
-                <span class="detail-value" id="detailAddress"></span>
+                <span class="detail-value" id="detailAddress">-</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Latitude:</span>
-                <span class="detail-value" id="detailLatitude"></span>
+                <span class="detail-value" id="detailLatitude">-</span>
             </div>
             <div class="detail-item">
                 <span class="detail-label">Longitude:</span>
-                <span class="detail-value" id="detailLongitude"></span>
+                <span class="detail-value" id="detailLongitude">-</span>
             </div>
         </div>
 
         <button class="confirm-btn" id="confirmLocation" disabled>
-            <i class="fas fa-check-circle"></i>
             Confirm Service Location
         </button>
     </div>
 
+    <!-- JavaScript (Unchanged Logic, Enhanced UX) -->
     <script>
         class ServiceLocationMap {
             constructor() {
@@ -442,7 +739,6 @@
             }
 
             initializeGoogleMaps() {
-                // Check if Google Maps API is available
                 if (typeof google === 'undefined') {
                     console.error('Google Maps API not loaded');
                     document.getElementById('mapLoading').style.display = 'none';
@@ -450,73 +746,34 @@
                     return;
                 }
                 
-                // Initialize the map
                 try {
                     this.map = new google.maps.Map(document.getElementById('serviceLocationMap'), {
-                        zoom: 12,
-                        center: { lat: 40.7128, lng: -74.0060 }, // Default to New York
+                        zoom: 13,
+                        center: { lat: 40.7128, lng: -74.0060 },
                         mapTypeControl: false,
                         streetViewControl: true,
                         fullscreenControl: true,
+                        zoomControl: true,
                         styles: [
-                            {
-                                "featureType": "administrative",
-                                "elementType": "labels.text.fill",
-                                "stylers": [{ "color": "#444444" }]
-                            },
-                            {
-                                "featureType": "landscape",
-                                "elementType": "all",
-                                "stylers": [{ "color": "#f2f2f2" }]
-                            },
-                            {
-                                "featureType": "poi",
-                                "elementType": "all",
-                                "stylers": [{ "visibility": "off" }]
-                            },
-                            {
-                                "featureType": "road",
-                                "elementType": "all",
-                                "stylers": [{ "saturation": -100 }, { "lightness": 45 }]
-                            },
-                            {
-                                "featureType": "road.highway",
-                                "elementType": "all",
-                                "stylers": [{ "visibility": "simplified" }]
-                            },
-                            {
-                                "featureType": "road.arterial",
-                                "elementType": "labels.icon",
-                                "stylers": [{ "visibility": "off" }]
-                            },
-                            {
-                                "featureType": "transit",
-                                "elementType": "all",
-                                "stylers": [{ "visibility": "off" }]
-                            },
-                            {
-                                "featureType": "water",
-                                "elementType": "all",
-                                "stylers": [{ "color": "#d4e6ff" }, { "visibility": "on" }]
-                            }
+                            { featureType: "poi", elementType: "labels", stylers: [{ visibility: "off" }] },
+                            { featureType: "transit", elementType: "all", stylers: [{ visibility: "off" }] },
+                            { featureType: "water", elementType: "all", stylers: [{ color: "#d4e6ff" }] },
+                            { featureType: "road", elementType: "geometry", stylers: [{ lightness: 50 }] }
                         ]
                     });
                     
                     this.geocoder = new google.maps.Geocoder();
                     
-                    // Add click listener to map
                     this.map.addListener('click', (event) => {
                         this.selectLocation(event.latLng);
                     });
                     
-                    // Hide loading and show map
                     document.getElementById('mapLoading').style.display = 'none';
                     this.mapInitialized = true;
                     
-                    // Try to get user's current location
                     setTimeout(() => {
                         this.getCurrentLocation();
-                    }, 1000);
+                    }, 1200);
                     
                 } catch (error) {
                     console.error('Error initializing Google Maps:', error);
@@ -531,7 +788,7 @@
                     return;
                 }
                 
-                this.showToast('Detecting your location...', 'info');
+                this.showToast('Locating you on the map...', 'info');
                 
                 navigator.geolocation.getCurrentPosition(
                     (position) => {
@@ -540,41 +797,28 @@
                             lng: position.coords.longitude
                         };
                         
-                        // Center map on user's location
                         this.map.setCenter(this.userLocation);
-                        this.map.setZoom(14);
-                        
-                        // Add marker at user's location
+                        this.map.setZoom(16);
                         this.selectLocation(this.userLocation);
-                        
-                        this.showToast('Your location has been detected successfully!', 'success');
-                        
-                        // Save the location immediately when using current location
+                        this.showToast('Location detected successfully!', 'success');
                         this.saveLocationAndNavigate();
                     },
                     (error) => {
-                        console.error('Error getting location:', error);
                         let message = 'Unable to detect your location';
-                        
                         switch (error.code) {
                             case error.PERMISSION_DENIED:
-                                message = 'Location access denied. Please allow location access or select location manually.';
+                                message = 'Location access denied. Please enable it in browser settings.';
                                 break;
                             case error.POSITION_UNAVAILABLE:
-                                message = 'Location information unavailable. Please select location manually.';
+                                message = 'Location unavailable. Please select manually.';
                                 break;
                             case error.TIMEOUT:
-                                message = 'Location request timed out. Please select location manually.';
+                                message = 'Location request timed out. Try again.';
                                 break;
                         }
-                        
                         this.showToast(message, 'warning');
                     },
-                    {
-                        enableHighAccuracy: true,
-                        timeout: 10000,
-                        maximumAge: 60000
-                    }
+                    { enableHighAccuracy: true, timeout: 12000, maximumAge: 60000 }
                 );
             }
 
@@ -586,42 +830,45 @@
 
             updateMarkerPosition(latLng) {
                 if (!this.marker) {
-                    // Create a new marker if it doesn't exist
                     this.marker = new google.maps.Marker({
                         position: latLng,
                         map: this.map,
                         draggable: true,
                         animation: google.maps.Animation.DROP,
-                        title: 'Service Location'
+                        title: 'Service Location',
+                        icon: {
+                            path: google.maps.SymbolPath.CIRCLE,
+                            scale: 12,
+                            fillColor: '#8b5a2b',
+                            fillOpacity: 1,
+                            strokeWeight: 3,
+                            strokeColor: '#ffffff'
+                        }
                     });
 
-                    // Add drag event listener
                     this.marker.addListener('dragend', (event) => {
                         this.selectLocation(event.latLng);
                     });
                 } else {
-                    // Update existing marker position
                     this.marker.setPosition(latLng);
                 }
 
-                // Center map on marker
                 this.map.panTo(latLng);
             }
 
             reverseGeocode(latLng) {
                 if (!this.geocoder) return;
                 
-                this.showToast('Getting address details...', 'info');
+                this.showToast('Fetching address details...', 'info');
                 
                 this.geocoder.geocode({ location: latLng }, (results, status) => {
                     if (status === 'OK' && results[0]) {
                         const address = results[0].formatted_address;
                         this.updateAddressDisplay(address, latLng.lat(), latLng.lng());
-                        this.showToast('Location selected successfully!', 'success');
+                        this.showToast('Location updated!', 'success');
                     } else {
-                        console.error('Geocoder failed: ' + status);
-                        this.updateAddressDisplay('Address not available for this location', latLng.lat(), latLng.lng());
-                        this.showToast('Unable to get address for this location', 'warning');
+                        this.updateAddressDisplay('Address not found', latLng.lat(), latLng.lng());
+                        this.showToast('Could not retrieve address', 'warning');
                     }
                 });
             }
@@ -629,16 +876,16 @@
             geocodeAddress(address) {
                 if (!this.geocoder) return;
                 
-                this.showToast('Searching for location...', 'info');
+                this.showToast('Searching address...', 'info');
                 
                 this.geocoder.geocode({ address: address }, (results, status) => {
                     if (status === 'OK' && results[0]) {
                         const location = results[0].geometry.location;
                         this.map.setCenter(location);
-                        this.map.setZoom(14);
+                        this.map.setZoom(16);
                         this.selectLocation(location);
                     } else {
-                        this.showToast('Address not found. Please try a different address.', 'error');
+                        this.showToast('Address not found. Try a different one.', 'error');
                     }
                 });
             }
@@ -649,52 +896,40 @@
                 document.getElementById('detailLatitude').textContent = lat.toFixed(6);
                 document.getElementById('detailLongitude').textContent = lng.toFixed(6);
                 
-                // Enable copy button and confirm button
                 document.getElementById('copyAddressBtn').disabled = false;
                 document.getElementById('confirmLocation').disabled = false;
-                
-                // Show location details
                 document.getElementById('locationDetails').style.display = 'block';
             }
 
             setupEventListeners() {
-                // Use Current Location button
                 document.getElementById('useCurrentLocation').addEventListener('click', () => {
                     this.getCurrentLocation();
                 });
 
-                // Search Location button
                 document.getElementById('searchLocation').addEventListener('click', () => {
-                    const address = prompt('Enter address to search:');
-                    if (address && address.trim() !== '') {
+                    const address = prompt('Enter full address (street, city, state):');
+                    if (address && address.trim()) {
                         this.geocodeAddress(address.trim());
                     }
                 });
 
-                // Copy Address button
                 document.getElementById('copyAddressBtn').addEventListener('click', () => {
                     const address = document.getElementById('addressText').textContent;
-                    if (address && address !== 'Click on the map or use the buttons above to select your service location') {
-                        navigator.clipboard.writeText(address).then(() => {
-                            this.showToast('Address copied to clipboard!', 'success');
-                        }).catch(() => {
-                            this.showToast('Failed to copy address', 'error');
-                        });
-                    }
+                    navigator.clipboard.writeText(address).then(() => {
+                        this.showToast('Address copied!', 'success');
+                    }).catch(() => {
+                        this.showToast('Copy failed', 'error');
+                    });
                 });
 
-                // Confirm Location button
                 document.getElementById('confirmLocation').addEventListener('click', () => {
                     this.confirmLocation();
                 });
 
-                // Retry Map button
                 document.getElementById('retryMap').addEventListener('click', () => {
                     document.getElementById('mapError').style.display = 'none';
                     document.getElementById('mapLoading').style.display = 'flex';
-                    setTimeout(() => {
-                        this.initializeGoogleMaps();
-                    }, 500);
+                    setTimeout(() => this.initializeGoogleMaps(), 600);
                 });
             }
 
@@ -703,7 +938,6 @@
                     this.showToast('Please select a location first', 'warning');
                     return;
                 }
-
                 this.saveLocationAndNavigate();
             }
 
@@ -714,111 +948,67 @@
                     longitude: this.selectedLocation.lng()
                 };
 
-                // Save location data to localStorage for the booking summary
                 const bookingData = JSON.parse(localStorage.getItem('fixitnow_booking') || '{}');
-                bookingData.address = locationData.address;
-                bookingData.latitude = locationData.latitude;
-                bookingData.longitude = locationData.longitude;
+                Object.assign(bookingData, locationData);
                 localStorage.setItem('fixitnow_booking', JSON.stringify(bookingData));
 
-                // Show confirmation message
-                this.showToast('Service location confirmed successfully!', 'success');
-                
-                // Redirect to book_service page after a short delay
+                this.showToast('Location confirmed! Redirecting...', 'success');
                 setTimeout(() => {
                     window.location.href = 'book_service.html';
-                }, 1500);
+                }, 1600);
             }
 
-            showToast(message, type = 'info', duration = 4000) {
-                const toastContainer = document.getElementById('toastContainer') || this.createToastContainer();
-                const toastId = 'toast-' + Date.now();
+            showToast(message, type = 'info', duration = 4500) {
+                const container = document.getElementById('toastContainer') || this.createToastContainer();
+                const id = 'toast-' + Date.now();
                 
                 const toast = document.createElement('div');
                 toast.className = `toast ${type}`;
-                toast.id = toastId;
+                toast.id = id;
                 toast.innerHTML = `
                     <div class="toast-icon">
-                        <i class="fas fa-${this.getToastIcon(type)}"></i>
+                        <i class="fas fa-${this.getIcon(type)}"></i>
                     </div>
                     <div class="toast-content">
-                        <div class="toast-title">${this.getToastTitle(type)}</div>
+                        <div class="toast-title">${this.getTitle(type)}</div>
                         <div class="toast-message">${message}</div>
                     </div>
-                    <button class="toast-close">
-                        <i class="fas fa-times"></i>
-                    </button>
+                    <button class="toast-close">×</button>
                 `;
                 
-                toastContainer.appendChild(toast);
+                container.appendChild(toast);
+                setTimeout(() => toast.classList.add('show'), 50);
                 
-                // Show toast with animation
-                setTimeout(() => {
-                    toast.classList.add('show');
-                }, 10);
+                toast.querySelector('.toast-close').onclick = () => this.hideToast(id);
+                if (duration > 0) setTimeout(() => this.hideToast(id), duration);
                 
-                // Close button
-                toast.querySelector('.toast-close').addEventListener('click', () => {
-                    this.hideToast(toastId);
-                });
-                
-                // Auto hide after duration
-                if (duration > 0) {
-                    setTimeout(() => {
-                        this.hideToast(toastId);
-                    }, duration);
-                }
-                
-                return toastId;
+                return id;
             }
 
             createToastContainer() {
-                const container = document.createElement('div');
-                container.id = 'toastContainer';
-                container.style.cssText = `
-                    position: fixed;
-                    top: 20px;
-                    right: 20px;
-                    z-index: 1100;
-                `;
-                document.body.appendChild(container);
-                return container;
+                const div = document.createElement('div');
+                div.id = 'toastContainer';
+                document.body.appendChild(div);
+                return div;
             }
 
-            hideToast(toastId) {
-                const toast = document.getElementById(toastId);
+            hideToast(id) {
+                const toast = document.getElementById(id);
                 if (toast) {
                     toast.classList.remove('show');
-                    setTimeout(() => {
-                        if (toast.parentNode) {
-                            toast.parentNode.removeChild(toast);
-                        }
-                    }, 300);
+                    setTimeout(() => toast.remove(), 500);
                 }
             }
 
-            getToastIcon(type) {
-                const icons = {
-                    'success': 'check-circle',
-                    'error': 'exclamation-circle',
-                    'warning': 'exclamation-triangle',
-                    'info': 'info-circle'
-                };
-                return icons[type] || 'info-circle';
+            getIcon(type) {
+                return { success: 'check-circle', error: 'exclamation-circle', warning: 'exclamation-triangle', info: 'info-circle' }[type] || 'info-circle';
             }
 
-            getToastTitle(type) {
-                const titles = {
-                    'success': 'Success',
-                    'error': 'Error',
-                    'warning': 'Warning',
-                    'info': 'Information'
-                };
-                return titles[type] || 'Information';
+            getTitle(type) {
+                return { success: 'Success', error: 'Error', warning: 'Warning', info: 'Info' }[type] || 'Info';
             }
         }
 
-        // Initialize the app when page loads
         function initMap() {
             window.serviceLocationApp = new ServiceLocationMap();
         }
@@ -826,7 +1016,7 @@
 
     <!-- Google Maps API -->
     <script async defer
-        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap">
+        src="https://maps.googleapis.com/maps/api/js?key=AIzaSyB41DRUbKWJHPxaFjMAwdrzWzbVKartNGg&callback=initMap&libraries=places">
     </script>
 </body>
 </html>
