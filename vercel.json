@@ -3,16 +3,6 @@
     {
       "source": "/",
       "destination": "/welcome/welcome.html"
-    },
-    {
-      "source": "/api/(.*)",
-      "destination": "/admin/Server.js"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/(.*)",
-      "dest": "/$1"
     }
   ]
 }
